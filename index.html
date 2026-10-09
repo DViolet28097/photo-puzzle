@@ -68,11 +68,8 @@ header h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
 .empty{color:var(--muted);text-align:center;padding:40px 10px}
 @keyframes glow{50%{box-shadow:0 0 0 6px rgba(124,108,255,.15)}}
 /* game */
-#game header{padding-bottom:4px}
 header{background:var(--bg);position:relative;z-index:2}
-.hud{display:flex;gap:6px;padding:0 14px 6px;justify-content:center}
-.pill{background:var(--panel);border-radius:20px;padding:6px 12px;font-size:14px;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:5px}
-#stage{flex:1;display:flex;align-items:center;justify-content:center;padding:6px 8px;min-height:0;position:relative;touch-action:none;overflow:hidden}
+#stage{flex:1;display:flex;align-items:center;justify-content:center;padding:4px;min-height:0;position:relative;touch-action:none;overflow:hidden}
 #board{position:relative;touch-action:none;transform-origin:0 0;flex:none;border-radius:4px;background:#0b0c12;box-shadow:0 10px 40px rgba(0,0,0,.55)}
 .piece{position:absolute;left:0;top:0;background-repeat:no-repeat;transition:transform .2s ease;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.4),inset 0 0 0 1px rgba(0,0,0,.3);cursor:pointer;touch-action:none}
 .piece.sel{z-index:5;box-shadow:inset 0 0 0 2px var(--gold),inset 0 0 0 40px rgba(255,255,255,.18),0 0 10px 2px rgba(255,200,87,.85)}
@@ -103,12 +100,16 @@ button,.btn,.tile,input,label,.modal,.toast,header,.card,.stat,.ach{touch-action
 #peekImg{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity .25s;border-radius:4px;z-index:30}
 #board.peek #peekImg{opacity:1}
 #board.solved .piece{box-shadow:none}
-.foot{display:flex;gap:8px;padding:6px 14px 10px;align-items:center}
-.foot .prog{flex:1;height:8px;background:var(--panel);border-radius:6px;overflow:hidden}
-.foot .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
-.zbtn{min-height:38px;width:40px;padding:0;font-size:18px;border-radius:10px}
-.foot .ptxt{font-size:13px;color:var(--muted);min-width:56px;text-align:right;font-variant-numeric:tabular-nums}
+#gbar{flex:none;display:flex;align-items:center;gap:2px;height:34px;padding:0 6px;box-sizing:content-box;background:rgba(255,255,255,.035);border-top:1px solid rgba(255,255,255,.06)}
+#game{padding-bottom:0}
+#gbar{padding-bottom:var(--sab)}
+.gb{appearance:none;-webkit-appearance:none;border:0;background:transparent;color:var(--muted);font-weight:600;font-size:19px;line-height:1;font-family:inherit;min-width:44px;height:36px;margin:-1px 0;padding:0 8px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gb:active{background:rgba(255,255,255,.08)}
+#backBtn{font-size:26px;font-weight:400}
+#peekBtn{font-size:17px}
 #peekBtn.on{background:var(--gold);color:#2a2000}
+.gstats{margin-left:auto;display:flex;gap:14px;padding-right:8px;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.gstats b{font-weight:600;color:#c9ccdd}
 /* achievements */
 .ach{display:flex;gap:12px;align-items:center;background:var(--panel);border-radius:12px;padding:12px;margin-bottom:8px}
 .ach .ic{font-size:28px;width:48px;height:48px;border-radius:12px;background:var(--panel2);display:flex;align-items:center;justify-content:center;flex:none}
@@ -149,7 +150,7 @@ label.chk input{width:20px;height:20px}
 .toast.out{opacity:0;transform:translateY(-12px)}
 .toast .ic{font-size:26px}
 .toast small{display:block;color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
-body.ingame #toasts{top:auto;bottom:calc(64px + var(--sab));flex-direction:column-reverse}
+body.ingame #toasts{top:auto;bottom:calc(46px + var(--sab));flex-direction:column-reverse}
 @keyframes tin{from{transform:translateY(-20px);opacity:0}}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:150}
 #busy{position:fixed;inset:0;background:rgba(5,6,10,.8);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
@@ -202,18 +203,12 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
 
 <!-- GAME -->
 <section class="screen" id="game">
-  <header>
-    <button class="btn icon" id="backBtn" aria-label="Back">‹</button>
-    <h1 id="gTitle">Level 1</h1>
-    <button class="btn" id="peekBtn">👁 Peek</button>
-  </header>
-  <div class="hud">
-    <div class="pill">⏱ <span id="gTime">0:00</span></div>
-    <div class="pill">↔ <span id="gMoves">0</span> moves</div>
-    <div class="pill">🧩 <span id="gPieces">0</span></div>
-  </div>
-  <div id="stage"><div id="board"><img id="peekImg" alt=""></div></div>
-  <div class="foot"><button class="btn zbtn" id="zOut" aria-label="Zoom out">−</button><button class="btn zbtn" id="zReset" aria-label="Fit board" style="font-size:14px;width:auto;padding:0 10px">1×</button><button class="btn zbtn" id="zIn" aria-label="Zoom in">＋</button><div class="prog"><i id="gProg"></i></div><div class="ptxt" id="gPtxt">0%</div></div>
+  <div id="stage"><div id="board" role="img" aria-label=""><img id="peekImg" alt=""></div></div>
+  <nav id="gbar">
+    <button class="gb" id="backBtn" aria-label="Back to levels">‹</button>
+    <button class="gb" id="peekBtn" aria-label="Peek at the full picture">👁</button>
+    <div class="gstats"><span>⏱ <b id="gTime">0:00</b></span><span>↔ <b id="gMoves">0</b></span><span>🧩 <b id="gPieces">0</b></span></div>
+  </nav>
 </section>
 
 <!-- MY PHOTOS -->
@@ -600,20 +595,25 @@ async function openGame(){
   const n=cur.rows*cur.cols;const els=[];
   for(let p=0;p<n;p++){const el=document.createElement('div');el.className='piece';el.style.backgroundImage=`url("${curURL}")`;el.dataset.p=p;board.appendChild(el);els[p]=el}
   G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n};
-  $('#gTitle').innerHTML=`Level ${cur.level}<small>${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces</small>`;
+  const info=`${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces`;board.setAttribute('aria-label',`Level ${cur.level} · ${info}`);
   Z.z=1;Z.tx=0;Z.ty=0;gest=null;ptrs.clear();
   show('game');layout();refresh(false);startTimer();
+  toast('🧩',`Level ${cur.level}`,info);
   if(!S.seenZoomHint){S.seenZoomHint=1;save();toast('🤏','Pinch to zoom','Tap two pieces to swap them. Pieces that lock in place are in the right spot.')}
 }
 function layout(){
-  if(!G||!S.current)return;const cur=S.current;const st=$('#stage');
-  const aw=st.clientWidth-16,ah=st.clientHeight-12;const ar=cur.w/cur.h;
+  if(!G||!S.current||screen!=='game')return;const cur=S.current;const st=$('#stage');
+  // remember which board point is at the stage centre so zoom survives rotation
+  let fx=.5,fy=.5;const ow=board.offsetWidth,oh=board.offsetHeight;
+  if(Z.z>1.01&&ow&&oh){fx=(st.clientWidth/2-board.offsetLeft-Z.tx)/(ow*Z.z);fy=(st.clientHeight/2-board.offsetTop-Z.ty)/(oh*Z.z)}
+  const aw=st.clientWidth-8,ah=st.clientHeight-8;const ar=cur.w/cur.h;
   let bw=aw,bh=aw/ar;if(bh>ah){bh=ah;bw=ah*ar}
   G.pw=Math.floor(bw/cur.cols);G.ph=Math.floor(bh/cur.rows);bw=G.pw*cur.cols;bh=G.ph*cur.rows;
   const b=$('#board');b.style.width=bw+'px';b.style.height=bh+'px';
   G.els.forEach((el,p)=>{el.style.width=G.pw+'px';el.style.height=G.ph+'px';el.style.backgroundSize=`${bw}px ${bh}px`;
     el.style.backgroundPosition=`${-(p%cur.cols)*G.pw}px ${-Math.floor(p/cur.cols)*G.ph}px`});
   cur.order.forEach((p,s)=>place(G.els[p],s));
+  if(Z.z>1.01){Z.tx=st.clientWidth/2-board.offsetLeft-fx*bw*Z.z;Z.ty=st.clientHeight/2-board.offsetTop-fy*bh*Z.z}
   clampPan();applyZoom(false);
 }
 function slotXY(s){const c=S.current.cols;return [(s%c)*G.pw,Math.floor(s/c)*G.ph]}
@@ -625,7 +625,6 @@ function refresh(anim){
     if(good&&!el.classList.contains('ok')){el.classList.add('ok');if(anim){el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),950);if(!S.seenLockTip){S.seenLockTip=1;setTimeout(()=>toast('🔒','Locked in!','That piece is in the right spot, so it can’t move now. Locked pieces blend into the photo.'),250)}}}
     else if(!good)el.classList.remove('ok')});
   $('#gMoves').textContent=cur.moves;$('#gPieces').textContent=`${ok}/${G.n}`;
-  const pct=Math.round(ok/G.n*100);$('#gProg').style.width=pct+'%';$('#gPtxt').textContent=pct+'%';
   return ok;
 }
 function swap(a,b){
@@ -642,8 +641,7 @@ function select(s){if(G.sel!=null)G.els[S.current.order[G.sel]].classList.remove
 // ---------- input: tap-to-swap, pinch-zoom, pan, drag-to-swap ----------
 const board=$('#board'),stage=$('#stage');
 const MAXZ=4,Z={z:1,tx:0,ty:0},ptrs=new Map();let gest=null;
-function applyZoom(anim){board.style.transition=anim?'transform .22s ease':'none';board.style.transform=`translate(${Z.tx}px,${Z.ty}px) scale(${Z.z})`;
-  $('#zOut').disabled=$('#zReset').disabled=Z.z<=1.001;$('#zIn').disabled=Z.z>=MAXZ-.001;$('#zReset').textContent=(Math.round(Z.z*10)/10)+'×'}
+function applyZoom(anim){board.style.transition=anim?'transform .22s ease':'none';board.style.transform=`translate(${Z.tx}px,${Z.ty}px) scale(${Z.z})`;}
 function clampPan(){const W=board.offsetWidth*Z.z,H=board.offsetHeight*Z.z,L=board.offsetLeft,T=board.offsetTop,SW=stage.clientWidth,SH=stage.clientHeight,pad=30;
   if(W<=SW)Z.tx=(SW-W)/2-L;else Z.tx=Math.min(pad-L,Math.max(SW-pad-L-W,Z.tx));
   if(H<=SH)Z.ty=(SH-H)/2-T;else Z.ty=Math.min(pad-T,Math.max(SH-pad-T-H,Z.ty))}
@@ -651,7 +649,6 @@ function boardOrigin(){const r=stage.getBoundingClientRect();return [r.left+boar
 function zoomAt(nz,cx,cy,anim){nz=Math.min(MAXZ,Math.max(1,nz));const [ox,oy]=boardOrigin();
   const px=(cx-ox-Z.tx)/Z.z,py=(cy-oy-Z.ty)/Z.z;Z.z=nz;Z.tx=cx-ox-px*nz;Z.ty=cy-oy-py*nz;clampPan();applyZoom(anim)}
 function zoomCenter(f){const r=stage.getBoundingClientRect();zoomAt(f===0?1:Z.z*f,r.left+r.width/2,r.top+r.height/2,true)}
-$('#zIn').onclick=()=>zoomCenter(1.6);$('#zOut').onclick=()=>zoomCenter(1/1.6);$('#zReset').onclick=()=>zoomCenter(0);
 stage.addEventListener('wheel',e=>{if(!G)return;e.preventDefault();zoomAt(Z.z*Math.exp(-e.deltaY*.003),e.clientX,e.clientY,false)},{passive:false});
 
 function slotAt(x,y){const r=board.getBoundingClientRect();const c=Math.floor((x-r.left)/(G.pw*Z.z)),rr=Math.floor((y-r.top)/(G.ph*Z.z));if(c<0||rr<0||c>=S.current.cols||rr>=S.current.rows)return -1;return rr*S.current.cols+c}
@@ -782,7 +779,7 @@ if(window.visualViewport)visualViewport.addEventListener('resize',onResize);
 // test hook, only with ?debug=1
 if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=>IMAGES,runtime:()=>G,
   nearlySolve(){if(!S.current||!G)return;const n=G.n,o=S.current.order;for(let i=0;i<n;i++)o[i]=i;[o[0],o[1]]=[o[1],o[0]];layout();refresh(false);save()},
-  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),checkViewport:f=>checkViewport(f),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
+  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),zoomCenter:f=>zoomCenter(f),checkViewport:f=>checkViewport(f),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
   slotCenter(s){const r=board.getBoundingClientRect(),c=S.current.cols;return [r.left+(s%c+.5)*G.pw*Z.z,r.top+(Math.floor(s/c)+.5)*G.ph*Z.z]}};
 
 // boot
