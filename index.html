@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Puzzles">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#13141c">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADzElEQVR42u3dvZHTUBSAUe8bd8AOEVRCRMgMObRAAxRBA7QAOTOERFRCxlAEwQ5eZr1ry/J90r1650tZy0/24cry782z2xc76bGam0BwCA7BITgEh+AQHIJDcAgOCQ7BITgEh+AQHIJDcAgOwSH9a7/AdXx4/yvDrn7+8jJqU89/fMqwR79ff+y6/Zt+H01IYiJQSRITiylpo8mYvba0MvqtLX5yZGYxb4RkZtF1hLRhZUxcbSEZ4attw8qYsuZaMsLX7FRW/XFUHBunV15xbMSuvA0u46n115URuH6HFcGhVXBUP6Yc70X1Y0rUXpgcgkNwCA7BITgEh+AQHIJDcEhwCA7BoZ7t3QS7o88o3L3Bfxsv3MMRxgIROM6wQGToxxyXfly290eW4agqY1gfjQw+4BAc3cbGgMPD5BAccV/7NM7wMDkEh+AQHIJDcAiOlYv6qohxXqE1OQRH0PAY6o0dJofgiBgeo70fbMTJsb0vxodjTR9jvod03DcY3/k4+1Ktd5/vEMECjklEsHAqKzgEh+DQcsX8AOAy343/6DlF1FU/2PgGHpNe/0boGmcrJ56NuPunbfxyg1PZMBaI1HjMEfhL4NdsdvYyji9Y/cMpIetva92RnTY441JPXaSuj6iVJz1buYZapzHmsJLx4LKiworDI3DNLc//+MCNXPQwdrHbupaMLmcrJU4cLvJX4mvBeiBuGW79Hsems0+NZLj1M8vYdX2e43AfJJkigd/ckmSK9PYa8/S5nK0IDqn3Y45Df769mv7Ht29/drreyC2/eZfhzrv9/rUqjotMLGl0tpIkJo7X00lJyyYjitSJ7cy7imwyFljbfvMD48QiJ46QzCweLDJ2hLSEMq7fyMQtTPmzEjI6rbaNNjMuWnMtGeFrbhXvs+0ZzVnLcHdGPmy8/FJPXaTi2IhdecspY95mA0+R6soIXH/2NxhPPK1wKKlxKrswESz6FfCq7GbungO+6seU+z267mkPL7wJDsEhOASH4BAcgkNwCA7BIcEhOASH4BAcgkNwCA7BITgkOASH4BAcgkNwCA7BITgEhwSH4BAcgkNwCA7BITgEh+AQHBIcgkNJcAT+XuuK/b8XvX+vdaE9unovTA7BobVwVD+yHK+/+pElZP2t3+1bV0Z1H1Erd1jRIjgqDo/Ta644PALX3Ja8rWvJqOgjdrUBPwD4aMl/FXAG4uS/CtgDcctz62eWkXyEdFpbr8mRcIoEek0yRXp7XQKHnK0IDsEhwSE4BIfgEByCQ3AIDsEhOASHBIfgEByCQ3AIDhXpLyo+TK/k2xO6AAAAAElFTkSuQmCC">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADzElEQVR42u3dvZHTUBSAUe8bd8AOEVRCRMgMObRAAxRBA7QAOTOERFRCxlAEwQ5eZr1ry/J90r1650tZy0/24cry782z2xc76bGam0BwCA7BITgEh+AQHIJDcAgOCQ7BITgEh+AQHIJDcAgOwSH9a7/AdXx4/yvDrn7+8jJqU89/fMqwR79ff+y6/Zt+H01IYiJQSRITiylpo8mYvba0MvqtLX5yZGYxb4RkZtF1hLRhZUxcbSEZ4attw8qYsuZaMsLX7FRW/XFUHBunV15xbMSuvA0u46n115URuH6HFcGhVXBUP6Yc70X1Y0rUXpgcgkNwCA7BITgEh+AQHIJDcEhwCA7BoZ7t3QS7o88o3L3Bfxsv3MMRxgIROM6wQGToxxyXfly290eW4agqY1gfjQw+4BAc3cbGgMPD5BAccV/7NM7wMDkEh+AQHIJDcAiOlYv6qohxXqE1OQRH0PAY6o0dJofgiBgeo70fbMTJsb0vxodjTR9jvod03DcY3/k4+1Ktd5/vEMECjklEsHAqKzgEh+DQcsX8AOAy343/6DlF1FU/2PgGHpNe/0boGmcrJ56NuPunbfxyg1PZMBaI1HjMEfhL4NdsdvYyji9Y/cMpIetva92RnTY441JPXaSuj6iVJz1buYZapzHmsJLx4LKiworDI3DNLc//+MCNXPQwdrHbupaMLmcrJU4cLvJX4mvBeiBuGW79Hsems0+NZLj1M8vYdX2e43AfJJkigd/ckmSK9PYa8/S5nK0IDqn3Y45Df769mv7Ht29/drreyC2/eZfhzrv9/rUqjotMLGl0tpIkJo7X00lJyyYjitSJ7cy7imwyFljbfvMD48QiJ46QzCweLDJ2hLSEMq7fyMQtTPmzEjI6rbaNNjMuWnMtGeFrbhXvs+0ZzVnLcHdGPmy8/FJPXaTi2IhdecspY95mA0+R6soIXH/2NxhPPK1wKKlxKrswESz6FfCq7GbungO+6seU+z267mkPL7wJDsEhOASH4BAcgkNwCA7BIcEhOASH4BAcgkNwCA7BITgkOASH4BAcgkNwCA7BITgEhwSH4BAcgkNwCA7BITgEh+AQHBIcgkNJcAT+XuuK/b8XvX+vdaE9unovTA7BobVwVD+yHK+/+pElZP2t3+1bV0Z1H1Erd1jRIjgqDo/Ta644PALX3Ja8rWvJqOgjdrUBPwD4aMl/FXAG4uS/CtgDcctz62eWkXyEdFpbr8mRcIoEek0yRXp7XQKHnK0IDsEhwSE4BIfgEByCQ3AIDsEhOASHBIfgEByCQ3AIDhXpLyo+TK/k2xO6AAAAAElFTkSuQmCC">
+<title>Picture Puzzles</title>
+<style>
+:root{--bg:#13141c;--panel:#1d1f2b;--panel2:#2a2d3f;--text:#eceef6;--muted:#9aa0b8;--accent:#7c6cff;--accent2:#29d3a6;--gold:#ffc857;--danger:#ff5d73;--r:14px;
+--sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom);--sal:env(safe-area-inset-left);--sar:env(safe-area-inset-right)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:15px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;overscroll-behavior:none;overflow:hidden}
+body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%}
+img{-webkit-user-drag:none;-webkit-touch-callout:none}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;padding:var(--sat) var(--sar) var(--sab) var(--sal)}
+.screen.active{display:flex}
+header{display:flex;align-items:center;gap:8px;padding:10px 14px;min-height:56px}
+header h1{font-size:21px;margin:0;flex:1;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.btn{appearance:none;-webkit-appearance:none;border:0;border-radius:12px;padding:11px 16px;background:var(--panel2);color:var(--text);font:inherit;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;transition:transform .1s,background .2s}
+.btn.primary{background:var(--accent)}
+.btn.green{background:var(--accent2);color:#06261d}
+.btn.danger{background:var(--danger)}
+.btn.icon{padding:0;width:44px;font-size:19px}
+.btn.wide{width:100%}
+.btn:active{transform:scale(.96)}
+.btn[disabled]{opacity:.45}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 14px 28px;overscroll-behavior:contain}
+.stats{display:flex;gap:8px;margin:2px 0 14px}
+.stat{flex:1;background:var(--panel);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.card{background:var(--panel);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 6px;font-size:17px}
+.hint{color:var(--muted);font-size:14px;margin:0 0 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .btn{flex:1}
+.sect{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:6px 2px 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:10px}
+.tile{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--panel);cursor:pointer}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile .cap{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 6px;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:12px;line-height:1.25}
+.tile .cap b{font-size:13px}
+.tile .badge{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);border-radius:20px;padding:2px 7px;font-size:12px}
+.tile.next{background:linear-gradient(135deg,#3a2f8f,#7c6cff);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;box-shadow:0 0 0 3px rgba(124,108,255,.35);animation:glow 2s infinite}
+.tile.next .big{font-size:34px;line-height:1}
+.tile.next img{position:absolute;inset:0;filter:blur(6px) brightness(.55)}
+.tile.next > div{position:relative;text-align:center}
+.tile.locked{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);border:2px dashed #34374c;background:transparent;cursor:default}
+.tile.locked .big{font-size:28px}
+@keyframes glow{50%{box-shadow:0 0 0 6px rgba(124,108,255,.15)}}
+/* game */
+#game header{padding-bottom:4px}
+header{background:var(--bg);position:relative;z-index:2}
+.hud{display:flex;gap:6px;padding:0 14px 6px;justify-content:center}
+.pill{background:var(--panel);border-radius:20px;padding:6px 12px;font-size:14px;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:5px}
+#stage{flex:1;display:flex;align-items:center;justify-content:center;padding:6px 8px;min-height:0;position:relative;touch-action:none;overflow:hidden}
+#board{position:relative;touch-action:none;transform-origin:0 0;flex:none;border-radius:4px;background:#0b0c12;box-shadow:0 10px 40px rgba(0,0,0,.55)}
+.piece{position:absolute;left:0;top:0;background-repeat:no-repeat;transition:transform .2s ease;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.4),inset 0 0 0 1px rgba(0,0,0,.3);cursor:pointer;touch-action:none}
+.piece.sel{z-index:5;box-shadow:inset 0 0 0 2px var(--gold),inset 0 0 0 40px rgba(255,255,255,.18),0 0 10px 2px rgba(255,200,87,.85)}
+.piece.dragging{transition:none;z-index:10;will-change:transform;box-shadow:0 10px 26px rgba(0,0,0,.7),inset 0 0 0 2px var(--gold)}
+.piece.target{box-shadow:inset 0 0 0 2px #fff,inset 0 0 0 40px rgba(255,255,255,.3)}
+.piece.ok{box-shadow:none;cursor:default}
+.piece.pop{animation:pop .6s}
+@keyframes pop{0%{box-shadow:inset 0 0 0 40px rgba(255,255,255,.6)}100%{box-shadow:inset 0 0 0 40px rgba(255,255,255,0)}}
+#peekImg{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity .25s;border-radius:4px;z-index:30}
+#board.peek #peekImg{opacity:1}
+#board.solved .piece{box-shadow:none}
+.foot{display:flex;gap:8px;padding:6px 14px 10px;align-items:center}
+.foot .prog{flex:1;height:8px;background:var(--panel);border-radius:6px;overflow:hidden}
+.foot .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+.zbtn{min-height:38px;width:40px;padding:0;font-size:18px;border-radius:10px}
+.foot .ptxt{font-size:13px;color:var(--muted);min-width:56px;text-align:right;font-variant-numeric:tabular-nums}
+#peekBtn.on{background:var(--gold);color:#2a2000}
+/* achievements */
+.ach{display:flex;gap:12px;align-items:center;background:var(--panel);border-radius:12px;padding:12px;margin-bottom:8px}
+.ach .ic{font-size:28px;width:48px;height:48px;border-radius:12px;background:var(--panel2);display:flex;align-items:center;justify-content:center;flex:none}
+.ach.on .ic{background:linear-gradient(135deg,#ffc857,#ff8a5b)}
+.ach.off{opacity:.55}
+.ach.off .ic{filter:grayscale(1)}
+.ach b{display:block}
+.ach small{color:var(--muted)}
+.ach .when{margin-left:auto;font-size:11px;color:var(--accent2);text-align:right;flex:none}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(5,6,10,.72);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;padding-top:calc(20px + var(--sat));padding-bottom:calc(20px + var(--sab));-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.modal.show{display:flex}
+.modal .box{background:var(--panel);border-radius:20px;padding:22px;width:100%;max-width:380px;max-height:100%;overflow:auto;text-align:center;animation:rise .25s ease}
+.modal h2{margin:0 0 8px}
+.modal p{color:var(--muted);margin:0 0 16px}
+.modal .stack{display:flex;flex-direction:column;gap:8px;text-align:left}
+.modal img.prev{max-width:100%;max-height:34vh;object-fit:contain;border-radius:12px;margin:0 auto 12px;display:block}
+#mView img.prev{max-height:62vh}
+@keyframes rise{from{transform:translateY(20px) scale(.97);opacity:0}}
+.celebrate .trophy{font-size:56px;animation:bounce 1s ease infinite alternate}
+@keyframes bounce{to{transform:translateY(-8px) rotate(-6deg)}}
+.cstats{display:flex;gap:8px;margin:12px 0 16px}
+.cstats div{flex:1;background:var(--panel2);border-radius:12px;padding:8px}
+.cstats b{display:block;font-size:18px}
+.cstats span{font-size:11px;color:var(--muted)}
+.storage{background:var(--panel2);border-radius:12px;padding:12px;margin-bottom:4px}
+.storage .srow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.storage .srow span{color:var(--muted);font-size:13px}
+.sbar{height:8px;background:#151722;border-radius:6px;overflow:hidden;margin-bottom:8px}
+.sbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .4s}
+.sbar.warn i{background:linear-gradient(90deg,var(--gold),var(--danger))}
+.sline{font-size:12px;color:var(--muted);line-height:1.5}
+.sline:empty{display:none}
+label.chk{display:flex;gap:10px;align-items:center;color:var(--text);font-size:14px;padding:6px 0}
+label.chk input{width:20px;height:20px}
+#toasts{position:fixed;left:0;right:0;top:calc(10px + var(--sat));display:flex;flex-direction:column;align-items:center;gap:8px;z-index:200;pointer-events:none;padding:0 12px}
+.toast{background:#262a3d;border:1px solid #3a3f5c;border-radius:14px;padding:10px 14px;box-shadow:0 8px 30px rgba(0,0,0,.5);display:flex;gap:10px;align-items:center;max-width:360px;width:100%;animation:tin .35s ease;transition:opacity .4s,transform .4s}
+.toast.out{opacity:0;transform:translateY(-12px)}
+.toast .ic{font-size:26px}
+.toast small{display:block;color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+body.ingame #toasts{top:auto;bottom:calc(64px + var(--sab));flex-direction:column-reverse}
+@keyframes tin{from{transform:translateY(-20px);opacity:0}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:150}
+#busy{position:fixed;inset:0;background:rgba(5,6,10,.8);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+#busy.show{display:flex}
+.spin{width:40px;height:40px;border:4px solid #333;border-top-color:var(--accent);border-radius:50%;animation:sp 0.8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
+</style>
+</head>
+<body>
+<input type="file" id="fileIn" accept="image/*" multiple>
+<input type="file" id="dirIn" multiple webkitdirectory>
+
+<!-- HOME -->
+<section class="screen active" id="home">
+  <header>
+    <h1>🧩 Picture Puzzles</h1>
+    <button class="btn icon" id="achBtn" aria-label="Achievements">🏆</button>
+    <button class="btn icon" id="setBtn" aria-label="Settings">⚙️</button>
+  </header>
+  <div class="scroll">
+    <div class="stats">
+      <div class="stat"><b id="stLevel">1</b><span>Level</span></div>
+      <div class="stat"><b id="stImgs">0</b><span>Photos</span></div>
+      <div class="stat"><b id="stAch">0</b><span>Badges</span></div>
+    </div>
+    <div class="card" id="importCard">
+      <h2 id="importTitle">Add your photos</h2>
+      <p class="hint">Make a folder in <b>Files</b> (e.g. “Puzzles”), add photos, then tap <b>Add photos</b> → <b>Browse</b> → open the folder → <b>Select</b> → <b>Select All</b>. Photos are saved inside this app, so you only do this once — you can add more any time.</p>
+      <div class="row">
+        <button class="btn primary" id="addBtn">＋ Add photos</button>
+        <button class="btn" id="dirBtn">📁 Choose folder</button>
+      </div>
+    </div>
+    <div id="playWrap" class="hidden" style="margin-bottom:14px"><button class="btn primary wide" id="playBtn" style="font-size:17px;min-height:52px">▶ Play</button></div>
+    <div class="sect">Levels</div>
+    <div class="grid" id="levels"></div>
+  </div>
+</section>
+
+<!-- GAME -->
+<section class="screen" id="game">
+  <header>
+    <button class="btn icon" id="backBtn" aria-label="Back">‹</button>
+    <h1 id="gTitle">Level 1</h1>
+    <button class="btn" id="peekBtn">👁 Peek</button>
+  </header>
+  <div class="hud">
+    <div class="pill">⏱ <span id="gTime">0:00</span></div>
+    <div class="pill">↔ <span id="gMoves">0</span> moves</div>
+    <div class="pill">🧩 <span id="gPieces">0</span></div>
+  </div>
+  <div id="stage"><div id="board"><img id="peekImg" alt=""></div></div>
+  <div class="foot"><button class="btn zbtn" id="zOut" aria-label="Zoom out">−</button><button class="btn zbtn" id="zReset" aria-label="Fit board" style="font-size:14px;width:auto;padding:0 10px">1×</button><button class="btn zbtn" id="zIn" aria-label="Zoom in">＋</button><div class="prog"><i id="gProg"></i></div><div class="ptxt" id="gPtxt">0%</div></div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section class="screen" id="achs">
+  <header>
+    <button class="btn icon" id="achBack" aria-label="Back">‹</button>
+    <h1>Achievements<small id="achSum"></small></h1>
+  </header>
+  <div class="scroll" id="achList"></div>
+</section>
+
+<div class="modal" id="mCelebrate"><div class="box celebrate">
+  <div class="trophy">🏆</div>
+  <h2 id="cTitle">Level complete!</h2>
+  <img class="prev" id="cImg" alt="">
+  <div class="cstats"><div><b id="cTime">0:00</b><span>Time</span></div><div><b id="cMoves">0</b><span>Moves</span></div><div><b id="cPeeks">0</b><span>Peeks</span></div></div>
+  <p id="cNext">Level 2 unlocked!</p>
+  <div class="stack"><button class="btn primary wide" id="cNextBtn">Next level ▶</button><button class="btn wide" id="cHomeBtn">All levels</button></div>
+</div></div>
+
+<div class="modal" id="mSettings"><div class="box">
+  <h2>Settings</h2>
+  <div class="stack">
+    <div class="storage" id="storeBox"><div class="srow"><b>💾 Storage</b><span id="stPhotos">–</span></div>
+      <div class="sbar"><i id="stBar"></i></div>
+      <div class="sline" id="stGame">–</div><div class="sline" id="stQuota"></div><div class="sline" id="stPersist"></div></div>
+    <button class="btn wide" id="sAdd">＋ Add more photos</button>
+    <button class="btn wide" id="sSkip">🔀 Swap current puzzle for another photo</button>
+    <button class="btn danger wide" id="sReset">Reset progress…</button>
+    <button class="btn wide" id="sClose">Close</button>
+  </div>
+  <p style="margin:14px 0 0;font-size:12px">Tip: tap Share → <b>Add to Home Screen</b> to play full-screen and keep your progress safe.</p>
+</div></div>
+
+<div class="modal" id="mConfirm"><div class="box">
+  <h2>Reset progress?</h2>
+  <p>This clears all completed levels, achievements and the puzzle in progress. This can’t be undone.</p>
+  <div class="stack">
+    <label class="chk"><input type="checkbox" id="rImgs"> Also remove my photos</label>
+    <button class="btn danger wide" id="rYes">Yes, reset</button>
+    <button class="btn wide" id="rNo">Cancel</button>
+  </div>
+</div></div>
+
+<div class="modal" id="mAlert"><div class="box">
+  <div style="font-size:44px" id="aIc">⚠️</div><h2 id="aTitle"></h2><p id="aTxt"></p>
+  <div class="stack"><button class="btn primary wide" id="aOk">OK</button></div>
+</div></div>
+
+<div class="modal" id="mView"><div class="box">
+  <img class="prev" id="vImg" alt="">
+  <p id="vTxt"></p>
+  <div class="stack"><button class="btn wide" id="vClose">Close</button></div>
+</div></div>
+
+<div id="toasts"></div>
+<canvas id="confetti"></canvas>
+<div id="busy"><div class="spin"></div><div id="busyTxt">Adding photos…</div></div>
+
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s);
+const LS='picturePuzzle.v1';
+const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const fmt=s=>{s=Math.floor(s);const h=Math.floor(s/3600),m=Math.floor(s/60)%60,x=s%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')};
+const dayKey=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// ---------- state ----------
+function fresh(){return {completed:[],current:null,ach:{},days:[]}}
+let S;
+try{S=Object.assign(fresh(),JSON.parse(localStorage.getItem(LS)||'{}'))}catch(e){S=fresh()}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){console.warn('save failed',e)}}
+const doneIds=()=>new Set(S.completed.map(c=>c.id));
+
+// ---------- IndexedDB ----------
+let dbp;
+function db(){if(!dbp)dbp=new Promise((res,rej)=>{const r=indexedDB.open('picture-puzzle',1);r.onupgradeneeded=()=>{r.result.createObjectStore('images',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});return dbp}
+async function tx(mode,fn){const d=await db();return new Promise((res,rej)=>{const t=d.transaction('images',mode);let out;const r=fn(t.objectStore('images'));if(r)r.onsuccess=()=>{out=r.result};t.oncomplete=()=>res(out);t.onerror=()=>rej(t.error||(r&&r.error));t.onabort=()=>rej(t.error||(r&&r.error)||new DOMException('Transaction aborted','AbortError'))})}
+const idbGet=id=>tx('readonly',s=>s.get(id));
+const idbPut=o=>tx('readwrite',s=>s.put(o));
+const idbClear=()=>tx('readwrite',s=>s.clear());
+async function idbMeta(){const out=[];const d=await db();return new Promise((res,rej)=>{const t=d.transaction('images','readonly');const c=t.objectStore('images').openCursor();c.onsuccess=()=>{const cur=c.result;if(cur){const v=cur.value;out.push({id:v.id,name:v.name,w:v.w,h:v.h,thumb:v.thumb,added:v.added,bytes:(v.data?v.data.byteLength:0)+(v.thumb?v.thumb.length:0)});cur.continue()}};t.oncomplete=()=>res(out.sort((a,b)=>a.added-b.added));t.onerror=()=>rej(t.error)})}
+let IMAGES=[];
+
+// ---------- storage ----------
+function isQuota(e){return !!e&&(e.name==='QuotaExceededError'||e.code===22||e.code===1014||/quota|storage.*full|exceed/i.test(e.message||''))}
+const mb=b=>b>=1e9?(b/1e9).toFixed(2)+' GB':b>=1e6?(b/1e6).toFixed(1)+' MB':Math.max(0,Math.round(b/1e3))+' KB';
+async function renderStorage(){
+  const n=IMAGES.length,game=IMAGES.reduce((a,i)=>a+(i.bytes||0),0)+((localStorage.getItem(LS)||'').length*2);
+  $('#stPhotos').textContent=`${n} photo${n===1?'':'s'} saved`;
+  $('#stGame').textContent=`Game data: about ${mb(game)}`+(n?` (≈${mb(game/n)} per photo)`:'');
+  let est=null;try{if(navigator.storage&&navigator.storage.estimate)est=await navigator.storage.estimate()}catch(e){}
+  const bar=$('#stBar');
+  if(est&&est.quota){const used=Math.max(est.usage||0,game),pct=Math.min(100,used/est.quota*100);
+    bar.style.width=Math.max(pct,1)+'%';bar.parentNode.classList.toggle('warn',pct>80);bar.parentNode.classList.remove('hidden');
+    $('#stQuota').textContent=`Browser storage: ${mb(used)} used of ${mb(est.quota)} available (${pct<1?'<1':Math.round(pct)}%)`;}
+  else{bar.parentNode.classList.add('hidden');$('#stQuota').textContent='This browser doesn’t report how much space is left.'}
+  let p=null;try{if(navigator.storage&&navigator.storage.persisted)p=await navigator.storage.persisted()}catch(e){}
+  $('#stPersist').textContent=p===true?'🔒 Protected from automatic clean-up':p===false?'Tip: Add to Home Screen so iOS keeps your photos safe.':'';
+}
+function showAlert(ic,title,txt){closeModals();$('#aIc').textContent=ic;$('#aTitle').textContent=title;$('#aTxt').textContent=txt;openModal('#mAlert')}
+$('#aOk').onclick=()=>closeModals();
+
+// ---------- import ----------
+function loadImg(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file);const i=new Image();i.onload=()=>{res(i);setTimeout(()=>URL.revokeObjectURL(u),0)};i.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('decode'))};i.src=u})}
+function scaled(img,max){const w0=img.naturalWidth,h0=img.naturalHeight,k=Math.min(1,max/Math.max(w0,h0));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w0*k));c.height=Math.max(1,Math.round(h0*k));const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(img,0,0,c.width,c.height);return c}
+const toBlob=(c,q)=>new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('toBlob')),'image/jpeg',q));
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+async function importFiles(list){
+  const files=[...list].filter(f=>/^image\//.test(f.type)||/\.(jpe?g|png|gif|webp|heic|heif|bmp|avif)$/i.test(f.name));
+  if(!files.length){toast('🤔','No images found','Pick some photos to turn into puzzles');return}
+  busy(true,'Adding photos…');
+  const have=new Set(IMAGES.map(i=>i.id));let added=0,failed=0,dup=0,full=false,skipped=0;
+  try{
+  for(let n=0;n<files.length;n++){
+    const f=files[n];$('#busyTxt').textContent=`Adding photos… ${n+1}/${files.length}`;
+    const id='i'+hash(f.name+'|'+f.size+'|'+f.lastModified);
+    if(have.has(id)){dup++;continue}
+    try{
+      const img=await loadImg(f);
+      const big=scaled(img,1600);const blob=await toBlob(big,.88);
+      const data=await blob.arrayBuffer(); // ArrayBuffer is the most reliable thing to store in iOS IndexedDB
+      const thumb=scaled(img,300).toDataURL('image/jpeg',.72);
+      const rec={id,name:f.name,w:big.width,h:big.height,thumb,added:Date.now()+n,data,type:'image/jpeg'};
+      await idbPut(rec);have.add(id);added++;
+    }catch(e){
+      if(isQuota(e)){full=true;skipped=files.length-n;console.warn('storage full',e);break}
+      console.warn('import failed',f.name,e);failed++}
+  }
+  }finally{try{IMAGES=await idbMeta()}catch(e){}busy(false)}
+  if(full){
+    showAlert('📦','Storage is full',`Saved ${added} new photo${added===1?'':'s'}, but there wasn’t room for the other ${skipped}. Your saved photos and progress are safe. To make room, free up space on your iPhone, or reset with “Also remove my photos” and add a smaller set.`);
+    checkAch(null);renderHome();return}
+  if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+  toast('🖼️',`Added ${added} photo${added===1?'':'s'}`,(dup?`${dup} already added. `:'')+(failed?`${failed} couldn’t be read.`:'')||'Ready to play!');
+  checkAch(null);renderHome();
+}
+$('#addBtn').onclick=$('#sAdd').onclick=()=>{closeModals();$('#fileIn').click()};
+$('#dirBtn').onclick=()=>$('#dirIn').click();
+$('#fileIn').onchange=e=>{const f=e.target.files;if(f&&f.length)importFiles(f);e.target.value=''};
+$('#dirIn').onchange=e=>{const f=e.target.files;if(f&&f.length)importFiles(f);e.target.value=''};
+if(isIOS||!('webkitdirectory' in document.createElement('input')))$('#dirBtn').classList.add('hidden');
+
+// ---------- achievements ----------
+const ACH=[
+ {id:'first',ic:'🧩',name:'First Puzzle',desc:'Complete your first puzzle',t:()=>S.completed.length>=1},
+ {id:'five',ic:'🖐️',name:'High Five',desc:'Complete 5 puzzles',t:()=>S.completed.length>=5},
+ {id:'ten',ic:'🔟',name:'Puzzle Pro',desc:'Complete 10 puzzles',t:()=>S.completed.length>=10},
+ {id:'twentyfive',ic:'👑',name:'Puzzle Royalty',desc:'Complete 25 puzzles',t:()=>S.completed.length>=25},
+ {id:'speed',ic:'⚡',name:'Speed Solver',desc:'Finish a puzzle in under 20 minutes',t:r=>r&&r.time<1200},
+ {id:'lightning',ic:'🌩️',name:'Lightning Hands',desc:'Finish a puzzle in under 10 minutes',t:r=>r&&r.time<600},
+ {id:'efficient',ic:'🎯',name:'Efficient',desc:'Finish using at most 1.25× as many moves as pieces',t:r=>r&&r.moves<=Math.round(r.pieces*1.25)},
+ {id:'nopeek',ic:'🙈',name:'No Peeking',desc:'Finish a puzzle without using Peek',t:r=>r&&r.peeks===0},
+ {id:'night',ic:'🦉',name:'Night Owl',desc:'Solve a puzzle after 10 PM',t:r=>{if(!r)return false;const h=new Date(r.date).getHours();return h>=22||h<4}},
+ {id:'early',ic:'🌅',name:'Early Bird',desc:'Solve a puzzle between 5 and 8 AM',t:r=>{if(!r)return false;const h=new Date(r.date).getHours();return h>=5&&h<8}},
+ {id:'collector',ic:'🗂️',name:'Collector',desc:'Add 20 photos to your collection',t:()=>IMAGES.length>=20},
+ {id:'streak',ic:'🔥',name:'Streak',desc:'Solve puzzles on 3 different days',t:()=>S.days.length>=3},
+ {id:'completionist',ic:'🏅',name:'Completionist',desc:'Solve every photo in your collection (3+ photos)',t:()=>{const d=doneIds();return IMAGES.length>=3&&IMAGES.every(i=>d.has(i.id))}},
+];
+function checkAch(r){
+  const got=[];
+  for(const a of ACH){if(!S.ach[a.id]){let ok=false;try{ok=!!a.t(r)}catch(e){}if(ok){S.ach[a.id]=Date.now();got.push(a)}}}
+  if(got.length){save();got.forEach((a,i)=>toast(a.ic,a.name,'Achievement unlocked!',true))}
+  return got;
+}
+function renderAch(){
+  const n=Object.keys(S.ach).length;$('#achSum').textContent=`${n} of ${ACH.length} unlocked`;
+  $('#achList').innerHTML=ACH.map(a=>{const w=S.ach[a.id];return `<div class="ach ${w?'on':'off'}"><div class="ic">${w?a.ic:'🔒'}</div><div><b>${a.name}</b><small>${a.desc}</small></div>${w?`<div class="when">✓<br>${new Date(w).toLocaleDateString()}</div>`:''}</div>`}).join('');
+}
+
+// ---------- toasts / busy / modals ----------
+const tq=[];let tBusy=false;
+function toast(ic,title,sub,isAch){tq.push([ic,title,sub,isAch]);if(!tBusy)nextToast()}
+function nextToast(){const t=tq.shift();if(!t){tBusy=false;return}tBusy=true;showToast(...t);setTimeout(nextToast,t[3]?1700:1200)}
+function showToast(ic,title,sub,isAch){const el=document.createElement('div');el.className='toast'+(isAch?' ach-t':'');el.innerHTML=`<div class="ic">${ic}</div><div>${isAch?`<small>${esc(sub)}</small><b>${esc(title)}</b>`:`<b>${esc(title)}</b><div style="font-size:13px;color:var(--muted)">${esc(sub||'')}</div>`}</div>`;$('#toasts').appendChild(el);setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),450)},isAch?2600:2600)}
+function busy(on,t){$('#busy').classList.toggle('show',on);if(t)$('#busyTxt').textContent=t}
+function openModal(id){$(id).classList.add('show')}
+function closeModals(){document.querySelectorAll('.modal.show').forEach(m=>m.classList.remove('show'))}
+
+// ---------- screens ----------
+let screen='home';
+function show(id){if(id!==screen){for(let i=tq.length-1;i>=0;i--)if(!tq[i][3])tq.splice(i,1);document.querySelectorAll('.toast:not(.ach-t)').forEach(t=>t.remove())}document.body.classList.toggle('ingame',id==='game');document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));screen=id;if(id!=='game')stopTimer()}
+
+function renderHome(){
+  const lvl=S.completed.length+1;
+  $('#stLevel').textContent=lvl;$('#stImgs').textContent=IMAGES.length;$('#stAch').textContent=Object.keys(S.ach).length+'/'+ACH.length;
+  $('#importTitle').textContent=IMAGES.length?'Add more photos':'Add your photos';
+  $('#importCard').querySelector('.hint').style.display=IMAGES.length?'none':'';
+  const d=doneIds(),remaining=IMAGES.filter(i=>!d.has(i.id)).length;
+  $('#playWrap').classList.toggle('hidden',!IMAGES.length);
+  $('#playBtn').textContent=S.current?`▶ Continue level ${S.current.level}`:(remaining?`▶ Play level ${lvl}`:'🔁 Replay a random photo');
+  const thumbs=Object.fromEntries(IMAGES.map(i=>[i.id,i.thumb]));
+  let h='';
+  S.completed.forEach((c,i)=>{h+=`<div class="tile" data-view="${i}">${thumbs[c.id]?`<img src="${thumbs[c.id]}" alt="">`:''}<span class="badge">✓</span><div class="cap"><b>Level ${c.level}</b><br>${fmt(c.time)} · ${c.moves} moves</div></div>`});
+  if(IMAGES.length){
+    const cur=S.current;
+    h+=`<div class="tile next" data-play="1">${cur&&thumbs[cur.imageId]?`<img src="${thumbs[cur.imageId]}" alt="">`:''}<div><div class="big">${cur?'▶':'?'}</div>Level ${lvl}<br><small style="font-weight:500">${cur?'In progress':(remaining?'Unlocked':'Replay')}</small></div></div>`;
+    h+=`<div class="tile locked"><div class="big">🔒</div>Level ${lvl+1}</div>`;
+  }else{
+    h+=`<div class="tile locked"><div class="big">🔒</div>Level 1</div>`;
+  }
+  $('#levels').innerHTML=h;
+}
+$('#levels').addEventListener('click',async e=>{
+  const t=e.target.closest('.tile');if(!t)return;
+  if(t.dataset.play)return play();
+  if(t.dataset.view!=null){const c=S.completed[+t.dataset.view];const rec=await idbGet(c.id);
+    if(rec){const u=URL.createObjectURL(new Blob([rec.data],{type:rec.type}));$('#vImg').onload=()=>URL.revokeObjectURL(u);$('#vImg').src=u}
+    else $('#vImg').removeAttribute('src');
+    $('#vTxt').textContent=`Level ${c.level} · ${fmt(c.time)} · ${c.moves} moves · ${new Date(c.date).toLocaleDateString()}`;openModal('#mView')}
+});
+$('#playBtn').onclick=()=>play();
+$('#vClose').onclick=closeModals;
+$('#achBtn').onclick=()=>{renderAch();show('achs')};
+$('#achBack').onclick=()=>{renderHome();show('home')};
+$('#setBtn').onclick=()=>{$('#sSkip').classList.toggle('hidden',!S.current||IMAGES.length<2);renderStorage();openModal('#mSettings')};
+$('#sClose').onclick=closeModals;
+$('#sSkip').onclick=()=>{closeModals();if(S.current){const lvl=S.current.level,old=S.current.imageId;S.current=null;newPuzzle(old,lvl);renderHome();toast('🔀','New photo picked',`Level ${lvl} now uses a different photo`)}};
+$('#sReset').onclick=()=>{closeModals();$('#rImgs').checked=false;openModal('#mConfirm')};
+$('#rNo').onclick=closeModals;
+$('#rYes').onclick=async()=>{const imgs=$('#rImgs').checked;S=fresh();save();if(imgs){await idbClear();IMAGES=[]}closeModals();renderHome();toast('♻️','Progress reset',imgs?'Photos removed too':'Your photos are still here')};
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m&&m.id!=='mCelebrate')closeModals()}));
+
+// ---------- puzzle ----------
+const MINP=190,MAXP=210,TARGETP=200;
+function chooseGrid(w,h){
+  let best=[14,14],bs=1e9;
+  for(let r=4;r<=60;r++)for(let c=4;c<=60;c++){const n=r*c;if(n<MINP||n>MAXP)continue;
+    const pa=(w/c)/(h/r);const s=Math.abs(Math.log(pa))*3+Math.abs(n-TARGETP)/30;if(s<bs){bs=s;best=[r,c]}}
+  return best;
+}
+function derange(n){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}
+  for(let i=0;i<n;i++)if(a[i]===i){const j=(i+1)%n;[a[i],a[j]]=[a[j],a[i]]}return a}
+function newPuzzle(excludeId,level){
+  const d=doneIds();let pool=IMAGES.filter(i=>!d.has(i.id)&&i.id!==excludeId);
+  if(!pool.length)pool=IMAGES.filter(i=>!d.has(i.id));
+  if(!pool.length)pool=IMAGES.filter(i=>i.id!==excludeId); // all solved → replay
+  if(!pool.length)pool=IMAGES.slice();
+  if(!pool.length)return false;
+  const img=pool[Math.random()*pool.length|0];level=level||S.completed.length+1;
+  const [rows,cols]=chooseGrid(img.w,img.h);
+  S.current={imageId:img.id,level,rows,cols,order:derange(rows*cols),moves:0,elapsed:0,peeks:0,w:img.w,h:img.h};
+  save();return true;
+}
+async function play(){
+  if(!IMAGES.length){$('#fileIn').click();return}
+  if(!S.current&&!newPuzzle())return;
+  await openGame();
+}
+
+let G=null; // runtime
+let curURL=null;
+async function openGame(){
+  const cur=S.current;const rec=await idbGet(cur.imageId);
+  if(!rec){S.current=null;save();renderHome();toast('⚠️','Photo missing','Picking another one');if(newPuzzle())return openGame();return}
+  if(curURL)URL.revokeObjectURL(curURL);
+  curURL=URL.createObjectURL(new Blob([rec.data],{type:rec.type||'image/jpeg'}));
+  cur.w=rec.w;cur.h=rec.h;
+  const nn=cur.rows*cur.cols;
+  if(!(nn>=MINP&&nn<=MAXP)||!Array.isArray(cur.order)||cur.order.length!==nn){ // saved with an older piece count → restart same photo
+    const [r2,c2]=chooseGrid(rec.w,rec.h);Object.assign(cur,{rows:r2,cols:c2,order:derange(r2*c2),moves:0,elapsed:0,peeks:0});save();
+    toast('🧩','Puzzle upgraded',`Level ${cur.level} restarted with ${r2*c2} pieces`)}
+  const board=$('#board');board.querySelectorAll('.piece').forEach(p=>p.remove());board.classList.remove('solved','peek');
+  $('#peekImg').src=curURL;
+  const n=cur.rows*cur.cols;const els=[];
+  for(let p=0;p<n;p++){const el=document.createElement('div');el.className='piece';el.style.backgroundImage=`url("${curURL}")`;el.dataset.p=p;board.appendChild(el);els[p]=el}
+  G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n};
+  $('#gTitle').innerHTML=`Level ${cur.level}<small>${cur.rows*cur.cols} pieces · ${cur.cols}×${cur.rows}</small>`;
+  Z.z=1;Z.tx=0;Z.ty=0;gest=null;ptrs.clear();
+  show('game');layout();refresh(false);startTimer();
+  if(!S.seenZoomHint){S.seenZoomHint=1;save();toast('🤏','Pinch to zoom','Tap two pieces to swap them · drag to move around')}
+}
+function layout(){
+  if(!G||!S.current)return;const cur=S.current;const st=$('#stage');
+  const aw=st.clientWidth-16,ah=st.clientHeight-12;const ar=cur.w/cur.h;
+  let bw=aw,bh=aw/ar;if(bh>ah){bh=ah;bw=ah*ar}
+  G.pw=Math.floor(bw/cur.cols);G.ph=Math.floor(bh/cur.rows);bw=G.pw*cur.cols;bh=G.ph*cur.rows;
+  const b=$('#board');b.style.width=bw+'px';b.style.height=bh+'px';
+  G.els.forEach((el,p)=>{el.style.width=G.pw+'px';el.style.height=G.ph+'px';el.style.backgroundSize=`${bw}px ${bh}px`;
+    el.style.backgroundPosition=`${-(p%cur.cols)*G.pw}px ${-Math.floor(p/cur.cols)*G.ph}px`});
+  cur.order.forEach((p,s)=>place(G.els[p],s));
+  clampPan();applyZoom(false);
+}
+function slotXY(s){const c=S.current.cols;return [(s%c)*G.pw,Math.floor(s/c)*G.ph]}
+function place(el,s){const [x,y]=slotXY(s);el.dataset.s=s;el.style.transform=`translate(${x}px,${y}px)`}
+const isOk=s=>S.current.order[s]===s;
+function refresh(anim){
+  const cur=S.current;let ok=0;
+  cur.order.forEach((p,s)=>{const el=G.els[p];const good=p===s;if(good)ok++;
+    if(good&&!el.classList.contains('ok')){el.classList.add('ok');if(anim){el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),650)}}
+    else if(!good)el.classList.remove('ok')});
+  $('#gMoves').textContent=cur.moves;$('#gPieces').textContent=`${ok}/${G.n}`;
+  const pct=Math.round(ok/G.n*100);$('#gProg').style.width=pct+'%';$('#gPtxt').textContent=pct+'%';
+  return ok;
+}
+function swap(a,b){
+  if(G.solved||a===b||isOk(a)||isOk(b))return false;
+  const o=S.current.order;[o[a],o[b]]=[o[b],o[a]];S.current.moves++;
+  place(G.els[o[a]],a);place(G.els[o[b]],b);
+  if(navigator.vibrate)try{navigator.vibrate(8)}catch(e){}
+  const ok=refresh(true);save();
+  if(ok===G.n)complete();
+  return true;
+}
+function select(s){if(G.sel!=null)G.els[S.current.order[G.sel]].classList.remove('sel');G.sel=s;if(s!=null)G.els[S.current.order[s]].classList.add('sel')}
+
+// ---------- input: tap-to-swap, pinch-zoom, pan, drag-to-swap ----------
+const board=$('#board'),stage=$('#stage');
+const MAXZ=4,Z={z:1,tx:0,ty:0},ptrs=new Map();let gest=null;
+function applyZoom(anim){board.style.transition=anim?'transform .22s ease':'none';board.style.transform=`translate(${Z.tx}px,${Z.ty}px) scale(${Z.z})`;
+  $('#zOut').disabled=$('#zReset').disabled=Z.z<=1.001;$('#zIn').disabled=Z.z>=MAXZ-.001;$('#zReset').textContent=(Math.round(Z.z*10)/10)+'×'}
+function clampPan(){const W=board.offsetWidth*Z.z,H=board.offsetHeight*Z.z,L=board.offsetLeft,T=board.offsetTop,SW=stage.clientWidth,SH=stage.clientHeight,pad=30;
+  if(W<=SW)Z.tx=(SW-W)/2-L;else Z.tx=Math.min(pad-L,Math.max(SW-pad-L-W,Z.tx));
+  if(H<=SH)Z.ty=(SH-H)/2-T;else Z.ty=Math.min(pad-T,Math.max(SH-pad-T-H,Z.ty))}
+function boardOrigin(){const r=stage.getBoundingClientRect();return [r.left+board.offsetLeft,r.top+board.offsetTop]}
+function zoomAt(nz,cx,cy,anim){nz=Math.min(MAXZ,Math.max(1,nz));const [ox,oy]=boardOrigin();
+  const px=(cx-ox-Z.tx)/Z.z,py=(cy-oy-Z.ty)/Z.z;Z.z=nz;Z.tx=cx-ox-px*nz;Z.ty=cy-oy-py*nz;clampPan();applyZoom(anim)}
+function zoomCenter(f){const r=stage.getBoundingClientRect();zoomAt(f===0?1:Z.z*f,r.left+r.width/2,r.top+r.height/2,true)}
+$('#zIn').onclick=()=>zoomCenter(1.6);$('#zOut').onclick=()=>zoomCenter(1/1.6);$('#zReset').onclick=()=>zoomCenter(0);
+stage.addEventListener('wheel',e=>{if(!G)return;e.preventDefault();zoomAt(Z.z*Math.exp(-e.deltaY*.003),e.clientX,e.clientY,false)},{passive:false});
+
+function slotAt(x,y){const r=board.getBoundingClientRect();const c=Math.floor((x-r.left)/(G.pw*Z.z)),rr=Math.floor((y-r.top)/(G.ph*Z.z));if(c<0||rr<0||c>=S.current.cols||rr>=S.current.rows)return -1;return rr*S.current.cols+c}
+let tgtEl=null;
+function setTarget(el){if(tgtEl===el)return;if(tgtEl)tgtEl.classList.remove('target');tgtEl=el;if(el)el.classList.add('target')}
+function tapSlot(s){if(isOk(s)){select(null);return}
+  if(G.sel==null)select(s);else if(G.sel===s)select(null);else{const a=G.sel;select(null);swap(a,s)}}
+function startDrag(){const g=gest;g.type='drag';g.el.classList.add('dragging');select(null);if(navigator.vibrate)try{navigator.vibrate(12)}catch(_){}}
+function dropGesture(){if(!gest)return;clearTimeout(gest.lp);if(gest.type==='drag'){gest.el.classList.remove('dragging');place(gest.el,gest.s)}setTarget(null);gest=null}
+function pinchInfo(){const [a,b]=[...ptrs.values()];return {d:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),mx:(a.x+b.x)/2,my:(a.y+b.y)/2}}
+stage.addEventListener('pointerdown',e=>{
+  if(!G||G.solved||screen!=='game')return;e.preventDefault();
+  ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  try{stage.setPointerCapture(e.pointerId)}catch(_){}
+  if(ptrs.size===2){dropGesture();const p=pinchInfo();const [ox,oy]=boardOrigin();
+    gest={type:'pinch',d0:p.d,z0:Z.z,px:(p.mx-ox-Z.tx)/Z.z,py:(p.my-oy-Z.ty)/Z.z};return}
+  if(ptrs.size>2)return;
+  const el=e.target.closest&&e.target.closest('.piece');const s=el?+el.dataset.s:-1;
+  gest={type:'tap',id:e.pointerId,x0:e.clientX,y0:e.clientY,el,s,tx0:Z.tx,ty0:Z.ty,lp:null};
+  // when zoomed, one finger pans; press-and-hold a piece to drag it instead
+  if(el&&!isOk(s)&&Z.z>1.01){const g=gest;g.lp=setTimeout(()=>{if(gest===g&&g.type==='tap')startDrag()},420)}
+});
+stage.addEventListener('pointermove',e=>{
+  const p=ptrs.get(e.pointerId);if(!p)return;p.x=e.clientX;p.y=e.clientY;e.preventDefault();
+  if(!gest)return;
+  if(gest.type==='pinch'){if(ptrs.size<2)return;const q=pinchInfo(),g=gest;const nz=Math.min(MAXZ,Math.max(1,g.z0*q.d/g.d0));const [ox,oy]=boardOrigin();
+    Z.z=nz;Z.tx=q.mx-ox-g.px*nz;Z.ty=q.my-oy-g.py*nz;clampPan();applyZoom(false);return}
+  if(gest.id!==e.pointerId)return;
+  const dx=e.clientX-gest.x0,dy=e.clientY-gest.y0;
+  if(gest.type==='tap'&&Math.hypot(dx,dy)>8){clearTimeout(gest.lp);
+    if(Z.z>1.01)gest.type='pan';else if(gest.el&&!isOk(gest.s))startDrag();else gest.type='none'}
+  if(gest.type==='pan'){Z.tx=gest.tx0+dx;Z.ty=gest.ty0+dy;clampPan();applyZoom(false)}
+  else if(gest.type==='drag'){const [x,y]=slotXY(gest.s);gest.el.style.transform=`translate(${x+dx/Z.z}px,${y+dy/Z.z}px) scale(1.25)`;
+    const t=slotAt(e.clientX,e.clientY);setTarget(t>=0&&t!==gest.s&&!isOk(t)?G.els[S.current.order[t]]:null)}
+});
+function endPtr(e,cancel){
+  if(!ptrs.delete(e.pointerId))return;
+  if(!gest)return;
+  if(gest.type==='pinch'){if(ptrs.size<2){const rest=[...ptrs.entries()][0];
+      gest=rest?{type:Z.z>1.01?'pan':'none',id:rest[0],x0:rest[1].x,y0:rest[1].y,tx0:Z.tx,ty0:Z.ty}:null}return}
+  if(gest.id!==e.pointerId)return;
+  const g=gest;gest=null;clearTimeout(g.lp);setTarget(null);
+  if(g.type==='drag'){g.el.classList.remove('dragging');const t=cancel?-1:slotAt(e.clientX,e.clientY);if(!(t>=0&&swap(g.s,t)))place(g.el,g.s);return}
+  if(g.type==='tap'&&!cancel){if(g.el)tapSlot(g.s);else select(null)}
+}
+stage.addEventListener('pointerup',e=>endPtr(e,false));
+stage.addEventListener('pointercancel',e=>endPtr(e,true));
+// stop iOS from scrolling/zooming/rubber-banding while playing
+['touchmove','gesturestart','gesturechange'].forEach(ev=>document.addEventListener(ev,e=>{if(screen==='game'||e.type!=='touchmove')e.preventDefault()},{passive:false}));
+stage.addEventListener('contextmenu',e=>e.preventDefault());
+
+// peek
+let peekT=null;
+$('#peekBtn').onclick=()=>{if(!G||G.solved)return;
+  if(board.classList.contains('peek')){board.classList.remove('peek');$('#peekBtn').classList.remove('on');clearTimeout(peekT);return}
+  S.current.peeks++;save();board.classList.add('peek');$('#peekBtn').classList.add('on');
+  clearTimeout(peekT);peekT=setTimeout(()=>{board.classList.remove('peek');$('#peekBtn').classList.remove('on')},2500)};
+
+// timer
+let tick=null,lastT=0,saveCnt=0;
+function startTimer(){stopTimer();lastT=performance.now();upd();tick=setInterval(()=>{const now=performance.now();
+  if(screen==='game'&&!document.hidden&&G&&!G.solved&&S.current){S.current.elapsed+=Math.min(5,(now-lastT)/1000);upd();if(++saveCnt%5===0)save()}lastT=now},1000)}
+function stopTimer(){if(tick){clearInterval(tick);tick=null}if(S.current)save()}
+function upd(){if(S.current)$('#gTime').textContent=fmt(S.current.elapsed)}
+document.addEventListener('visibilitychange',()=>{lastT=performance.now();save()});
+window.addEventListener('pagehide',save);
+$('#backBtn').onclick=()=>{select(null);stopTimer();renderHome();show('home')};
+
+function complete(){
+  G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);const cur=S.current;
+  const r={id:cur.imageId,level:cur.level,time:Math.round(cur.elapsed),moves:cur.moves,peeks:cur.peeks,pieces:G.n,date:Date.now()};
+  S.completed.push(r);const dk=dayKey(new Date());if(!S.days.includes(dk))S.days.push(dk);
+  S.current=null;save();stopTimer();
+  const got=checkAch(r);
+  setTimeout(()=>{
+    $('#cTitle').textContent=`Level ${r.level} complete!`;$('#cImg').src=curURL;$('#cTime').textContent=fmt(r.time);$('#cMoves').textContent=r.moves;$('#cPeeks').textContent=r.peeks;
+    const d=doneIds(),left=IMAGES.filter(i=>!d.has(i.id)).length;
+    $('#cNext').innerHTML=`🔓 Level ${r.level+1} unlocked!`+(got.length?`<br>🏆 ${got.length} new achievement${got.length>1?'s':''}`:'')+(left?'':'<br>You’ve solved every photo — add more or replay!');
+    openModal('#mCelebrate');confetti();
+  },700);
+}
+$('#cNextBtn').onclick=()=>{closeModals();play()};
+$('#cHomeBtn').onclick=()=>{closeModals();renderHome();show('home')};
+
+function confetti(){const c=$('#confetti'),g=c.getContext('2d');const dpr=Math.min(2,devicePixelRatio||1);c.width=innerWidth*dpr;c.height=innerHeight*dpr;g.scale(dpr,dpr);
+  const cols=['#7c6cff','#29d3a6','#ffc857','#ff5d73','#5bc0ff','#fff'];const P=[...Array(160)].map(()=>({x:innerWidth/2+(Math.random()-.5)*80,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:Math.random()*7+4,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[Math.random()*cols.length|0]}));
+  const t0=performance.now();(function f(t){g.clearRect(0,0,innerWidth,innerHeight);for(const p of P){p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);g.restore()}
+    if(t-t0<3500)requestAnimationFrame(f);else g.clearRect(0,0,innerWidth,innerHeight)})(t0)}
+
+let rz;function onResize(){clearTimeout(rz);rz=setTimeout(layout,60)}
+window.addEventListener('resize',onResize);window.addEventListener('orientationchange',onResize);
+if(window.visualViewport)visualViewport.addEventListener('resize',onResize);
+
+// test hook, only with ?debug=1
+if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=>IMAGES,runtime:()=>G,
+  nearlySolve(){if(!S.current||!G)return;const n=G.n,o=S.current.order;for(let i=0;i<n;i++)o[i]=i;[o[0],o[1]]=[o[1],o[0]];layout();refresh(false);save()},
+  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
+  slotCenter(s){const r=board.getBoundingClientRect(),c=S.current.cols;return [r.left+(s%c+.5)*G.pw*Z.z,r.top+(Math.floor(s/c)+.5)*G.ph*Z.z]}};
+
+// boot
+(async()=>{try{IMAGES=await idbMeta()}catch(e){console.warn(e);toast('⚠️','Storage unavailable','Photos can’t be saved in this browser mode')}
+  renderHome();if(S.current&&IMAGES.some(i=>i.id===S.current.imageId))openGame();})();
+})();
+</script>
+</body>
+</html>
