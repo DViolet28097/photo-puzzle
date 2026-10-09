@@ -211,6 +211,50 @@ body.ingame #toasts{top:auto;bottom:calc(46px + var(--sab));flex-direction:colum
 @keyframes sp{to{transform:rotate(360deg)}}
 .hidden{display:none!important}
 input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
+/* rush */
+.btn.rushbtn{background:linear-gradient(135deg,#ff8a3d,#ff3d6e);color:#fff;font-size:19px;min-height:58px;flex-direction:column;gap:0;line-height:1.2;box-shadow:0 6px 22px rgba(255,61,110,.28)}
+.btn.rushbtn small{display:block;font-size:12px;font-weight:500;opacity:.92}
+#rushWrap .row{margin-top:8px}
+#rushInv{font-size:12.5px;color:var(--muted);text-align:center;margin-top:6px}
+body.rush .no{display:none!important}
+body:not(.rush) .ro{display:none!important}
+.gb{position:relative}
+.gb .cnt{position:absolute;top:0;right:0;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:var(--accent);color:#fff;font-size:10px;line-height:15px;font-weight:700;text-align:center;font-family:-apple-system,sans-serif}
+.gb.empty{opacity:.45}.gb.empty .cnt{background:#4a4d63}
+.gb.inv{font-size:15px;min-width:40px;padding:0 4px}
+.gb.inv i{font-style:normal;font-size:11px;font-weight:800;margin-left:-1px}
+body.rush #gTime{font-size:15px;color:#fff;font-weight:700}
+body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
+.gs.tm.bump b{animation:bump .45s}
+@keyframes bump{40%{transform:scale(1.35);color:var(--accent2)}}
+#gside .sl b.big{font-size:34px;font-variant-numeric:tabular-nums}
+#gside .rinv{display:flex;flex-direction:column;gap:3px;font-size:13px;color:#c9ccdd}
+#gside .rinv b{color:var(--text)}
+.rwd{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#3a2f8f,#5a3fb0);border-radius:14px;padding:10px 12px;margin:0 0 12px;font-weight:700;font-size:17px;animation:rise .4s ease}
+.rwd .ic{font-size:30px}
+.rwd small{display:block;font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.6px}
+.lbrow{background:var(--panel);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.lbhead{display:grid;grid-template-columns:30px 1.3fr 1fr 1fr 1fr 14px;align-items:center;gap:4px;padding:10px 10px;cursor:pointer;text-align:center}
+.lbhead small{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.lbhead b{font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lbhead .lbp b{font-size:17px;color:var(--gold)}
+.lbrk{font-weight:800;font-size:16px;color:var(--muted)}
+.lbrow:nth-child(1) .lbrk{color:#ffd76a}.lbrow:nth-child(2) .lbrk{color:#d8dbe8}.lbrow:nth-child(3) .lbrk{color:#e0a46a}
+.lbchev{color:var(--muted);transition:transform .2s}
+.lbrow.open .lbchev{transform:rotate(90deg)}
+.lbbody{display:none;padding:0 10px 12px}
+.lbrow.open .lbbody{display:block}
+.lbgrid{grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.lbgrid .tile{-webkit-touch-callout:none}
+.lbgrid .tile.holding{transform:scale(.96);transition:transform 1s}
+.lbgrid .tile .cap{font-size:11px;padding:12px 6px 5px}
+.lbnone{font-size:13px;color:var(--muted);padding:4px 2px}
+#lbPop{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,86vw);border-radius:18px;overflow:hidden;z-index:120;box-shadow:0 20px 60px rgba(0,0,0,.7);background:#111;animation:rise .2s ease}
+#lbPop .gpimg{position:absolute;inset:0}
+#lbPop .gpimg img{width:100%;height:100%;object-fit:cover;filter:blur(14px) brightness(.4);transform:scale(1.2)}
+#lbPop .gpst{position:relative;padding:20px 20px 8px;font-size:15px;line-height:1.65;color:#e6e8f5}
+#lbPop .gpst b{color:#fff}
+#lbPop small{position:relative;display:block;text-align:center;color:var(--muted);padding:0 0 14px}
 </style>
 </head>
 <body>
@@ -248,6 +292,9 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
       </div>
     </div>
     <div id="playWrap" class="hidden" style="margin-bottom:14px"><button class="btn primary wide" id="playBtn" style="font-size:17px;min-height:52px">▶ Play</button></div>
+    <div id="rushWrap" class="hidden" style="margin-bottom:16px"><button class="btn wide rushbtn" id="rushBtn">⚡ Rush</button>
+      <div class="row"><button class="btn" id="lbBtn">🏁 Leaderboard</button><button class="btn hidden" id="quitBtn">✕ Quit run</button></div>
+      <div id="rushInv"></div></div>
     <div class="sect srow2"><span>Levels</span><button class="btn" id="galBtn">🏞 Gallery</button></div>
     <div class="grid" id="levels"></div>
   </div>
@@ -255,13 +302,15 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
 
 <!-- GAME -->
 <section class="screen" id="game">
-  <aside id="gside"><div class="sl">Level<b id="sdLv">1</b></div><div class="sm" id="sdMode">Standard</div><div class="sp"><i id="sdBar"></i></div><div class="spt" id="sdPct">0%</div><div class="snm hidden" id="sdNm">Shuffle in <b id="sdNmT">60</b>s</div></aside>
+  <aside id="gside"><div class="sl no">Level<b id="sdLv">1</b></div><div class="sm no" id="sdMode">Standard</div><div class="sl ro">⚡ Rush · puzzle<b id="rsN">#1</b></div><div class="sl ro">Time left<b class="big" id="rsT">15:00</b></div><div class="sl ro">Run points<b id="rsP">0</b></div><div class="sp"><i id="sdBar"></i></div><div class="spt" id="sdPct">0%</div><div class="snm hidden" id="sdNm">Shuffle in <b id="sdNmT">60</b>s</div><div class="rinv ro"><span>👁 Peeks <b id="rsI1">0</b></span><span>🧩+ Free squares <b id="rsI2">0</b></span><span>⏱+ Extra minutes <b id="rsI3">0</b></span></div></aside>
   <div id="stage"><div id="board" role="img" aria-label=""><img id="peekImg" alt=""></div><div id="shuffleFlash"></div></div>
   <nav id="gbar">
     <button class="gb" id="backBtn" aria-label="Back to levels">‹</button><span class="glv" id="gLv">Lv 1</span>
     <div class="gright">
-      <button class="gb" id="peekBtn" aria-label="Peek at the full picture">👁</button>
-      <span class="gs"><span class="ic">⏱</span><b id="gTime">0:00</b></span><span class="gs"><span class="ic">↔</span><b id="gMoves">0</b></span><span class="gs"><span class="ic">🧩</span><b id="gPieces">0</b></span>
+      <button class="gb" id="peekBtn" aria-label="Peek at the full picture">👁<span class="cnt ro" id="pkN">0</span></button>
+      <button class="gb inv ro" id="sqBtn" aria-label="Free square solve">🧩<i>+</i><span class="cnt" id="sqN">0</span></button>
+      <button class="gb inv ro" id="mnBtn" aria-label="Extra minute">⏱<i>+</i><span class="cnt" id="mnN">0</span></button>
+      <span class="gs tm"><span class="ic" id="gTIc">⏱</span><b id="gTime">0:00</b></span><span class="gs"><span class="ic">↔</span><b id="gMoves">0</b></span><span class="gs no"><span class="ic">🧩</span><b id="gPieces">0</b></span>
       <span class="gs nm hidden" id="gNm" title="Seconds until shuffle"><i class="ring" id="gRing"></i><b id="gNmT">60</b></span>
       <button class="gb" id="statusBtn" aria-label="Show which pieces are right" aria-pressed="false"><svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="3" fill="none" stroke="#c9ccdd" stroke-width="1.6"/><path d="M3.5 3.5h6.5v13H5a1.5 1.5 0 0 1-1.5-1.5z" fill="#2fd27a" opacity=".85"/><path d="M10 3.5h5a1.5 1.5 0 0 1 1.5 1.5v10a1.5 1.5 0 0 1-1.5 1.5h-5z" fill="#ff4d5e" opacity=".85"/></svg></button>
     </div>
@@ -276,6 +325,16 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
   </header>
   <div class="scroll"><p class="hint" style="margin:0 2px 10px">Tap to view · press and hold for stats</p><div class="grid" id="galGrid"></div></div>
   <div id="galPop" class="hidden" role="dialog" aria-label="Solve stats"><div class="gpimg"><img id="gpImg" alt=""></div><div class="gpst" id="gpSt"></div><small>Tap anywhere to close</small></div>
+</section>
+
+<!-- RUSH LEADERBOARD -->
+<section class="screen" id="rushlb">
+  <header>
+    <button class="btn icon" id="lbBack" aria-label="Back">‹</button>
+    <h1>🏁 Rush Leaderboard<small id="lbSum"></small></h1>
+  </header>
+  <div class="scroll"><p class="hint" style="margin:0 2px 10px">Top 10 runs · tap a run to see its puzzles · press and hold a puzzle for stats</p><div id="lbList"></div></div>
+  <div id="lbPop" class="hidden" role="dialog" aria-label="Rush solve stats"><div class="gpimg"><img id="lpImg" alt=""></div><div class="gpst" id="lpSt"></div><small>Tap anywhere to close</small></div>
 </section>
 
 <!-- MY PHOTOS -->
@@ -307,6 +366,31 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
   <div class="stack"><button class="btn primary wide" id="cNextBtn">Next level ▶</button><button class="btn wide" id="cHomeBtn">All levels</button></div>
 </div></div>
 
+<div class="modal" id="mRushWin"><div class="box celebrate">
+  <div class="trophy">⚡</div>
+  <h2 id="rwTitle">Puzzle #1 solved!</h2>
+  <div class="rwd" id="rwRwd"><span class="ic" id="rwIc">🎁</span><div><small>Reward</small><span id="rwName">+2 Peeks</span></div></div>
+  <img class="prev" id="rwImg" alt="" style="max-height:26vh">
+  <div class="cstats"><div><b id="rwTime">0:00</b><span>Time</span></div><div><b id="rwMoves">0</b><span>Moves</span></div><div><b id="rwPts">1000</b><span>Points</span></div></div>
+  <p id="rwRun"></p>
+  <div class="stack"><button class="btn primary wide" id="rwNext">Next puzzle ▶</button></div>
+</div></div>
+
+<div class="modal" id="mRushOver"><div class="box">
+  <div style="font-size:50px" id="roIc">⏰</div>
+  <h2 id="roTitle">Time’s up!</h2>
+  <div class="cstats"><div><b id="roN">0</b><span>Puzzles</span></div><div><b id="roTime">0:00</b><span>Total time</span></div><div><b id="roPts">0</b><span>Points</span></div></div>
+  <p id="roTxt"></p>
+  <div class="stack"><button class="btn primary wide" id="roNew">⚡ New run</button><button class="btn wide" id="roLb">🏁 Leaderboard</button><button class="btn wide" id="roHome">Home</button></div>
+</div></div>
+
+<div class="modal" id="mQuit"><div class="box">
+  <div style="font-size:44px">🏁</div>
+  <h2>Quit this run?</h2>
+  <p id="qTxt"></p>
+  <div class="stack"><button class="btn danger wide" id="qYes">Quit run</button><button class="btn wide" id="qNo">Keep going</button></div>
+</div></div>
+
 <div class="modal" id="mSettings"><div class="box">
   <h2>Settings</h2>
   <div class="stack">
@@ -326,7 +410,7 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
 
 <div class="modal" id="mConfirm"><div class="box">
   <h2>Reset progress?</h2>
-  <p>This clears all completed levels, achievements and the puzzle in progress. This can’t be undone.</p>
+  <p>This clears all completed levels, achievements, Rush runs, rewards and the leaderboard, and the puzzle in progress. This can’t be undone.</p>
   <div class="stack">
     <label class="chk"><input type="checkbox" id="rImgs"> Also remove my photos</label>
     <button class="btn danger wide" id="rYes">Yes, reset</button>
@@ -390,9 +474,14 @@ const dayKey=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 // ---------- state ----------
-function fresh(){return {completed:[],current:null,ach:{},days:[]}}
+function fresh(){return {completed:[],current:null,ach:{},days:[],rush:freshRush()}}
+function freshRush(){return {inv:{peek:0,square:0,minute:0},board:[],total:0,run:null,playing:0}}
 let S;
 try{S=Object.assign(fresh(),JSON.parse(localStorage.getItem(LS)||'{}'))}catch(e){S=fresh()}
+function normRush(){let r=S.rush;if(!r||typeof r!=='object')r=S.rush=freshRush();r.inv=Object.assign({peek:0,square:0,minute:0},r.inv);if(!Array.isArray(r.board))r.board=[];r.total=r.total||0;if(!r.run||typeof r.run!=='object')r.run=null;else{const u=r.run;u.n=u.n||0;u.points=u.points||0;u.time=u.time||0;if(!Array.isArray(u.solves))u.solves=[];if(!Array.isArray(u.used))u.used=[];if(u.cur&&typeof u.cur!=='object')u.cur=null}}
+normRush();
+let RUSH=false; // true while the game screen is playing a Rush puzzle
+const C=()=>RUSH?(S.rush.run&&S.rush.run.cur):S.current;
 function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){console.warn('save failed',e)}}
 const doneIds=()=>new Set(S.completed.map(c=>c.id));
 
@@ -472,18 +561,22 @@ const ACH=[
  {id:'five',ic:'🖐️',name:'High Five',desc:'Complete 5 puzzles',t:()=>S.completed.length>=5},
  {id:'ten',ic:'🔟',name:'Puzzle Pro',desc:'Complete 10 puzzles',t:()=>S.completed.length>=10},
  {id:'twentyfive',ic:'👑',name:'Puzzle Royalty',desc:'Complete 25 puzzles',t:()=>S.completed.length>=25},
- {id:'speed',ic:'⚡',name:'Speed Solver',desc:'Finish a puzzle in under 10 minutes',t:r=>r&&r.time<600},
- {id:'lightning',ic:'🌩️',name:'Lightning Hands',desc:'Finish a puzzle in under 5 minutes',t:r=>r&&r.time<300},
- {id:'efficient',ic:'🎯',name:'Efficient',desc:'Finish using at most 1.25× as many moves as pieces',t:r=>r&&r.moves<=Math.round(r.pieces*1.25)},
- {id:'nopeek',ic:'🙈',name:'No Peeking',desc:'Finish a puzzle without using Peek',t:r=>r&&r.peeks===0},
- {id:'night',ic:'🦉',name:'Night Owl',desc:'Solve a puzzle after 10 PM',t:r=>{if(!r)return false;const h=new Date(r.date).getHours();return h>=22||h<4}},
- {id:'early',ic:'🌅',name:'Early Bird',desc:'Solve a puzzle between 5 and 8 AM',t:r=>{if(!r)return false;const h=new Date(r.date).getHours();return h>=5&&h<8}},
+ {id:'speed',ic:'⚡',name:'Speed Solver',desc:'Finish a puzzle in under 10 minutes',t:r=>r&&!r.rush&&r.time<600},
+ {id:'lightning',ic:'🌩️',name:'Lightning Hands',desc:'Finish a puzzle in under 5 minutes',t:r=>r&&!r.rush&&r.time<300},
+ {id:'efficient',ic:'🎯',name:'Efficient',desc:'Finish using at most 1.25× as many moves as pieces',t:r=>r&&!r.rush&&r.moves<=Math.round(r.pieces*1.25)},
+ {id:'nopeek',ic:'🙈',name:'No Peeking',desc:'Finish a puzzle without using Peek',t:r=>r&&!r.rush&&r.peeks===0},
+ {id:'night',ic:'🦉',name:'Night Owl',desc:'Solve a puzzle after 10 PM',t:r=>{if(!r||r.rush)return false;const h=new Date(r.date).getHours();return h>=22||h<4}},
+ {id:'early',ic:'🌅',name:'Early Bird',desc:'Solve a puzzle between 5 and 8 AM',t:r=>{if(!r||r.rush)return false;const h=new Date(r.date).getHours();return h>=5&&h<8}},
  {id:'hard1',ic:'💪',name:'Hard Mode',desc:'Solve your first Hard puzzle',t:()=>S.completed.some(c=>c.mode==='hard')},
  {id:'hard5',ic:'🥊',name:'Hard Hitter',desc:'Solve 5 Hard puzzles',t:()=>S.completed.filter(c=>c.mode==='hard').length>=5},
  {id:'nm1',ic:'😈',name:'Nightmare Survivor',desc:'Solve your first Nightmare puzzle',t:()=>S.completed.some(c=>c.mode==='nightmare')},
  {id:'nm3',ic:'🌙',name:'Sleepless',desc:'Solve 3 Nightmare puzzles',t:()=>S.completed.filter(c=>c.mode==='nightmare').length>=3},
  {id:'collector',ic:'🗂️',name:'Collector',desc:'Add 20 photos to your collection',t:()=>IMAGES.length>=20},
  {id:'streak',ic:'🔥',name:'Streak',desc:'Solve puzzles on 3 different days',t:()=>S.days.length>=3},
+ {id:'rush1',ic:'⚡',name:'Rush Starter',desc:'Solve your first Rush puzzle',t:r=>(r&&r.rush)||S.rush.total>=1},
+ {id:'rush3',ic:'🎢',name:'On a Roll',desc:'Solve 3 puzzles in one Rush run',t:r=>!!(r&&r.rush&&r.k>=3)},
+ {id:'rush10',ic:'🏃',name:'Marathon',desc:'Solve 10 puzzles in one Rush run',t:r=>!!(r&&r.rush&&r.k>=10)},
+ {id:'rushperfect',ic:'💯',name:'Perfect Rush Solve',desc:'Score 1000 points on a Rush puzzle',t:r=>!!(r&&r.rush&&r.points>=1000)},
  {id:'completionist',ic:'🏅',name:'Completionist',desc:'Solve every photo in your collection (3+ photos)',t:()=>{const d=doneIds();return IMAGES.length>=3&&IMAGES.every(i=>d.has(i.id))}},
 ];
 function checkAch(r){
@@ -529,6 +622,7 @@ function renderHome(){updateInstallUI();renderMode();
     h+=`<div class="tile locked"><div class="big">🔒</div>Level 1</div>`;
   }
   $('#levels').innerHTML=h;
+  renderRushHome();
 }
 $('#levels').addEventListener('click',async e=>{
   const t=e.target.closest('.tile');if(!t)return;
@@ -646,6 +740,7 @@ async function deletePhotos(ids){
   IMAGES=await idbMeta();
   let replaced=false;
   if(S.current&&!IMAGES.some(i=>i.id===S.current.imageId)){const lvl=S.current.level;S.current=null;if(IMAGES.length)newPuzzle(null,lvl);replaced=true}
+  const rr=S.rush.run;if(rr&&rr.cur&&!IMAGES.some(i=>i.id===rr.cur.imageId))rr.cur=null;
   save();pSel=null;pView=null;checkAch(null); // earned achievements are never revoked
   renderPhotos();renderHome();
   toast('🗑️',`Deleted ${ids.length} photo${ids.length===1?'':'s'}`,replaced&&S.current?'Your puzzle in progress now uses a new photo':(IMAGES.length?`${IMAGES.length} left`:'Add photos to keep playing'));
@@ -659,7 +754,7 @@ $('#sSkip').onclick=()=>{closeModals();if(S.current){const lvl=S.current.level,o
 $('#sReset').onclick=()=>{closeModals();$('#rImgs').checked=false;openModal('#mConfirm')};
 $('#rNo').onclick=closeModals;
 $('#rYes').onclick=async()=>{const imgs=$('#rImgs').checked;const keepUi=S.ui;S=fresh();if(keepUi)S.ui=keepUi;save();if(imgs){await idbClear();IMAGES=[]}closeModals();renderHome();toast('♻️','Progress reset',imgs?'Photos removed too':'Your photos are still here')};
-document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m&&m.id!=='mCelebrate')closeModals()}));
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m&&!['mCelebrate','mRushWin','mRushOver'].includes(m.id))closeModals()}));
 
 // ---------- puzzle ----------
 const MODES={standard:{label:'Standard',min:95,max:105,t:100},hard:{label:'Hard',min:145,max:155,t:150},nightmare:{label:'Nightmare',min:145,max:155,t:150}};
@@ -698,15 +793,17 @@ async function play(){
 let G=null; // runtime
 let curURL=null;
 async function openGame(){
-  const cur=S.current;const rec=await idbGet(cur.imageId);
-  if(!rec){S.current=null;save();renderHome();toast('⚠️','Photo missing','Picking another one');if(newPuzzle())return openGame();return}
+  const cur=C();const rec=await idbGet(cur.imageId);
+  if(!rec){if(RUSH){S.rush.run.cur=null;save();toast('⚠️','Photo missing','Picking another one');if(newRushPuzzle())return openGame();RUSH=false;return}
+    S.current=null;save();renderHome();toast('⚠️','Photo missing','Picking another one');if(newPuzzle())return openGame();return}
+  document.body.classList.toggle('rush',RUSH);
   if(curURL)URL.revokeObjectURL(curURL);
   curURL=URL.createObjectURL(new Blob([rec.data],{type:rec.type||'image/jpeg'}));
   cur.w=rec.w;cur.h=rec.h;
   const nn=cur.rows*cur.cols;
   const valid=nn>=4&&Array.isArray(cur.order)&&cur.order.length===nn&&new Set(cur.order).size===nn&&cur.order.every(v=>v>=0&&v<nn);
   if(!valid){ // corrupt save → restart same photo in the current mode
-    const m=curMode(),[r2,c2]=chooseGrid(rec.w,rec.h,m);Object.assign(cur,{mode:m,rows:r2,cols:c2,order:derange(r2*c2),moves:0,elapsed:0,peeks:0});save();
+    const m=RUSH?'standard':curMode(),[r2,c2]=chooseGrid(rec.w,rec.h,m);Object.assign(cur,{mode:m,rows:r2,cols:c2,order:derange(r2*c2),moves:0,elapsed:0,peeks:0});save();
     toast('🧩','Puzzle restarted',`Level ${cur.level} restarted with ${r2*c2} pieces`)}
   const board=$('#board');board.querySelectorAll('.piece').forEach(p=>p.remove());board.classList.remove('solved','peek');
   $('#peekImg').src=curURL;
@@ -714,10 +811,10 @@ async function openGame(){
   for(let p=0;p<n;p++){const el=document.createElement('div');el.className='piece';el.style.backgroundImage=`url("${curURL}")`;el.dataset.p=p;board.appendChild(el);els[p]=el}
   G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n,intro:false};
   if(cur.mode==='nightmare'&&!(cur.shuffleIn>0))cur.shuffleIn=SHUFFLE_EVERY;
-  const info=`${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces`;board.setAttribute('aria-label',`Level ${cur.level} · ${info}`);
+  const info=`${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces`,ttl=RUSH?`Rush · puzzle #${cur.level}`:`Level ${cur.level}`;board.setAttribute('aria-label',`${ttl} · ${info}`);
   Z.z=1;Z.tx=0;Z.ty=0;gest=null;ptrs.clear();
   const ml=MODES[cur.mode]?MODES[cur.mode].label:'';
-  $('#gLv').textContent=`Lv ${cur.level}`;$('#sdLv').textContent=cur.level;$('#sdMode').textContent=ml||`${n} pieces`;$('#sdMode').className='sm '+(cur.mode||'');
+  $('#gLv').textContent=RUSH?`#${cur.level}`:`Lv ${cur.level}`;$('#gTIc').textContent=RUSH?'⏳':'⏱';if(RUSH)rushUI();upd();$('#sdLv').textContent=cur.level;$('#sdMode').textContent=ml||`${n} pieces`;$('#sdMode').className='sm no '+(cur.mode||'');
   $('#gNm').classList.toggle('hidden',cur.mode!=='nightmare');$('#sdNm').classList.toggle('hidden',cur.mode!=='nightmare');
   setStatus(!!(S.ui&&S.ui.status));
   show('game');layout();refresh(false);updNm();
@@ -726,15 +823,17 @@ async function openGame(){
     setTimeout(()=>{if(G!==g0)return;board.classList.add('introfade');board.classList.remove('intro');
       setTimeout(()=>{if(G!==g0)return;board.classList.remove('introfade');G.intro=false;startTimer()},720)},2000)}
   else startTimer();
-  toast(modeIc(cur.mode),`Level ${cur.level}`,info+(cur.mode==='nightmare'?` · reshuffles every ${SHUFFLE_EVERY}s`:''));
+  if(RUSH)toast('⚡',ttl,`${info} · ${fmt(Math.ceil(cur.remain))} on the clock`);else toast(modeIc(cur.mode),`Level ${cur.level}`,info+(cur.mode==='nightmare'?` · reshuffles every ${SHUFFLE_EVERY}s`:''));
   if(!S.seenZoomHint){S.seenZoomHint=1;save();toast('🤏','Pinch to zoom','Tap two pieces to swap them. Pieces that lock in place are in the right spot.')}
 }
 function layout(){
-  if(!G||!S.current||screen!=='game')return;const cur=S.current;const st=$('#stage');
+  if(!G||!C()||screen!=='game')return;const cur=C();const st=$('#stage');
   // remember which board point is at the stage centre so zoom survives rotation
   let fx=.5,fy=.5;const ow=board.offsetWidth,oh=board.offsetHeight;
   if(Z.z>1.01&&ow&&oh){fx=(st.clientWidth/2-board.offsetLeft-Z.tx)/(ow*Z.z);fy=(st.clientHeight/2-board.offsetTop-Z.ty)/(oh*Z.z)}
-  const aw=st.clientWidth-8,ah=st.clientHeight-8;const ar=cur.w/cur.h;
+  // landscape: reserve left strip so the side panel always has room
+  const landscape=innerWidth>innerHeight,reserve=landscape?100:0;
+  const aw=st.clientWidth-8-reserve,ah=st.clientHeight-8;const ar=cur.w/cur.h;
   let bw=aw,bh=aw/ar;if(bh>ah){bh=ah;bw=ah*ar}
   G.pw=Math.floor(bw/cur.cols);G.ph=Math.floor(bh/cur.rows);bw=G.pw*cur.cols;bh=G.ph*cur.rows;
   const b=$('#board');b.style.width=bw+'px';b.style.height=bh+'px';
@@ -743,15 +842,14 @@ function layout(){
   cur.order.forEach((p,s)=>place(G.els[p],s));
   if(Z.z>1.01){Z.tx=st.clientWidth/2-board.offsetLeft-fx*bw*Z.z;Z.ty=st.clientHeight/2-board.offsetTop-fy*bh*Z.z}
   clampPan();applyZoom(false);
-  // landscape: use the side margin for level / mode / progress
-  const margin=(st.clientWidth-bw)/2,land=innerWidth>innerHeight&&margin>=78;
+  const margin=(st.clientWidth-bw)/2,land=landscape&&margin>=78;
   const gs=$('#gside');gs.classList.toggle('show',land);if(land)gs.style.width=Math.min(170,margin-20)+'px';
 }
-function slotXY(s){const c=S.current.cols;return [(s%c)*G.pw,Math.floor(s/c)*G.ph]}
+function slotXY(s){const c=C().cols;return [(s%c)*G.pw,Math.floor(s/c)*G.ph]}
 function place(el,s){const [x,y]=slotXY(s);el.dataset.s=s;el.style.transform=`translate(${x}px,${y}px)`}
-const isOk=s=>S.current.order[s]===s;
+const isOk=s=>C().order[s]===s;
 function refresh(anim){
-  const cur=S.current;let ok=0;
+  const cur=C();let ok=0;
   cur.order.forEach((p,s)=>{const el=G.els[p];const good=p===s;if(good)ok++;
     if(good&&!el.classList.contains('ok')){el.classList.add('ok');if(anim){el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),950);if(!S.seenLockTip){S.seenLockTip=1;setTimeout(()=>toast('🔒','Locked in!','That piece is in the right spot, so it can’t move now. Locked pieces blend into the photo.'),250)}}}
     else if(!good)el.classList.remove('ok')});
@@ -761,14 +859,14 @@ function refresh(anim){
 }
 function swap(a,b){
   if(G.solved||a===b||isOk(a)||isOk(b))return false;
-  const o=S.current.order;[o[a],o[b]]=[o[b],o[a]];S.current.moves++;
+  const o=C().order;[o[a],o[b]]=[o[b],o[a]];C().moves++;
   place(G.els[o[a]],a);place(G.els[o[b]],b);
   if(navigator.vibrate)try{navigator.vibrate(8)}catch(e){}
   const ok=refresh(true);save();
   if(ok===G.n)complete();
   return true;
 }
-function select(s){if(G.sel!=null)G.els[S.current.order[G.sel]].classList.remove('sel');G.sel=s;if(s!=null)G.els[S.current.order[s]].classList.add('sel')}
+function select(s){if(G.sel!=null)G.els[C().order[G.sel]].classList.remove('sel');G.sel=s;if(s!=null)G.els[C().order[s]].classList.add('sel')}
 
 // ---------- input: tap-to-swap, pinch-zoom, pan, drag-to-swap ----------
 const board=$('#board'),stage=$('#stage');
@@ -783,7 +881,7 @@ function zoomAt(nz,cx,cy,anim){nz=Math.min(MAXZ,Math.max(1,nz));const [ox,oy]=bo
 function zoomCenter(f){const r=stage.getBoundingClientRect();zoomAt(f===0?1:Z.z*f,r.left+r.width/2,r.top+r.height/2,true)}
 stage.addEventListener('wheel',e=>{if(!G)return;e.preventDefault();zoomAt(Z.z*Math.exp(-e.deltaY*.003),e.clientX,e.clientY,false)},{passive:false});
 
-function slotAt(x,y){const r=board.getBoundingClientRect();const c=Math.floor((x-r.left)/(G.pw*Z.z)),rr=Math.floor((y-r.top)/(G.ph*Z.z));if(c<0||rr<0||c>=S.current.cols||rr>=S.current.rows)return -1;return rr*S.current.cols+c}
+function slotAt(x,y){const r=board.getBoundingClientRect();const c=Math.floor((x-r.left)/(G.pw*Z.z)),rr=Math.floor((y-r.top)/(G.ph*Z.z));if(c<0||rr<0||c>=C().cols||rr>=C().rows)return -1;return rr*C().cols+c}
 let tgtEl=null;
 function setTarget(el){if(tgtEl===el)return;if(tgtEl)tgtEl.classList.remove('target');tgtEl=el;if(el)el.classList.add('target')}
 function tapSlot(s){if(isOk(s)){select(null);return}
@@ -815,7 +913,7 @@ stage.addEventListener('pointermove',e=>{
     if(Z.z>1.01)gest.type='pan';else if(gest.el&&!isOk(gest.s))startDrag();else gest.type='none'}
   if(gest.type==='pan'){Z.tx=gest.tx0+dx;Z.ty=gest.ty0+dy;clampPan();applyZoom(false)}
   else if(gest.type==='drag'){const [x,y]=slotXY(gest.s);gest.el.style.transform=`translate(${x+dx/Z.z}px,${y+dy/Z.z}px) scale(1.25)`;
-    const t=slotAt(e.clientX,e.clientY);setTarget(t>=0&&t!==gest.s&&!isOk(t)?G.els[S.current.order[t]]:null)}
+    const t=slotAt(e.clientX,e.clientY);setTarget(t>=0&&t!==gest.s&&!isOk(t)?G.els[C().order[t]]:null)}
 });
 function endPtr(e,cancel){
   if(!ptrs.delete(e.pointerId))return;
@@ -871,7 +969,8 @@ stage.addEventListener('contextmenu',e=>e.preventDefault());
 let peekT=null;
 $('#peekBtn').onclick=()=>{if(!G||G.solved||G.intro)return;
   if(board.classList.contains('peek')){board.classList.remove('peek');$('#peekBtn').classList.remove('on');clearTimeout(peekT);return}
-  S.current.peeks++;save();board.classList.add('peek');$('#peekBtn').classList.add('on');
+  if(RUSH){const inv=S.rush.inv;if(!(inv.peek>0)){toast('👁','No Peeks left','Solve Rush puzzles to earn more');return}inv.peek--;rushUI()}
+  C().peeks++;save();board.classList.add('peek');$('#peekBtn').classList.add('on');
   clearTimeout(peekT);peekT=setTimeout(()=>{board.classList.remove('peek');$('#peekBtn').classList.remove('on')},2500)};
 
 // status overlay (green = right spot, red = wrong)
@@ -881,14 +980,15 @@ $('#statusBtn').onclick=()=>{const on=!board.classList.contains('status');setSta
 // timer
 let tick=null,lastT=0,saveCnt=0;
 function startTimer(){stopTimer();lastT=performance.now();upd();tick=setInterval(()=>{const now=performance.now();
-  if(screen==='game'&&!document.hidden&&G&&!G.solved&&!G.intro&&S.current){const dt=Math.min(5,(now-lastT)/1000);S.current.elapsed+=dt;
-    if(S.current.mode==='nightmare'){S.current.shuffleIn=(S.current.shuffleIn>0?S.current.shuffleIn:SHUFFLE_EVERY)-dt;if(S.current.shuffleIn<=0){S.current.shuffleIn+=SHUFFLE_EVERY;nightmareShuffle()}updNm()}
+  if(screen==='game'&&!document.hidden&&G&&!G.solved&&!G.intro&&C()){const dt=Math.min(5,(now-lastT)/1000);C().elapsed+=dt;
+    if(RUSH){const c=C();c.remain=(c.remain??RUSH_T)-dt;if(c.remain<=0){c.remain=0;upd();rushOver('timeout');return}}
+    if(C().mode==='nightmare'){C().shuffleIn=(C().shuffleIn>0?C().shuffleIn:SHUFFLE_EVERY)-dt;if(C().shuffleIn<=0){C().shuffleIn+=SHUFFLE_EVERY;nightmareShuffle()}updNm()}
     upd();if(++saveCnt%5===0)save()}lastT=now},1000)}
-function updNm(){const c=S.current;if(!c||c.mode!=='nightmare')return;const t=Math.max(0,Math.ceil(c.shuffleIn||SHUFFLE_EVERY));
+function updNm(){const c=C();if(!c||c.mode!=='nightmare')return;const t=Math.max(0,Math.ceil(c.shuffleIn||SHUFFLE_EVERY));
   $('#gNmT').textContent=t;$('#sdNmT').textContent=t;$('#gRing').style.setProperty('--p',(t/SHUFFLE_EVERY*100)+'%');$('#gNm').classList.toggle('soon',t<=5)}
 // Nightmare: every wrong piece (except a selected one) is shuffled among the wrong positions
 function nightmareShuffle(){
-  if(!G||G.solved||!S.current)return;const o=S.current.order;
+  if(!G||G.solved||!C())return;const o=C().order;
   if(gest&&gest.type==='drag')dropGesture();
   const slots=[];for(let s=0;s<o.length;s++)if(o[s]!==s&&s!==G.sel)slots.push(s);
   if(slots.length<2)return;
@@ -899,14 +999,17 @@ function nightmareShuffle(){
   if(navigator.vibrate)try{navigator.vibrate([30,40,30])}catch(e){}
   const ok=refresh(true);save();if(ok===G.n)complete();
 }
-function stopTimer(){if(tick){clearInterval(tick);tick=null}if(S.current)save()}
-function upd(){if(S.current)$('#gTime').textContent=fmt(S.current.elapsed)}
+function stopTimer(){if(tick){clearInterval(tick);tick=null}if(C())save()}
+function upd(){const c=C();if(!c)return;
+  if(RUSH){const t=Math.max(0,Math.ceil(c.remain??RUSH_T)),txt=fmt(t);$('#gTime').textContent=txt;$('#rsT').textContent=txt;const low=t<=60;$('#gTime').parentNode.classList.toggle('low',low);$('#rsT').classList.toggle('low',low)}
+  else{$('#gTime').textContent=fmt(c.elapsed);$('#gTime').parentNode.classList.remove('low')}}
 document.addEventListener('visibilitychange',()=>{lastT=performance.now();save()});
 window.addEventListener('pagehide',save);
-$('#backBtn').onclick=()=>{select(null);stopTimer();renderHome();show('home')};
+$('#backBtn').onclick=()=>{select(null);stopTimer();if(RUSH){S.rush.playing=0;save()}RUSH=false;renderHome();show('home')};
 
 function complete(){
-  G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);const cur=S.current;
+  if(RUSH)return rushComplete();
+  G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);const cur=C();
   const r={id:cur.imageId,level:cur.level,time:Math.round(cur.elapsed),moves:cur.moves,peeks:cur.peeks,pieces:G.n,mode:cur.mode||null,date:Date.now()};
   S.completed.push(r);const dk=dayKey(new Date());if(!S.days.includes(dk))S.days.push(dk);
   S.current=null;save();stopTimer();
@@ -930,15 +1033,121 @@ let rz;function onResize(){clearTimeout(rz);rz=setTimeout(layout,60)}
 window.addEventListener('resize',onResize);window.addEventListener('orientationchange',onResize);
 if(window.visualViewport)visualViewport.addEventListener('resize',onResize);
 
+// ---------- RUSH MODE ----------
+const RUSH_T=900;
+const REWARDS=[{k:'peek',n:2,ic:'👁',name:'+2 Peeks'},{k:'square',n:5,ic:'🧩',name:'+5 Free Square Solves'},{k:'minute',n:1,ic:'⏱',name:'+1 Extra Minute'}];
+const rushPoints=m=>Math.max(100,1000-50*Math.floor(Math.max(0,m-150)/25));
+const lbSort=(a,b)=>(b.points-a.points)||(b.n-a.n)||(a.date-b.date);
+// random over the whole collection (solved or not); no repeats within a run until every photo has been used
+function pickRush(){const run=S.rush.run,used=new Set(run.used);let pool=IMAGES.filter(i=>!used.has(i.id));
+  if(!pool.length){run.used=[];pool=IMAGES.filter(i=>i.id!==run.last);if(!pool.length)pool=IMAGES.slice()}
+  const img=pool.length?pool[rnd(pool.length)]:null;if(img){run.used.push(img.id);run.last=img.id}return img}
+function newRushPuzzle(){const run=S.rush.run,img=pickRush();if(!img)return false;const [rows,cols]=chooseGrid(img.w,img.h,'standard');
+  run.cur={imageId:img.id,level:run.n+1,mode:'standard',rush:1,rows,cols,order:derange(rows*cols),moves:0,elapsed:0,peeks:0,squares:0,minutes:0,remain:RUSH_T,w:img.w,h:img.h};save();return true}
+async function rushPlay(){if(!IMAGES.length){$('#fileIn').click();return}
+  const rs=S.rush;if(!rs.run)rs.run={start:Date.now(),n:0,points:0,time:0,solves:[],used:[]};
+  if(!rs.run.cur&&!newRushPuzzle())return;RUSH=true;rs.playing=1;save();await openGame()}
+function rushUI(){const rs=S.rush,inv=rs.inv,run=rs.run;
+  $('#pkN').textContent=inv.peek;$('#sqN').textContent=inv.square;$('#mnN').textContent=inv.minute;
+  $('#rsI1').textContent=inv.peek;$('#rsI2').textContent=inv.square;$('#rsI3').textContent=inv.minute;
+  if(RUSH)$('#peekBtn').classList.toggle('empty',!inv.peek);else $('#peekBtn').classList.remove('empty');
+  $('#sqBtn').classList.toggle('empty',!inv.square);$('#mnBtn').classList.toggle('empty',!inv.minute);
+  if(run){$('#rsN').textContent='#'+(run.n+1);$('#rsP').textContent=run.points.toLocaleString()}}
+function useItem(k){if(!RUSH||!G||G.solved)return false;const inv=S.rush.inv,c=C();if(!c||!(k in inv))return false;
+  const nm={square:['🧩','No Free Square Solves left'],minute:['⏱','No Extra Minutes left']}[k];
+  if(!(inv[k]>0)){toast(nm[0],nm[1],'Solve Rush puzzles to earn more');return false}
+  if(k==='minute'){inv.minute--;c.minutes=(c.minutes||0)+1;c.remain=(c.remain??RUSH_T)+60;save();upd();rushUI();
+    const t=$('#gTime').parentNode;t.classList.remove('bump');void t.offsetWidth;t.classList.add('bump');return true}
+  if(k==='square'){if(G.intro)return false;const o=c.order,wrong=[];for(let s=0;s<o.length;s++)if(o[s]!==s)wrong.push(s);if(!wrong.length)return false;
+    select(null);dropGesture();const s=wrong[rnd(wrong.length)],j=o.indexOf(s);[o[s],o[j]]=[o[j],o[s]];place(G.els[o[s]],s);place(G.els[o[j]],j);
+    inv.square--;c.squares=(c.squares||0)+1;const ok=refresh(true);save();rushUI();if(ok===G.n)complete();return true}
+  return false}
+$('#sqBtn').onclick=()=>useItem('square');$('#mnBtn').onclick=()=>useItem('minute');
+let rwTimer=null;
+function rushComplete(){
+  G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);
+  const rs=S.rush,run=rs.run,c=run.cur,pts=rushPoints(c.moves),rw=REWARDS[rnd(REWARDS.length)];rs.inv[rw.k]+=rw.n;
+  const r={id:c.imageId,k:run.n+1,time:Math.round(c.elapsed),moves:c.moves,peeks:c.peeks||0,squares:c.squares||0,minutes:c.minutes||0,points:pts,pieces:G.n,date:Date.now(),reward:rw.k,rush:1};
+  run.solves.push(r);run.n++;run.points+=pts;run.time+=c.elapsed;rs.total++;run.cur=null;save();stopTimer();rushUI();
+  const got=checkAch(r);
+  setTimeout(()=>{if(!RUSH||screen!=='game')return;
+    $('#rwTitle').textContent=`Puzzle #${r.k} solved!`;$('#rwIc').textContent=rw.ic;$('#rwName').textContent=rw.name;
+    $('#rwImg').src=curURL;$('#rwTime').textContent=fmt(r.time);$('#rwMoves').textContent=r.moves;$('#rwPts').textContent=pts.toLocaleString();
+    const rr=$('#rwRwd');rr.style.animation='none';void rr.offsetWidth;rr.style.animation='';
+    $('#rwRun').innerHTML=`Run: <b>${run.n}</b> solved · <b>${run.points.toLocaleString()}</b> pts`+(got.length?`<br>🏆 ${got.length} new achievement${got.length>1?'s':''}`:'');
+    openModal('#mRushWin');confetti();
+    let n=4;const lab=()=>{$('#rwNext').textContent=`Next puzzle ▶ (${n})`};lab();clearInterval(rwTimer);
+    rwTimer=setInterval(()=>{if(!$('#mRushWin').classList.contains('show')){clearInterval(rwTimer);return}if(document.hidden)return;if(--n<=0)rushNext();else lab()},1000);
+  },700)}
+function rushNext(){clearInterval(rwTimer);if(!$('#mRushWin').classList.contains('show'))return;closeModals();rushPlay()}
+$('#rwNext').onclick=rushNext;
+let lbOpenIdx=-1;
+function rushOver(reason){const rs=S.rush,run=rs.run;if(!run)return;
+  if(run.cur)run.time+=run.cur.elapsed||0;
+  const rec={points:run.points,n:run.n,time:Math.round(run.time),date:Date.now(),start:run.start,solves:run.solves,end:reason};
+  rs.board.push(rec);rs.board.sort(lbSort);if(rs.board.length>50)rs.board.length=50;const rank=rs.board.indexOf(rec)+1;
+  if(G&&RUSH&&screen==='game'&&run.cur){G.solved=true;select(null);dropGesture();clearTimeout(peekT);board.classList.remove('peek');$('#peekBtn').classList.remove('on')}
+  rs.run=null;rs.playing=0;
+  stopTimer();save();
+  $('#roIc').textContent=reason==='timeout'?'⏰':'🏁';$('#roTitle').textContent=reason==='timeout'?'Time’s up!':'Run ended';
+  $('#roN').textContent=rec.n;$('#roTime').textContent=fmt(rec.time);$('#roPts').textContent=rec.points.toLocaleString();
+  $('#roTxt').textContent=(rank>0&&rank<=10?`#${rank} on your leaderboard. `:'')+'Run progress is wiped, so the next run starts from puzzle 1. Your rewards are kept.';
+  lbOpenIdx=rank>0&&rank<=10?rank-1:-1;closeModals();openModal('#mRushOver')}
+const leaveGame=()=>{RUSH=false;closeModals();renderHome();show('home')};
+$('#roNew').onclick=()=>{closeModals();rushPlay()};
+$('#roHome').onclick=leaveGame;
+$('#roLb').onclick=()=>{RUSH=false;closeModals();openLB(lbOpenIdx)};
+function renderRushHome(){const rs=S.rush,run=rs.run,inv=rs.inv;
+  $('#rushWrap').classList.toggle('hidden',!IMAGES.length&&!rs.board.length);$('#rushBtn').disabled=!IMAGES.length;
+  $('#rushBtn').innerHTML=run?`⚡ Continue Rush<small>Puzzle #${run.n+1} · ${run.points.toLocaleString()} pts${run.cur?' · '+fmt(Math.ceil(run.cur.remain??RUSH_T))+' left':''}</small>`:`⚡ Rush<small>15:00 per puzzle · earn rewards · beat your best</small>`;
+  $('#quitBtn').classList.toggle('hidden',!run);
+  const best=rs.board.length?rs.board[0].points:0;
+  $('#rushInv').textContent=`Rewards: 👁 ${inv.peek} · 🧩+ ${inv.square} · ⏱+ ${inv.minute}`+(best?` · Best ${best.toLocaleString()} pts`:'')}
+$('#rushBtn').onclick=()=>rushPlay();
+$('#quitBtn').onclick=()=>{const run=S.rush.run;if(!run)return;$('#qTxt').textContent=`This ends your run (${run.n} puzzle${run.n===1?'':'s'}, ${run.points.toLocaleString()} points) and records it on the leaderboard. The next run starts from puzzle 1. Your rewards are kept.`;closeModals();openModal('#mQuit')};
+$('#qNo').onclick=closeModals;
+$('#qYes').onclick=()=>{closeModals();rushOver('quit');renderHome()};
+// leaderboard
+const fmtD=t=>t?new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'}):'—';
+function rushStatsHtml(r){const dash='—';return `<b>⚡ Rush · puzzle #${r.k}</b><br>Difficulty: <b>Standard</b><br>Completed: <b>${r.date?new Date(r.date).toLocaleDateString():dash}</b><br>Time: <b>${r.time!=null?fmt(r.time):dash}</b><br>Moves: <b>${r.moves??dash}</b><br>Peeks used: <b>${r.peeks??0}</b><br>Free squares used: <b>${r.squares??0}</b><br>Minutes used: <b>${r.minutes??0}</b><br>Points: <b>${(r.points??0).toLocaleString()}</b>`}
+function renderLB(){const top=S.rush.board.slice(0,10),thumbs=Object.fromEntries(IMAGES.map(i=>[i.id,i.thumb])),d=doneIds();
+  $('#lbSum').textContent=top.length?`Best ${top[0].points.toLocaleString()} pts · ${S.rush.board.length} run${S.rush.board.length===1?'':'s'} played`:'No runs yet';
+  $('#lbList').innerHTML=top.length?top.map((r,i)=>`<div class="lbrow${i===lbOpenIdx?' open':''}" data-i="${i}"><div class="lbhead"><span class="lbrk">${i+1}</span><span class="lbp"><b>${r.points.toLocaleString()}</b><small>points</small></span><span><b>${r.n}</b><small>puzzles</small></span><span><b>${fmt(r.time)}</b><small>time</small></span><span><b>${fmtD(r.date)}</b><small>date</small></span><span class="lbchev">›</span></div>
+    <div class="lbbody">${(r.solves||[]).length?`<div class="grid lbgrid">${r.solves.map((x,k)=>{const th=thumbs[x.id];return th?`<div class="tile${d.has(x.id)?'':' blur'}" data-i="${i}" data-k="${k}"><img src="${th}" alt=""><div class="cap"><b>#${x.k}</b> · ${x.points} pts</div></div>`:`<div class="tile gone" data-i="${i}" data-k="${k}"><div class="big">🗑️</div><div class="cap"><b>#${x.k}</b> · photo deleted</div></div>`}).join('')}</div>`:'<div class="lbnone">No puzzles completed in this run.</div>'}</div></div>`).join('')
+    :'<div class="empty">Finish a Rush run and it will show up here.</div>'}
+function openLB(idx){lbOpenIdx=idx==null?-1:idx;hideLbPop();renderLB();show('rushlb')}
+function showLbPop(t){const r=S.rush.board[+t.dataset.i],x=r&&r.solves[+t.dataset.k];if(!x)return;const im=IMAGES.find(i=>i.id===x.id);
+  const g=$('#lpImg');if(im){g.src=im.thumb;g.classList.remove('hidden')}else{g.removeAttribute('src');g.classList.add('hidden')}
+  $('#lpSt').innerHTML=(im?'':'<i>Photo deleted</i><br>')+rushStatsHtml(x);$('#lbPop').classList.remove('hidden')}
+function hideLbPop(){$('#lbPop').classList.add('hidden')}
+$('#lbBtn').onclick=()=>openLB(-1);
+$('#lbBack').onclick=()=>{hideLbPop();renderHome();show('home')};
+$('#lbPop').addEventListener('click',hideLbPop);
+const lbl=$('#lbList');let lbHold=null,lbSup=false;
+lbl.addEventListener('pointerdown',e=>{const t=e.target.closest('.lbgrid .tile');if(!t)return;clearTimeout(lbHold&&lbHold.t);t.classList.add('holding');
+  lbHold={el:t,x:e.clientX,y:e.clientY,fired:false,t:setTimeout(()=>{t.classList.remove('holding');lbHold.fired=true;showLbPop(t);if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}},1000)}});
+lbl.addEventListener('pointermove',e=>{if(lbHold&&!lbHold.fired&&Math.hypot(e.clientX-lbHold.x,e.clientY-lbHold.y)>10){clearTimeout(lbHold.t);lbHold.el.classList.remove('holding');lbHold=null}});
+const lbEnd=()=>{if(!lbHold)return;clearTimeout(lbHold.t);lbHold.el.classList.remove('holding');lbSup=lbHold.fired;lbHold=null};
+lbl.addEventListener('pointerup',lbEnd);lbl.addEventListener('pointercancel',lbEnd);lbl.addEventListener('contextmenu',e=>e.preventDefault());
+lbl.addEventListener('click',e=>{if(lbSup){lbSup=false;return}
+  if(!$('#lbPop').classList.contains('hidden')){hideLbPop();return}
+  if(e.target.closest('.lbgrid .tile')){toast('👆','Press and hold','Hold a puzzle to see its stats');return}
+  const h=e.target.closest('.lbhead');if(!h)return;const row=h.parentNode,i=+row.dataset.i;
+  lbOpenIdx=row.classList.contains('open')?-1:i;lbl.querySelectorAll('.lbrow').forEach(x=>x.classList.toggle('open',+x.dataset.i===lbOpenIdx))});
+
 // test hook, only with ?debug=1
 if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=>IMAGES,runtime:()=>G,
-  nearlySolve(){if(!S.current||!G)return;const n=G.n,o=S.current.order;for(let i=0;i<n;i++)o[i]=i;[o[0],o[1]]=[o[1],o[0]];layout();refresh(false);save()},
-  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),pickImage:x=>pickImage(x),shuffleNow:()=>nightmareShuffle(),setShuffleIn:t=>{S.current.shuffleIn=t;updNm()},select:x=>select(x),zoomCenter:f=>zoomCenter(f),checkViewport:f=>checkViewport(f),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
-  slotCenter(s){const r=board.getBoundingClientRect(),c=S.current.cols;return [r.left+(s%c+.5)*G.pw*Z.z,r.top+(Math.floor(s/c)+.5)*G.ph*Z.z]}};
+  nearlySolve(){if(!C()||!G)return;const n=G.n,o=C().order;for(let i=0;i<n;i++)o[i]=i;[o[0],o[1]]=[o[1],o[0]];layout();refresh(false);save()},
+  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),pickImage:x=>pickImage(x),shuffleNow:()=>nightmareShuffle(),setShuffleIn:t=>{C().shuffleIn=t;updNm()},select:x=>select(x),zoomCenter:f=>zoomCenter(f),checkViewport:f=>checkViewport(f),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
+  rush:()=>S.rush,rushPoints:m=>rushPoints(m),useItem:k=>useItem(k),rushPlay:()=>rushPlay(),isRush:()=>RUSH,cur:()=>C(),rushOver:r=>rushOver(r),openLB:i=>openLB(i),
+  setRemain:t=>{const c=C();if(c){c.remain=t;upd()}},
+  slotCenter(s){const r=board.getBoundingClientRect(),c=C().cols;return [r.left+(s%c+.5)*G.pw*Z.z,r.top+(Math.floor(s/c)+.5)*G.ph*Z.z]}};
 
 // boot
 (async()=>{try{IMAGES=await idbMeta()}catch(e){console.warn(e);toast('⚠️','Storage unavailable','Photos can’t be saved in this browser mode')}
-  renderHome();if(S.current&&IMAGES.some(i=>i.id===S.current.imageId))openGame();})();
+  renderHome();
+  if(S.rush.playing&&S.rush.run&&IMAGES.length)rushPlay();
+  else if(S.current&&IMAGES.some(i=>i.id===S.current.imageId))openGame();})();
 })();
 </script>
 </body>
