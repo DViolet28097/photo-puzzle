@@ -81,6 +81,14 @@ header{background:var(--bg);position:relative;z-index:2}
 .piece.ok{box-shadow:none;cursor:default}
 button,.btn,.tile,input,label,.modal,.toast,header,.card,.stat,.ach{touch-action:manipulation}
 #stage,#board,.piece{touch-action:none}
+.modebox{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.modebox>span{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;flex:none}
+.seg{display:flex;flex:1;background:var(--panel);border-radius:12px;padding:4px;gap:4px}
+.seg button{flex:1;appearance:none;border:0;border-radius:9px;background:transparent;color:var(--muted);font-weight:600;font-size:15px;line-height:1.15;font-family:inherit;padding:8px 6px;min-height:44px;cursor:pointer}
+.seg button small{display:block;font-size:11px;font-weight:500;opacity:.85}
+.modal .seg{background:var(--panel2)}
+.seg button.on{background:var(--accent);color:#fff}
+.seg button[data-mode=hard].on{background:#e2556b}
 .banner{background:linear-gradient(135deg,#2b2560,#1d1f2b);border:1px solid #3d3780;border-radius:var(--r);padding:14px 14px 12px;margin-bottom:14px;position:relative}
 .banner h3{margin:0 26px 6px 0;font-size:16px}
 .banner p{margin:0 0 6px;font-size:13.5px;color:#c9cbe0}
@@ -170,6 +178,7 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
       <div class="stat"><b id="stImgs">0</b><span>Photos</span></div>
       <div class="stat"><b id="stAch">0</b><span>Badges</span></div>
     </div>
+    <div class="modebox"><span>Difficulty</span><div class="seg" role="radiogroup" aria-label="Difficulty"><button data-mode="standard" role="radio">Standard<small>~100 pieces</small></button><button data-mode="hard" role="radio">Hard<small>~150 pieces</small></button></div></div>
     <div class="banner hidden" id="installBanner">
       <button class="btn x" id="ibClose" aria-label="Dismiss">✕</button>
       <h3>📱 Play full screen like an app</h3>
@@ -242,6 +251,7 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
     <div class="storage" id="storeBox"><div class="srow"><b>💾 Storage</b><span id="stPhotos">–</span></div>
       <div class="sbar"><i id="stBar"></i></div>
       <div class="sline" id="stGame">–</div><div class="sline" id="stQuota"></div><div class="sline" id="stPersist"></div></div>
+    <div class="modebox" style="margin:0"><span>Mode</span><div class="seg" role="radiogroup" aria-label="Difficulty"><button data-mode="standard" role="radio">Standard<small>~100 pieces</small></button><button data-mode="hard" role="radio">Hard<small>~150 pieces</small></button></div></div>
     <button class="btn wide" id="sPhotos">🖼️ My Photos</button>
     <button class="btn wide" id="sFull">⛶ Full screen</button>
     <button class="btn wide" id="sAdd">＋ Add more photos</button>
@@ -286,6 +296,12 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
   <div class="stack"><button class="btn wide" id="vClose">Close</button></div>
 </div></div>
 
+<div class="modal" id="mMode"><div class="box">
+  <div style="font-size:44px" id="mmIc">🧩</div>
+  <h2 id="mmTitle">Restart this puzzle?</h2>
+  <p id="mmTxt"></p>
+  <div class="stack"><button class="btn primary wide" id="mmYes">Restart</button><button class="btn wide" id="mmNo">Keep current puzzle</button></div>
+</div></div>
 <div class="modal" id="mInstall"><div class="box" style="text-align:left">
   <h2 style="text-align:center">📱 Full screen</h2>
   <p>iPhone Safari can’t make a web page full screen by itself. Add it to your Home Screen instead:</p>
@@ -392,12 +408,14 @@ const ACH=[
  {id:'five',ic:'🖐️',name:'High Five',desc:'Complete 5 puzzles',t:()=>S.completed.length>=5},
  {id:'ten',ic:'🔟',name:'Puzzle Pro',desc:'Complete 10 puzzles',t:()=>S.completed.length>=10},
  {id:'twentyfive',ic:'👑',name:'Puzzle Royalty',desc:'Complete 25 puzzles',t:()=>S.completed.length>=25},
- {id:'speed',ic:'⚡',name:'Speed Solver',desc:'Finish a puzzle in under 20 minutes',t:r=>r&&r.time<1200},
- {id:'lightning',ic:'🌩️',name:'Lightning Hands',desc:'Finish a puzzle in under 10 minutes',t:r=>r&&r.time<600},
+ {id:'speed',ic:'⚡',name:'Speed Solver',desc:'Finish a puzzle in under 10 minutes',t:r=>r&&r.time<600},
+ {id:'lightning',ic:'🌩️',name:'Lightning Hands',desc:'Finish a puzzle in under 5 minutes',t:r=>r&&r.time<300},
  {id:'efficient',ic:'🎯',name:'Efficient',desc:'Finish using at most 1.25× as many moves as pieces',t:r=>r&&r.moves<=Math.round(r.pieces*1.25)},
  {id:'nopeek',ic:'🙈',name:'No Peeking',desc:'Finish a puzzle without using Peek',t:r=>r&&r.peeks===0},
  {id:'night',ic:'🦉',name:'Night Owl',desc:'Solve a puzzle after 10 PM',t:r=>{if(!r)return false;const h=new Date(r.date).getHours();return h>=22||h<4}},
  {id:'early',ic:'🌅',name:'Early Bird',desc:'Solve a puzzle between 5 and 8 AM',t:r=>{if(!r)return false;const h=new Date(r.date).getHours();return h>=5&&h<8}},
+ {id:'hard1',ic:'💪',name:'Hard Mode',desc:'Solve your first Hard puzzle',t:()=>S.completed.some(c=>c.mode==='hard')},
+ {id:'hard5',ic:'🥊',name:'Hard Hitter',desc:'Solve 5 Hard puzzles',t:()=>S.completed.filter(c=>c.mode==='hard').length>=5},
  {id:'collector',ic:'🗂️',name:'Collector',desc:'Add 20 photos to your collection',t:()=>IMAGES.length>=20},
  {id:'streak',ic:'🔥',name:'Streak',desc:'Solve puzzles on 3 different days',t:()=>S.days.length>=3},
  {id:'completionist',ic:'🏅',name:'Completionist',desc:'Solve every photo in your collection (3+ photos)',t:()=>{const d=doneIds();return IMAGES.length>=3&&IMAGES.every(i=>d.has(i.id))}},
@@ -426,7 +444,7 @@ function closeModals(){document.querySelectorAll('.modal.show').forEach(m=>m.cla
 let screen='home';
 function show(id){if(id!==screen){for(let i=tq.length-1;i>=0;i--)if(!tq[i][3])tq.splice(i,1);document.querySelectorAll('.toast:not(.ach-t)').forEach(t=>t.remove())}document.body.classList.toggle('ingame',id==='game');document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));screen=id;if(id!=='game')stopTimer()}
 
-function renderHome(){updateInstallUI();
+function renderHome(){updateInstallUI();renderMode();
   const lvl=S.completed.length+1;
   $('#stLevel').textContent=lvl;$('#stImgs').textContent=IMAGES.length;$('#stAch').textContent=Object.keys(S.ach).length+'/'+ACH.length;
   $('#importTitle').textContent=IMAGES.length?'Add more photos':'Add your photos';
@@ -456,6 +474,23 @@ $('#levels').addEventListener('click',async e=>{
     $('#vTxt').textContent=(rec?'':'This photo was deleted. ')+`Level ${c.level} · ${fmt(c.time)} · ${c.moves} moves · ${new Date(c.date).toLocaleDateString()}`;openModal('#mView')}
 });
 $('#playBtn').onclick=()=>play();
+
+// ---------- difficulty ----------
+function renderMode(){const m=curMode();document.querySelectorAll('.seg button').forEach(b=>{const on=b.dataset.mode===m;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)})}
+let pendingMode=null;
+function setMode(m){if(!MODES[m]||m===curMode()&&!(S.current&&S.current.mode!==m))return;
+  S.mode=m;save();renderMode();renderHome();
+  const cur=S.current;
+  if(cur&&cur.mode!==m){pendingMode=m;const L=MODES[m].label;
+    $('#mmIc').textContent=m==='hard'?'💪':'🧩';$('#mmTitle').textContent=`Restart this puzzle in ${L}?`;
+    $('#mmTxt').textContent=`Your Level ${cur.level} puzzle has ${cur.rows*cur.cols} pieces. Restart it with ~${MODES[m].t} pieces (same photo, moves and timer reset), or keep playing it as it is. ${L} will be used for your next new puzzle either way.`;
+    $('#mmYes').textContent=`Restart in ${L}`;closeModals();openModal('#mMode')}
+  else toast(m==='hard'?'💪':'🧩',`${MODES[m].label} mode`,`New puzzles will have ~${MODES[m].t} pieces`)}
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+$('#mmNo').onclick=()=>{pendingMode=null;closeModals();toast('👍','Kept your puzzle',`${MODES[curMode()].label} starts with your next puzzle`)};
+$('#mmYes').onclick=()=>{const m=pendingMode;pendingMode=null;closeModals();const cur=S.current;if(!cur||!m)return;
+  const [r,c]=chooseGrid(cur.w,cur.h,m);Object.assign(cur,{mode:m,rows:r,cols:c,order:derange(r*c),moves:0,elapsed:0,peeks:0});save();renderHome();
+  toast('🔄',`Restarted in ${MODES[m].label}`,`Level ${cur.level} now has ${r*c} pieces`)};
 
 // ---------- My Photos ----------
 let pSel=null; // Set of ids when selecting
@@ -520,8 +555,9 @@ $('#rYes').onclick=async()=>{const imgs=$('#rImgs').checked;const keepUi=S.ui;S=
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m&&m.id!=='mCelebrate')closeModals()}));
 
 // ---------- puzzle ----------
-const MINP=190,MAXP=210,TARGETP=200;
-function chooseGrid(w,h){
+const MODES={standard:{label:'Standard',min:95,max:105,t:100},hard:{label:'Hard',min:145,max:155,t:150}};
+const curMode=()=>MODES[S.mode]?S.mode:'standard';
+function chooseGrid(w,h,mode){const M=MODES[mode]||MODES.standard,MINP=M.min,MAXP=M.max,TARGETP=M.t;
   let best=[14,14],bs=1e9;
   for(let r=4;r<=60;r++)for(let c=4;c<=60;c++){const n=r*c;if(n<MINP||n>MAXP)continue;
     const pa=(w/c)/(h/r);const s=Math.abs(Math.log(pa))*3+Math.abs(n-TARGETP)/30;if(s<bs){bs=s;best=[r,c]}}
@@ -536,8 +572,8 @@ function newPuzzle(excludeId,level){
   if(!pool.length)pool=IMAGES.slice();
   if(!pool.length)return false;
   const img=pool[Math.random()*pool.length|0];level=level||S.completed.length+1;
-  const [rows,cols]=chooseGrid(img.w,img.h);
-  S.current={imageId:img.id,level,rows,cols,order:derange(rows*cols),moves:0,elapsed:0,peeks:0,w:img.w,h:img.h};
+  const mode=curMode();const [rows,cols]=chooseGrid(img.w,img.h,mode);
+  S.current={imageId:img.id,level,mode,rows,cols,order:derange(rows*cols),moves:0,elapsed:0,peeks:0,w:img.w,h:img.h};
   save();return true;
 }
 async function play(){
@@ -555,15 +591,16 @@ async function openGame(){
   curURL=URL.createObjectURL(new Blob([rec.data],{type:rec.type||'image/jpeg'}));
   cur.w=rec.w;cur.h=rec.h;
   const nn=cur.rows*cur.cols;
-  if(!(nn>=MINP&&nn<=MAXP)||!Array.isArray(cur.order)||cur.order.length!==nn){ // saved with an older piece count → restart same photo
-    const [r2,c2]=chooseGrid(rec.w,rec.h);Object.assign(cur,{rows:r2,cols:c2,order:derange(r2*c2),moves:0,elapsed:0,peeks:0});save();
-    toast('🧩','Puzzle upgraded',`Level ${cur.level} restarted with ${r2*c2} pieces`)}
+  const valid=nn>=4&&Array.isArray(cur.order)&&cur.order.length===nn&&new Set(cur.order).size===nn&&cur.order.every(v=>v>=0&&v<nn);
+  if(!valid){ // corrupt save → restart same photo in the current mode
+    const m=curMode(),[r2,c2]=chooseGrid(rec.w,rec.h,m);Object.assign(cur,{mode:m,rows:r2,cols:c2,order:derange(r2*c2),moves:0,elapsed:0,peeks:0});save();
+    toast('🧩','Puzzle restarted',`Level ${cur.level} restarted with ${r2*c2} pieces`)}
   const board=$('#board');board.querySelectorAll('.piece').forEach(p=>p.remove());board.classList.remove('solved','peek');
   $('#peekImg').src=curURL;
   const n=cur.rows*cur.cols;const els=[];
   for(let p=0;p<n;p++){const el=document.createElement('div');el.className='piece';el.style.backgroundImage=`url("${curURL}")`;el.dataset.p=p;board.appendChild(el);els[p]=el}
   G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n};
-  $('#gTitle').innerHTML=`Level ${cur.level}<small>${cur.rows*cur.cols} pieces · ${cur.cols}×${cur.rows}</small>`;
+  $('#gTitle').innerHTML=`Level ${cur.level}<small>${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces</small>`;
   Z.z=1;Z.tx=0;Z.ty=0;gest=null;ptrs.clear();
   show('game');layout();refresh(false);startTimer();
   if(!S.seenZoomHint){S.seenZoomHint=1;save();toast('🤏','Pinch to zoom','Tap two pieces to swap them. Pieces that lock in place are in the right spot.')}
@@ -719,7 +756,7 @@ $('#backBtn').onclick=()=>{select(null);stopTimer();renderHome();show('home')};
 
 function complete(){
   G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);const cur=S.current;
-  const r={id:cur.imageId,level:cur.level,time:Math.round(cur.elapsed),moves:cur.moves,peeks:cur.peeks,pieces:G.n,date:Date.now()};
+  const r={id:cur.imageId,level:cur.level,time:Math.round(cur.elapsed),moves:cur.moves,peeks:cur.peeks,pieces:G.n,mode:cur.mode||null,date:Date.now()};
   S.completed.push(r);const dk=dayKey(new Date());if(!S.days.includes(dk))S.days.push(dk);
   S.current=null;save();stopTimer();
   const got=checkAch(r);
