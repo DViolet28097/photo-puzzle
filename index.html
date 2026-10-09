@@ -55,6 +55,17 @@ header h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
 .tile.next > div{position:relative;text-align:center}
 .tile.locked{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);border:2px dashed #34374c;background:transparent;cursor:default}
 .tile.locked .big{font-size:28px}
+.tile.gone{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--panel);color:var(--muted)}
+.tile.gone .big{font-size:26px;margin-bottom:22px}
+.tile .chk{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+#pGrid.selecting .tile .chk{display:flex}
+#pGrid .tile.picked{outline:3px solid var(--accent);outline-offset:-3px}
+#pGrid .tile.picked img{opacity:.7}
+#pGrid .tile.picked .chk{background:var(--accent);border-color:var(--accent)}
+.selbar{display:none;gap:8px;padding:8px 14px calc(8px + var(--sab));background:var(--panel);border-top:1px solid #2c2f42}
+.selbar.show{display:flex}
+.selbar .btn{flex:1}
+.empty{color:var(--muted);text-align:center;padding:40px 10px}
 @keyframes glow{50%{box-shadow:0 0 0 6px rgba(124,108,255,.15)}}
 /* game */
 #game header{padding-bottom:4px}
@@ -138,6 +149,7 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
 <section class="screen active" id="home">
   <header>
     <h1>🧩 Picture Puzzles</h1>
+    <button class="btn icon" id="photosBtn" aria-label="My Photos">🖼️</button>
     <button class="btn icon" id="achBtn" aria-label="Achievements">🏆</button>
     <button class="btn icon" id="setBtn" aria-label="Settings">⚙️</button>
   </header>
@@ -177,6 +189,17 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
   <div class="foot"><button class="btn zbtn" id="zOut" aria-label="Zoom out">−</button><button class="btn zbtn" id="zReset" aria-label="Fit board" style="font-size:14px;width:auto;padding:0 10px">1×</button><button class="btn zbtn" id="zIn" aria-label="Zoom in">＋</button><div class="prog"><i id="gProg"></i></div><div class="ptxt" id="gPtxt">0%</div></div>
 </section>
 
+<!-- MY PHOTOS -->
+<section class="screen" id="photos">
+  <header>
+    <button class="btn icon" id="pBack" aria-label="Back">‹</button>
+    <h1>My Photos<small id="pSum"></small></h1>
+    <button class="btn" id="pSelect">Select</button>
+  </header>
+  <div class="scroll"><div class="grid" id="pGrid"></div></div>
+  <div class="selbar" id="pBar"><button class="btn" id="pAll">Select all</button><button class="btn danger" id="pDel" disabled>Delete</button></div>
+</section>
+
 <!-- ACHIEVEMENTS -->
 <section class="screen" id="achs">
   <header>
@@ -201,6 +224,7 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
     <div class="storage" id="storeBox"><div class="srow"><b>💾 Storage</b><span id="stPhotos">–</span></div>
       <div class="sbar"><i id="stBar"></i></div>
       <div class="sline" id="stGame">–</div><div class="sline" id="stQuota"></div><div class="sline" id="stPersist"></div></div>
+    <button class="btn wide" id="sPhotos">🖼️ My Photos</button>
     <button class="btn wide" id="sAdd">＋ Add more photos</button>
     <button class="btn wide" id="sSkip">🔀 Swap current puzzle for another photo</button>
     <button class="btn danger wide" id="sReset">Reset progress…</button>
@@ -222,6 +246,19 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
 <div class="modal" id="mAlert"><div class="box">
   <div style="font-size:44px" id="aIc">⚠️</div><h2 id="aTitle"></h2><p id="aTxt"></p>
   <div class="stack"><button class="btn primary wide" id="aOk">OK</button></div>
+</div></div>
+
+<div class="modal" id="mPhoto"><div class="box">
+  <img class="prev" id="phImg" alt="">
+  <p id="phTxt"></p>
+  <div class="stack"><button class="btn danger wide" id="phDel">🗑 Delete photo</button><button class="btn wide" id="phClose">Close</button></div>
+</div></div>
+
+<div class="modal" id="mDel"><div class="box">
+  <div style="font-size:44px">🗑</div>
+  <h2 id="dTitle">Delete photo?</h2>
+  <p id="dTxt"></p>
+  <div class="stack"><button class="btn danger wide" id="dYes">Delete</button><button class="btn wide" id="dNo">Cancel</button></div>
 </div></div>
 
 <div class="modal" id="mView"><div class="box">
@@ -258,6 +295,7 @@ async function tx(mode,fn){const d=await db();return new Promise((res,rej)=>{con
 const idbGet=id=>tx('readonly',s=>s.get(id));
 const idbPut=o=>tx('readwrite',s=>s.put(o));
 const idbClear=()=>tx('readwrite',s=>s.clear());
+const idbDelMany=ids=>tx('readwrite',s=>{let r;ids.forEach(id=>{r=s.delete(id)});return r});
 async function idbMeta(){const out=[];const d=await db();return new Promise((res,rej)=>{const t=d.transaction('images','readonly');const c=t.objectStore('images').openCursor();c.onsuccess=()=>{const cur=c.result;if(cur){const v=cur.value;out.push({id:v.id,name:v.name,w:v.w,h:v.h,thumb:v.thumb,added:v.added,bytes:(v.data?v.data.byteLength:0)+(v.thumb?v.thumb.length:0)});cur.continue()}};t.oncomplete=()=>res(out.sort((a,b)=>a.added-b.added));t.onerror=()=>rej(t.error)})}
 let IMAGES=[];
 
@@ -309,10 +347,10 @@ async function importFiles(list){
   }finally{try{IMAGES=await idbMeta()}catch(e){}busy(false)}
   if(full){
     showAlert('📦','Storage is full',`Saved ${added} new photo${added===1?'':'s'}, but there wasn’t room for the other ${skipped}. Your saved photos and progress are safe. To make room, free up space on your iPhone, or reset with “Also remove my photos” and add a smaller set.`);
-    checkAch(null);renderHome();return}
+    checkAch(null);renderHome();if(screen==='photos')renderPhotos();return}
   if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
   toast('🖼️',`Added ${added} photo${added===1?'':'s'}`,(dup?`${dup} already added. `:'')+(failed?`${failed} couldn’t be read.`:'')||'Ready to play!');
-  checkAch(null);renderHome();
+  checkAch(null);renderHome();if(screen==='photos')renderPhotos();
 }
 $('#addBtn').onclick=$('#sAdd').onclick=()=>{closeModals();$('#fileIn').click()};
 $('#dirBtn').onclick=()=>$('#dirIn').click();
@@ -339,7 +377,7 @@ const ACH=[
 function checkAch(r){
   const got=[];
   for(const a of ACH){if(!S.ach[a.id]){let ok=false;try{ok=!!a.t(r)}catch(e){}if(ok){S.ach[a.id]=Date.now();got.push(a)}}}
-  if(got.length){save();got.forEach((a,i)=>toast(a.ic,a.name,'Achievement unlocked!',true))}
+  if(got.length){save();if(got.length<=2)got.forEach(a=>toast(a.ic,a.name,'Achievement unlocked!',true));else toast('🏆',got.map(a=>a.name).join(', '),`${got.length} achievements unlocked!`,true)}
   return got;
 }
 function renderAch(){
@@ -370,7 +408,7 @@ function renderHome(){
   $('#playBtn').textContent=S.current?`▶ Continue level ${S.current.level}`:(remaining?`▶ Play level ${lvl}`:'🔁 Replay a random photo');
   const thumbs=Object.fromEntries(IMAGES.map(i=>[i.id,i.thumb]));
   let h='';
-  S.completed.forEach((c,i)=>{h+=`<div class="tile" data-view="${i}">${thumbs[c.id]?`<img src="${thumbs[c.id]}" alt="">`:''}<span class="badge">✓</span><div class="cap"><b>Level ${c.level}</b><br>${fmt(c.time)} · ${c.moves} moves</div></div>`});
+  S.completed.forEach((c,i)=>{h+=`<div class="tile${thumbs[c.id]?'':' gone'}" data-view="${i}">${thumbs[c.id]?`<img src="${thumbs[c.id]}" alt="">`:'<div class="big">🗑️</div>'}<span class="badge">✓</span><div class="cap"><b>Level ${c.level}</b><br>${fmt(c.time)} · ${c.moves} moves</div></div>`});
   if(IMAGES.length){
     const cur=S.current;
     h+=`<div class="tile next" data-play="1">${cur&&thumbs[cur.imageId]?`<img src="${thumbs[cur.imageId]}" alt="">`:''}<div><div class="big">${cur?'▶':'?'}</div>Level ${lvl}<br><small style="font-weight:500">${cur?'In progress':(remaining?'Unlocked':'Replay')}</small></div></div>`;
@@ -386,9 +424,62 @@ $('#levels').addEventListener('click',async e=>{
   if(t.dataset.view!=null){const c=S.completed[+t.dataset.view];const rec=await idbGet(c.id);
     if(rec){const u=URL.createObjectURL(new Blob([rec.data],{type:rec.type}));$('#vImg').onload=()=>URL.revokeObjectURL(u);$('#vImg').src=u}
     else $('#vImg').removeAttribute('src');
-    $('#vTxt').textContent=`Level ${c.level} · ${fmt(c.time)} · ${c.moves} moves · ${new Date(c.date).toLocaleDateString()}`;openModal('#mView')}
+    $('#vImg').classList.toggle('hidden',!rec);
+    $('#vTxt').textContent=(rec?'':'This photo was deleted. ')+`Level ${c.level} · ${fmt(c.time)} · ${c.moves} moves · ${new Date(c.date).toLocaleDateString()}`;openModal('#mView')}
 });
 $('#playBtn').onclick=()=>play();
+
+// ---------- My Photos ----------
+let pSel=null; // Set of ids when selecting
+let pView=null;
+function renderPhotos(){
+  const d=doneIds(),n=IMAGES.length,solved=IMAGES.filter(i=>d.has(i.id)).length;
+  $('#pSum').textContent=n?`${n} photo${n===1?'':'s'} · ${solved} solved`:'No photos yet';
+  const g=$('#pGrid');g.classList.toggle('selecting',!!pSel);
+  g.innerHTML=n?IMAGES.map(i=>`<div class="tile${pSel&&pSel.has(i.id)?' picked':''}" data-id="${esc(i.id)}"><img src="${i.thumb}" alt=""><span class="chk">${pSel&&pSel.has(i.id)?'✓':''}</span>${d.has(i.id)?'<span class="badge">✓ Solved</span>':''}${S.current&&S.current.imageId===i.id?'<div class="cap"><b>▶ In progress</b></div>':''}</div>`).join('')
+    :`<div class="empty" style="grid-column:1/-1">No photos saved yet.<br><br><button class="btn primary" id="pAdd">＋ Add photos</button></div>`;
+  const b=$('#pAdd');if(b)b.onclick=()=>$('#fileIn').click();
+  $('#pSelect').textContent=pSel?'Cancel':'Select';$('#pSelect').classList.toggle('hidden',!n);
+  $('#pBar').classList.toggle('show',!!pSel);
+  if(pSel){$('#pDel').disabled=!pSel.size;$('#pDel').textContent=pSel.size?`Delete (${pSel.size})`:'Delete';$('#pAll').textContent=pSel.size===n?'Select none':'Select all'}
+}
+function openPhotos(){pSel=null;closeModals();renderPhotos();show('photos')}
+$('#photosBtn').onclick=openPhotos;$('#sPhotos').onclick=openPhotos;
+$('#pBack').onclick=()=>{pSel=null;renderHome();show('home')};
+$('#pSelect').onclick=()=>{pSel=pSel?null:new Set();renderPhotos()};
+$('#pAll').onclick=()=>{pSel=pSel.size===IMAGES.length?new Set():new Set(IMAGES.map(i=>i.id));renderPhotos()};
+$('#pDel').onclick=()=>{if(pSel&&pSel.size)askDelete([...pSel])};
+$('#pGrid').addEventListener('click',async e=>{
+  const t=e.target.closest('.tile[data-id]');if(!t)return;const id=t.dataset.id;
+  if(pSel){pSel.has(id)?pSel.delete(id):pSel.add(id);renderPhotos();return}
+  const meta=IMAGES.find(i=>i.id===id);if(!meta)return;pView=id;
+  $('#phImg').src=meta.thumb;
+  const runs=S.completed.filter(c=>c.id===id);
+  $('#phTxt').textContent=[meta.name,`${meta.w}×${meta.h}`,runs.length?`Solved ${runs.length}× · best ${fmt(Math.min(...runs.map(r=>r.time)))}`:'Not solved yet',S.current&&S.current.imageId===id?'In progress':''].filter(Boolean).join(' · ');
+  openModal('#mPhoto');
+  const rec=await idbGet(id);if(rec&&pView===id){const u=URL.createObjectURL(new Blob([rec.data],{type:rec.type}));$('#phImg').onload=()=>URL.revokeObjectURL(u);$('#phImg').src=u}
+});
+$('#phClose').onclick=()=>{pView=null;closeModals()};
+$('#phDel').onclick=()=>{if(pView)askDelete([pView])};
+let pendingDel=null;
+function askDelete(ids){
+  pendingDel=ids;const n=ids.length,cur=S.current&&ids.includes(S.current.imageId);
+  $('#dTitle').textContent=n===1?'Delete this photo?':`Delete ${n} photos?`;
+  $('#dTxt').textContent=`${n===1?'It':'They'} will be removed from this app (the original in your Files/Photos isn’t touched).`+(cur?' Your puzzle in progress uses '+(n===1?'this photo':'one of them')+' and will be replaced with a new one.':'')+' Solved levels and achievements are kept.';
+  $('#dYes').textContent=n===1?'Delete':`Delete ${n}`;
+  closeModals();openModal('#mDel');
+}
+$('#dNo').onclick=()=>{pendingDel=null;closeModals()};
+$('#dYes').onclick=async()=>{const ids=pendingDel;pendingDel=null;closeModals();if(ids&&ids.length)await deletePhotos(ids)};
+async function deletePhotos(ids){
+  try{await idbDelMany(ids)}catch(e){console.warn('delete failed',e);showAlert('⚠️','Couldn’t delete','Something went wrong deleting photos. Please try again.');return}
+  IMAGES=await idbMeta();
+  let replaced=false;
+  if(S.current&&!IMAGES.some(i=>i.id===S.current.imageId)){const lvl=S.current.level;S.current=null;if(IMAGES.length)newPuzzle(null,lvl);replaced=true}
+  save();pSel=null;pView=null;checkAch(null); // earned achievements are never revoked
+  renderPhotos();renderHome();
+  toast('🗑️',`Deleted ${ids.length} photo${ids.length===1?'':'s'}`,replaced&&S.current?'Your puzzle in progress now uses a new photo':(IMAGES.length?`${IMAGES.length} left`:'Add photos to keep playing'));
+}
 $('#vClose').onclick=closeModals;
 $('#achBtn').onclick=()=>{renderAch();show('achs')};
 $('#achBack').onclick=()=>{renderHome();show('home')};
@@ -592,7 +683,7 @@ if(window.visualViewport)visualViewport.addEventListener('resize',onResize);
 // test hook, only with ?debug=1
 if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=>IMAGES,runtime:()=>G,
   nearlySolve(){if(!S.current||!G)return;const n=G.n,o=S.current.order;for(let i=0;i<n;i++)o[i]=i;[o[0],o[1]]=[o[1],o[0]];layout();refresh(false);save()},
-  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
+  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
   slotCenter(s){const r=board.getBoundingClientRect(),c=S.current.cols;return [r.left+(s%c+.5)*G.pw*Z.z,r.top+(Math.floor(s/c)+.5)*G.ph*Z.z]}};
 
 // boot
