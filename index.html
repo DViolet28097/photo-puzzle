@@ -51,7 +51,7 @@ header h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
 .tile .badge{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);border-radius:20px;padding:2px 7px;font-size:12px}
 .tile.next{background:linear-gradient(135deg,#3a2f8f,#7c6cff);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;box-shadow:0 0 0 3px rgba(124,108,255,.35);animation:glow 2s infinite}
 .tile.next .big{font-size:34px;line-height:1}
-.tile.next img{position:absolute;inset:0;filter:blur(6px) brightness(.55)}
+.tile.next img{position:absolute;inset:0;filter:blur(18px) brightness(.5);transform:scale(1.3)}
 .tile.next > div{position:relative;text-align:center}
 .tile.locked{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);border:2px dashed #34374c;background:transparent;cursor:default}
 .tile.locked .big{font-size:28px}
@@ -78,14 +78,15 @@ header{background:var(--bg);position:relative;z-index:2}
 .piece.ok{box-shadow:none;cursor:default}
 button,.btn,.tile,input,label,.modal,.toast,header,.card,.stat,.ach{touch-action:manipulation}
 #stage,#board,.piece{touch-action:none}
-.modebox{display:flex;align-items:center;gap:10px;margin:0 0 14px}
-.modebox>span{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;flex:none}
+.modebox{display:flex;flex-direction:column;align-items:stretch;gap:6px;margin:0 0 14px}
+.modebox>span{font-size:12px;padding-left:2px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;flex:none}
 .seg{display:flex;flex:1;background:var(--panel);border-radius:12px;padding:4px;gap:4px}
-.seg button{flex:1;appearance:none;border:0;border-radius:9px;background:transparent;color:var(--muted);font-weight:600;font-size:15px;line-height:1.15;font-family:inherit;padding:8px 6px;min-height:44px;cursor:pointer}
+.seg button{flex:1;appearance:none;border:0;border-radius:9px;background:transparent;color:var(--muted);font-weight:600;font-size:14px;line-height:1.15;font-family:inherit;padding:7px 4px;min-height:44px;cursor:pointer}
 .seg button small{display:block;font-size:11px;font-weight:500;opacity:.85}
 .modal .seg{background:var(--panel2)}
 .seg button.on{background:var(--accent);color:#fff}
 .seg button[data-mode=hard].on{background:#e2556b}
+.seg button[data-mode=nightmare].on{background:linear-gradient(135deg,#5b1430,#9b1d4c);box-shadow:inset 0 0 0 1px #ff5d73}
 .banner{background:linear-gradient(135deg,#2b2560,#1d1f2b);border:1px solid #3d3780;border-radius:var(--r);padding:14px 14px 12px;margin-bottom:14px;position:relative}
 .banner h3{margin:0 26px 6px 0;font-size:16px}
 .banner p{margin:0 0 6px;font-size:13.5px;color:#c9cbe0}
@@ -100,16 +101,67 @@ button,.btn,.tile,input,label,.modal,.toast,header,.card,.stat,.ach{touch-action
 #peekImg{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity .25s;border-radius:4px;z-index:30}
 #board.peek #peekImg{opacity:1}
 #board.solved .piece{box-shadow:none}
-#gbar{flex:none;display:flex;align-items:center;gap:2px;height:34px;padding:0 6px;box-sizing:content-box;background:rgba(255,255,255,.035);border-top:1px solid rgba(255,255,255,.06)}
+#gbar{flex:none;display:flex;align-items:center;gap:0;height:34px;padding:0 2px;position:relative;z-index:2;box-sizing:content-box;background:rgba(255,255,255,.035);border-top:1px solid rgba(255,255,255,.06)}
 #game{padding-bottom:0}
 #gbar{padding-bottom:var(--sab)}
-.gb{appearance:none;-webkit-appearance:none;border:0;background:transparent;color:var(--muted);font-weight:600;font-size:19px;line-height:1;font-family:inherit;min-width:44px;height:36px;margin:-1px 0;padding:0 8px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gb{appearance:none;-webkit-appearance:none;border:0;background:transparent;color:var(--muted);font-weight:600;font-size:19px;line-height:1;font-family:inherit;min-width:38px;height:36px;margin:-1px 0;padding:0 6px;flex:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .gb:active{background:rgba(255,255,255,.08)}
 #backBtn{font-size:26px;font-weight:400}
 #peekBtn{font-size:17px}
 #peekBtn.on{background:var(--gold);color:#2a2000}
-.gstats{margin-left:auto;display:flex;gap:14px;padding-right:8px;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.gstats b{font-weight:600;color:#c9ccdd}
+.glv{font-size:12.5px;font-weight:600;color:#c9ccdd;white-space:nowrap;padding:0 2px}
+.gright{margin-left:auto;display:flex;align-items:center;gap:0;min-width:0}
+.gs{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;padding:0 5px}
+.gs b{font-weight:600;color:#c9ccdd}
+.gs .ic{font-size:11px;opacity:.85}
+.ring{width:14px;height:14px;border-radius:50%;display:inline-block;background:conic-gradient(var(--danger) var(--p,100%),rgba(255,255,255,.12) 0);-webkit-mask:radial-gradient(circle,transparent 3.5px,#000 4px);mask:radial-gradient(circle,transparent 3.5px,#000 4px)}
+.gs.nm.soon b{color:var(--danger)}
+.gs.nm.soon .ring{animation:pulse .5s infinite alternate}
+@keyframes pulse{to{transform:scale(1.25)}}
+#statusBtn svg{width:20px;height:20px;display:block}
+#statusBtn.on{background:rgba(255,255,255,.14)}
+#board.status .piece::after{content:'';position:absolute;inset:0;background:rgba(255,40,50,.4);pointer-events:none}
+#board.status .piece.ok::after{background:rgba(30,210,90,.4)}
+#board.solved .piece::after{display:none}
+#board.intro #peekImg{opacity:1;transition:none}
+#board.introfade #peekImg{transition:opacity .7s ease}
+#board.shake{animation:shake .5s}
+@keyframes shake{0%,100%{translate:0 0}20%{translate:-6px 0}40%{translate:6px 0}60%{translate:-4px 0}80%{translate:4px 0}}
+#shuffleFlash{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle,rgba(255,93,115,.0),rgba(255,93,115,.35));opacity:0;z-index:3}
+#shuffleFlash.on{animation:flash .7s}
+@keyframes flash{0%{opacity:1}100%{opacity:0}}
+#stage{z-index:1}
+#gside{position:absolute;left:calc(var(--sal) + 10px);top:calc(var(--sat) + 12px);display:none;flex-direction:column;gap:6px;z-index:0;pointer-events:none;color:var(--muted);font-size:13px}
+#gside.show{display:flex}
+#gside .sl{font-size:12px;text-transform:uppercase;letter-spacing:.6px}
+#gside .sl b{display:block;font-size:26px;color:var(--text);letter-spacing:0;line-height:1.1}
+#gside .sm{font-weight:600;color:#c9ccdd}
+#gside .sm.nightmare{color:#ff7a8c}#gside .sm.hard{color:#ff8fa0}
+#gside .sp{height:6px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:6px}
+#gside .sp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+#gside .spt{font-size:12px;font-variant-numeric:tabular-nums}
+#gside .snm b{color:var(--danger)}
+.srow2{display:flex;align-items:center;justify-content:space-between}
+.srow2 .btn{min-height:34px;padding:6px 12px;font-size:13px;text-transform:none;letter-spacing:0}
+.blur img,img.blur{filter:blur(16px) saturate(.8);transform:scale(1.3)}
+.tile.blur{overflow:hidden}
+.tile .lockic{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+#mPhoto .pwrap{overflow:hidden;border-radius:12px;margin-bottom:12px}
+#mPhoto .pwrap img.prev{margin:0 auto}
+#mPhoto .pwrap.blur img{filter:blur(28px);transform:scale(1.25)}
+#galGrid .tile{-webkit-touch-callout:none}
+#galGrid .tile img{transition:filter .25s}
+#galGrid .tile.stats img{filter:blur(10px) brightness(.45);transform:scale(1.15)}
+#galGrid .gst{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:8px;font-size:11.5px;line-height:1.45;color:#e6e8f5}
+#galGrid .gst b{color:#fff}
+#galPop{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,86vw);border-radius:18px;overflow:hidden;z-index:120;box-shadow:0 20px 60px rgba(0,0,0,.7);background:#111;animation:rise .2s ease}
+#galPop .gpimg{position:absolute;inset:0}
+#galPop .gpimg img{width:100%;height:100%;object-fit:cover;filter:blur(14px) brightness(.4);transform:scale(1.2)}
+#galPop .gpst{position:relative;padding:20px 20px 8px;font-size:15px;line-height:1.7;color:#e6e8f5}
+#galPop .gpst b{color:#fff}
+#galPop small{position:relative;display:block;text-align:center;color:var(--muted);padding:0 0 14px}
+#galGrid .tile.holding{transform:scale(.96);transition:transform 1s}
+#galGrid .tile.holding img{filter:blur(4px)}
 /* achievements */
 .ach{display:flex;gap:12px;align-items:center;background:var(--panel);border-radius:12px;padding:12px;margin-bottom:8px}
 .ach .ic{font-size:28px;width:48px;height:48px;border-radius:12px;background:var(--panel2);display:flex;align-items:center;justify-content:center;flex:none}
@@ -179,7 +231,7 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
       <div class="stat"><b id="stImgs">0</b><span>Photos</span></div>
       <div class="stat"><b id="stAch">0</b><span>Badges</span></div>
     </div>
-    <div class="modebox"><span>Difficulty</span><div class="seg" role="radiogroup" aria-label="Difficulty"><button data-mode="standard" role="radio">Standard<small>~100 pieces</small></button><button data-mode="hard" role="radio">Hard<small>~150 pieces</small></button></div></div>
+    <div class="modebox"><span>Difficulty</span><div class="seg" role="radiogroup" aria-label="Difficulty"><button data-mode="standard" role="radio">Standard<small>~100 pieces</small></button><button data-mode="hard" role="radio">Hard<small>~150 pieces</small></button><button data-mode="nightmare" role="radio">Nightmare<small>shuffles / 60s</small></button></div></div>
     <div class="banner hidden" id="installBanner">
       <button class="btn x" id="ibClose" aria-label="Dismiss">✕</button>
       <h3>📱 Play full screen like an app</h3>
@@ -196,19 +248,34 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
       </div>
     </div>
     <div id="playWrap" class="hidden" style="margin-bottom:14px"><button class="btn primary wide" id="playBtn" style="font-size:17px;min-height:52px">▶ Play</button></div>
-    <div class="sect">Levels</div>
+    <div class="sect srow2"><span>Levels</span><button class="btn" id="galBtn">🏞 Gallery</button></div>
     <div class="grid" id="levels"></div>
   </div>
 </section>
 
 <!-- GAME -->
 <section class="screen" id="game">
-  <div id="stage"><div id="board" role="img" aria-label=""><img id="peekImg" alt=""></div></div>
+  <aside id="gside"><div class="sl">Level<b id="sdLv">1</b></div><div class="sm" id="sdMode">Standard</div><div class="sp"><i id="sdBar"></i></div><div class="spt" id="sdPct">0%</div><div class="snm hidden" id="sdNm">Shuffle in <b id="sdNmT">60</b>s</div></aside>
+  <div id="stage"><div id="board" role="img" aria-label=""><img id="peekImg" alt=""></div><div id="shuffleFlash"></div></div>
   <nav id="gbar">
-    <button class="gb" id="backBtn" aria-label="Back to levels">‹</button>
-    <button class="gb" id="peekBtn" aria-label="Peek at the full picture">👁</button>
-    <div class="gstats"><span>⏱ <b id="gTime">0:00</b></span><span>↔ <b id="gMoves">0</b></span><span>🧩 <b id="gPieces">0</b></span></div>
+    <button class="gb" id="backBtn" aria-label="Back to levels">‹</button><span class="glv" id="gLv">Lv 1</span>
+    <div class="gright">
+      <button class="gb" id="peekBtn" aria-label="Peek at the full picture">👁</button>
+      <span class="gs"><span class="ic">⏱</span><b id="gTime">0:00</b></span><span class="gs"><span class="ic">↔</span><b id="gMoves">0</b></span><span class="gs"><span class="ic">🧩</span><b id="gPieces">0</b></span>
+      <span class="gs nm hidden" id="gNm" title="Seconds until shuffle"><i class="ring" id="gRing"></i><b id="gNmT">60</b></span>
+      <button class="gb" id="statusBtn" aria-label="Show which pieces are right" aria-pressed="false"><svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="3" fill="none" stroke="#c9ccdd" stroke-width="1.6"/><path d="M3.5 3.5h6.5v13H5a1.5 1.5 0 0 1-1.5-1.5z" fill="#2fd27a" opacity=".85"/><path d="M10 3.5h5a1.5 1.5 0 0 1 1.5 1.5v10a1.5 1.5 0 0 1-1.5 1.5h-5z" fill="#ff4d5e" opacity=".85"/></svg></button>
+    </div>
   </nav>
+</section>
+
+<!-- GALLERY -->
+<section class="screen" id="gallery">
+  <header>
+    <button class="btn icon" id="gBack" aria-label="Back">‹</button>
+    <h1>Gallery<small id="galSum"></small></h1>
+  </header>
+  <div class="scroll"><p class="hint" style="margin:0 2px 10px">Tap to view · press and hold for stats</p><div class="grid" id="galGrid"></div></div>
+  <div id="galPop" class="hidden" role="dialog" aria-label="Solve stats"><div class="gpimg"><img id="gpImg" alt=""></div><div class="gpst" id="gpSt"></div><small>Tap anywhere to close</small></div>
 </section>
 
 <!-- MY PHOTOS -->
@@ -246,7 +313,7 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
     <div class="storage" id="storeBox"><div class="srow"><b>💾 Storage</b><span id="stPhotos">–</span></div>
       <div class="sbar"><i id="stBar"></i></div>
       <div class="sline" id="stGame">–</div><div class="sline" id="stQuota"></div><div class="sline" id="stPersist"></div></div>
-    <div class="modebox" style="margin:0"><span>Mode</span><div class="seg" role="radiogroup" aria-label="Difficulty"><button data-mode="standard" role="radio">Standard<small>~100 pieces</small></button><button data-mode="hard" role="radio">Hard<small>~150 pieces</small></button></div></div>
+    <div class="modebox" style="margin:0"><span>Difficulty</span><div class="seg" role="radiogroup" aria-label="Difficulty"><button data-mode="standard" role="radio">Standard<small>~100 pieces</small></button><button data-mode="hard" role="radio">Hard<small>~150 pieces</small></button><button data-mode="nightmare" role="radio">Nightmare<small>shuffles / 60s</small></button></div></div>
     <button class="btn wide" id="sPhotos">🖼️ My Photos</button>
     <button class="btn wide" id="sFull">⛶ Full screen</button>
     <button class="btn wide" id="sAdd">＋ Add more photos</button>
@@ -273,7 +340,7 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
 </div></div>
 
 <div class="modal" id="mPhoto"><div class="box">
-  <img class="prev" id="phImg" alt="">
+  <div class="pwrap" id="phWrap"><img class="prev" id="phImg" alt=""></div>
   <p id="phTxt"></p>
   <div class="stack"><button class="btn danger wide" id="phDel">🗑 Delete photo</button><button class="btn wide" id="phClose">Close</button></div>
 </div></div>
@@ -315,8 +382,10 @@ input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
 'use strict';
 const $=s=>document.querySelector(s);
 const LS='picturePuzzle.v1';
+const NOINTRO=/[?&]debug=1\b/.test(location.search)&&/[?&]nointro=1\b/.test(location.search);
 const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const fmt=s=>{s=Math.floor(s);const h=Math.floor(s/3600),m=Math.floor(s/60)%60,x=s%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')};
+const rnd=n=>{if(n<=1)return 0;if(window.crypto&&crypto.getRandomValues){const a=new Uint32Array(1),lim=Math.floor(4294967296/n)*n;let x;do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);return x%n}return Math.random()*n|0};
 const dayKey=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -411,6 +480,8 @@ const ACH=[
  {id:'early',ic:'🌅',name:'Early Bird',desc:'Solve a puzzle between 5 and 8 AM',t:r=>{if(!r)return false;const h=new Date(r.date).getHours();return h>=5&&h<8}},
  {id:'hard1',ic:'💪',name:'Hard Mode',desc:'Solve your first Hard puzzle',t:()=>S.completed.some(c=>c.mode==='hard')},
  {id:'hard5',ic:'🥊',name:'Hard Hitter',desc:'Solve 5 Hard puzzles',t:()=>S.completed.filter(c=>c.mode==='hard').length>=5},
+ {id:'nm1',ic:'😈',name:'Nightmare Survivor',desc:'Solve your first Nightmare puzzle',t:()=>S.completed.some(c=>c.mode==='nightmare')},
+ {id:'nm3',ic:'🌙',name:'Sleepless',desc:'Solve 3 Nightmare puzzles',t:()=>S.completed.filter(c=>c.mode==='nightmare').length>=3},
  {id:'collector',ic:'🗂️',name:'Collector',desc:'Add 20 photos to your collection',t:()=>IMAGES.length>=20},
  {id:'streak',ic:'🔥',name:'Streak',desc:'Solve puzzles on 3 different days',t:()=>S.days.length>=3},
  {id:'completionist',ic:'🏅',name:'Completionist',desc:'Solve every photo in your collection (3+ photos)',t:()=>{const d=doneIds();return IMAGES.length>=3&&IMAGES.every(i=>d.has(i.id))}},
@@ -452,7 +523,7 @@ function renderHome(){updateInstallUI();renderMode();
   S.completed.forEach((c,i)=>{h+=`<div class="tile${thumbs[c.id]?'':' gone'}" data-view="${i}">${thumbs[c.id]?`<img src="${thumbs[c.id]}" alt="">`:'<div class="big">🗑️</div>'}<span class="badge">✓</span><div class="cap"><b>Level ${c.level}</b><br>${fmt(c.time)} · ${c.moves} moves</div></div>`});
   if(IMAGES.length){
     const cur=S.current;
-    h+=`<div class="tile next" data-play="1">${cur&&thumbs[cur.imageId]?`<img src="${thumbs[cur.imageId]}" alt="">`:''}<div><div class="big">${cur?'▶':'?'}</div>Level ${lvl}<br><small style="font-weight:500">${cur?'In progress':(remaining?'Unlocked':'Replay')}</small></div></div>`;
+    h+=`<div class="tile next blur" data-play="1">${cur&&thumbs[cur.imageId]?`<img src="${thumbs[cur.imageId]}" alt="">`:''}<div><div class="big">${cur?'▶':'?'}</div>Level ${lvl}<br><small style="font-weight:500">${cur?'In progress':(remaining?'Unlocked':'Replay')}</small></div></div>`;
     h+=`<div class="tile locked"><div class="big">🔒</div>Level ${lvl+1}</div>`;
   }else{
     h+=`<div class="tile locked"><div class="big">🔒</div>Level 1</div>`;
@@ -477,15 +548,55 @@ function setMode(m){if(!MODES[m]||m===curMode()&&!(S.current&&S.current.mode!==m
   S.mode=m;save();renderMode();renderHome();
   const cur=S.current;
   if(cur&&cur.mode!==m){pendingMode=m;const L=MODES[m].label;
-    $('#mmIc').textContent=m==='hard'?'💪':'🧩';$('#mmTitle').textContent=`Restart this puzzle in ${L}?`;
+    $('#mmIc').textContent=modeIc(m);$('#mmTitle').textContent=`Restart this puzzle in ${L}?`;
     $('#mmTxt').textContent=`Your Level ${cur.level} puzzle has ${cur.rows*cur.cols} pieces. Restart it with ~${MODES[m].t} pieces (same photo, moves and timer reset), or keep playing it as it is. ${L} will be used for your next new puzzle either way.`;
     $('#mmYes').textContent=`Restart in ${L}`;closeModals();openModal('#mMode')}
-  else toast(m==='hard'?'💪':'🧩',`${MODES[m].label} mode`,`New puzzles will have ~${MODES[m].t} pieces`)}
+  else toast(modeIc(m),`${MODES[m].label} mode`,m==='nightmare'?`~${MODES[m].t} pieces, and wrong pieces reshuffle every ${SHUFFLE_EVERY}s`:`New puzzles will have ~${MODES[m].t} pieces`)}
 document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
 $('#mmNo').onclick=()=>{pendingMode=null;closeModals();toast('👍','Kept your puzzle',`${MODES[curMode()].label} starts with your next puzzle`)};
 $('#mmYes').onclick=()=>{const m=pendingMode;pendingMode=null;closeModals();const cur=S.current;if(!cur||!m)return;
-  const [r,c]=chooseGrid(cur.w,cur.h,m);Object.assign(cur,{mode:m,rows:r,cols:c,order:derange(r*c),moves:0,elapsed:0,peeks:0});save();renderHome();
+  const [r,c]=chooseGrid(cur.w,cur.h,m);Object.assign(cur,{mode:m,rows:r,cols:c,order:derange(r*c),moves:0,elapsed:0,peeks:0});if(m==='nightmare')cur.shuffleIn=SHUFFLE_EVERY;else delete cur.shuffleIn;save();renderHome();
   toast('🔄',`Restarted in ${MODES[m].label}`,`Level ${cur.level} now has ${r*c} pieces`)};
+
+// ---------- Gallery ----------
+function galleryItems(){const by=new Map();S.completed.forEach(c=>{if(!by.has(c.id))by.set(c.id,[]);by.get(c.id).push(c)});
+  return [...by.entries()].map(([id,runs])=>({id,runs,last:runs[runs.length-1]})).sort((a,b)=>(b.last.date||0)-(a.last.date||0))}
+function statsHtml(it){const r=it.last,dash='—',ml=MODES[r.mode]?MODES[r.mode].label:dash;
+  const peek=r.peeks==null?dash:(r.peeks?`Yes (${r.peeks}×)`:'No');
+  let h=`<b>Level ${r.level??dash}</b><br>Difficulty: <b>${ml}</b><br>Completed: <b>${r.date?new Date(r.date).toLocaleDateString():dash}</b><br>Time: <b>${r.time!=null?fmt(r.time):dash}</b><br>Moves: <b>${r.moves??dash}</b><br>Peek: <b>${peek}</b>`;
+  if(it.runs.length>1){const best=Math.min(...it.runs.map(x=>x.time??1e9));h+=`<br>Solved <b>${it.runs.length}×</b> · best <b>${fmt(best)}</b>`}
+  return h}
+function renderGallery(){const items=galleryItems(),thumbs=Object.fromEntries(IMAGES.map(i=>[i.id,i.thumb]));
+  $('#galSum').textContent=items.length?`${items.length} solved photo${items.length===1?'':'s'}`:'Nothing solved yet';
+  $('#galGrid').innerHTML=items.length?items.map((it,k)=>`<div class="tile${thumbs[it.id]?'':' gone'}" data-k="${k}">${thumbs[it.id]?`<img src="${thumbs[it.id]}" alt="">`:'<div class="big">🗑️</div><div class="cap">Photo deleted</div>'}<div class="gst">${statsHtml(it)}</div></div>`).join('')
+    :'<div class="empty" style="grid-column:1/-1">Solve a puzzle and it will appear here.</div>';
+  galItems=items}
+let galItems=[],galHold=null,galSuppress=false;
+function showGalPop(t){const it=galItems[+t.dataset.k];if(!it)return;const im=IMAGES.find(i=>i.id===it.id);
+  const g=$('#gpImg');if(im){g.src=im.thumb;g.classList.remove('hidden')}else{g.removeAttribute('src');g.classList.add('hidden')}
+  $('#gpSt').innerHTML=(im?'':'<i>Photo deleted</i><br>')+statsHtml(it);$('#galPop').classList.remove('hidden')}
+function hideGalPop(){$('#galPop').classList.add('hidden');gg.querySelectorAll('.tile.stats').forEach(x=>x.classList.remove('stats'))}
+$('#galPop').addEventListener('click',hideGalPop);
+$('#gallery').addEventListener('click',e=>{if(!$('#galPop').classList.contains('hidden')&&!galSuppress&&!e.target.closest('#galGrid'))hideGalPop()});
+$('#galBtn').onclick=()=>{renderGallery();show('gallery')};
+$('#gBack').onclick=()=>{hideGalPop();renderHome();show('home')};
+const gg=$('#galGrid');
+gg.addEventListener('pointerdown',e=>{const t=e.target.closest('.tile[data-k]');if(!t)return;
+  clearTimeout(galHold&&galHold.t);t.classList.add('holding');
+  galHold={el:t,x:e.clientX,y:e.clientY,fired:false,t:setTimeout(()=>{gg.querySelectorAll('.tile.stats').forEach(x=>x!==t&&x.classList.remove('stats'));t.classList.remove('holding');t.classList.add('stats');galHold.fired=true;showGalPop(t);if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}},1000)}});
+gg.addEventListener('pointermove',e=>{if(galHold&&!galHold.fired&&Math.hypot(e.clientX-galHold.x,e.clientY-galHold.y)>10){clearTimeout(galHold.t);galHold.el.classList.remove('holding');galHold=null}});
+const galEnd=()=>{if(!galHold)return;clearTimeout(galHold.t);galHold.el.classList.remove('holding');galSuppress=galHold.fired;galHold=null};
+gg.addEventListener('pointerup',galEnd);gg.addEventListener('pointercancel',galEnd);
+gg.addEventListener('contextmenu',e=>e.preventDefault());
+gg.addEventListener('click',async e=>{const t=e.target.closest('.tile[data-k]');if(!t)return;
+  if(galSuppress){galSuppress=false;return}
+  if(!$('#galPop').classList.contains('hidden')){hideGalPop();return}
+  gg.querySelectorAll('.tile.stats').forEach(x=>x.classList.remove('stats'));
+  const it=galItems[+t.dataset.k];if(!it)return;const rec=await idbGet(it.id);
+  if(rec){const u=URL.createObjectURL(new Blob([rec.data],{type:rec.type}));$('#vImg').onload=()=>URL.revokeObjectURL(u);$('#vImg').src=u}else $('#vImg').removeAttribute('src');
+  $('#vImg').classList.toggle('hidden',!rec);
+  const r=it.last;$('#vTxt').textContent=(rec?'':'This photo was deleted. ')+[`Level ${r.level}`,MODES[r.mode]?MODES[r.mode].label:null,r.time!=null?fmt(r.time):null,r.moves!=null?`${r.moves} moves`:null,r.date?new Date(r.date).toLocaleDateString():null].filter(Boolean).join(' · ');
+  openModal('#mView')});
 
 // ---------- My Photos ----------
 let pSel=null; // Set of ids when selecting
@@ -494,7 +605,7 @@ function renderPhotos(){
   const d=doneIds(),n=IMAGES.length,solved=IMAGES.filter(i=>d.has(i.id)).length;
   $('#pSum').textContent=n?`${n} photo${n===1?'':'s'} · ${solved} solved`:'No photos yet';
   const g=$('#pGrid');g.classList.toggle('selecting',!!pSel);
-  g.innerHTML=n?IMAGES.map(i=>`<div class="tile${pSel&&pSel.has(i.id)?' picked':''}" data-id="${esc(i.id)}"><img src="${i.thumb}" alt=""><span class="chk">${pSel&&pSel.has(i.id)?'✓':''}</span>${d.has(i.id)?'<span class="badge">✓ Solved</span>':''}${S.current&&S.current.imageId===i.id?'<div class="cap"><b>▶ In progress</b></div>':''}</div>`).join('')
+  g.innerHTML=n?IMAGES.map(i=>`<div class="tile${pSel&&pSel.has(i.id)?' picked':''}${d.has(i.id)?'':' blur'}" data-id="${esc(i.id)}"><img src="${i.thumb}" alt="">${d.has(i.id)?'':'<span class="lockic">🔒</span>'}<span class="chk">${pSel&&pSel.has(i.id)?'✓':''}</span>${d.has(i.id)?'<span class="badge">✓ Solved</span>':''}${S.current&&S.current.imageId===i.id?'<div class="cap"><b>▶ In progress</b></div>':''}</div>`).join('')
     :`<div class="empty" style="grid-column:1/-1">No photos saved yet.<br><br><button class="btn primary" id="pAdd">＋ Add photos</button></div>`;
   const b=$('#pAdd');if(b)b.onclick=()=>$('#fileIn').click();
   $('#pSelect').textContent=pSel?'Cancel':'Select';$('#pSelect').classList.toggle('hidden',!n);
@@ -511,9 +622,10 @@ $('#pGrid').addEventListener('click',async e=>{
   const t=e.target.closest('.tile[data-id]');if(!t)return;const id=t.dataset.id;
   if(pSel){pSel.has(id)?pSel.delete(id):pSel.add(id);renderPhotos();return}
   const meta=IMAGES.find(i=>i.id===id);if(!meta)return;pView=id;
+  const solved=doneIds().has(id);$('#phWrap').classList.toggle('blur',!solved);
   $('#phImg').src=meta.thumb;
   const runs=S.completed.filter(c=>c.id===id);
-  $('#phTxt').textContent=[meta.name,`${meta.w}×${meta.h}`,runs.length?`Solved ${runs.length}× · best ${fmt(Math.min(...runs.map(r=>r.time)))}`:'Not solved yet',S.current&&S.current.imageId===id?'In progress':''].filter(Boolean).join(' · ');
+  $('#phTxt').textContent=[meta.name,`${meta.w}×${meta.h}`,runs.length?`Solved ${runs.length}× · best ${fmt(Math.min(...runs.map(r=>r.time)))}`:'Not solved yet (blurred until you solve it)',S.current&&S.current.imageId===id?'In progress':''].filter(Boolean).join(' · ');
   openModal('#mPhoto');
   const rec=await idbGet(id);if(rec&&pView===id){const u=URL.createObjectURL(new Blob([rec.data],{type:rec.type}));$('#phImg').onload=()=>URL.revokeObjectURL(u);$('#phImg').src=u}
 });
@@ -550,7 +662,9 @@ $('#rYes').onclick=async()=>{const imgs=$('#rImgs').checked;const keepUi=S.ui;S=
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m&&m.id!=='mCelebrate')closeModals()}));
 
 // ---------- puzzle ----------
-const MODES={standard:{label:'Standard',min:95,max:105,t:100},hard:{label:'Hard',min:145,max:155,t:150}};
+const MODES={standard:{label:'Standard',min:95,max:105,t:100},hard:{label:'Hard',min:145,max:155,t:150},nightmare:{label:'Nightmare',min:145,max:155,t:150}};
+const SHUFFLE_EVERY=60;
+const modeIc=m=>m==='nightmare'?'😈':m==='hard'?'💪':'🧩';
 const curMode=()=>MODES[S.mode]?S.mode:'standard';
 function chooseGrid(w,h,mode){const M=MODES[mode]||MODES.standard,MINP=M.min,MAXP=M.max,TARGETP=M.t;
   let best=[14,14],bs=1e9;
@@ -558,17 +672,21 @@ function chooseGrid(w,h,mode){const M=MODES[mode]||MODES.standard,MINP=M.min,MAX
     const pa=(w/c)/(h/r);const s=Math.abs(Math.log(pa))*3+Math.abs(n-TARGETP)/30;if(s<bs){bs=s;best=[r,c]}}
   return best;
 }
-function derange(n){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}
+function derange(n){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}
   for(let i=0;i<n;i++)if(a[i]===i){const j=(i+1)%n;[a[i],a[j]]=[a[j],a[i]]}return a}
-function newPuzzle(excludeId,level){
+// uniformly random among unsolved photos (never upload order)
+function pickImage(excludeId){
   const d=doneIds();let pool=IMAGES.filter(i=>!d.has(i.id)&&i.id!==excludeId);
   if(!pool.length)pool=IMAGES.filter(i=>!d.has(i.id));
   if(!pool.length)pool=IMAGES.filter(i=>i.id!==excludeId); // all solved → replay
   if(!pool.length)pool=IMAGES.slice();
-  if(!pool.length)return false;
-  const img=pool[Math.random()*pool.length|0];level=level||S.completed.length+1;
+  return pool.length?pool[rnd(pool.length)]:null;
+}
+function newPuzzle(excludeId,level){
+  const img=pickImage(excludeId);if(!img)return false;level=level||S.completed.length+1;
   const mode=curMode();const [rows,cols]=chooseGrid(img.w,img.h,mode);
   S.current={imageId:img.id,level,mode,rows,cols,order:derange(rows*cols),moves:0,elapsed:0,peeks:0,w:img.w,h:img.h};
+  if(mode==='nightmare')S.current.shuffleIn=SHUFFLE_EVERY;
   save();return true;
 }
 async function play(){
@@ -594,11 +712,21 @@ async function openGame(){
   $('#peekImg').src=curURL;
   const n=cur.rows*cur.cols;const els=[];
   for(let p=0;p<n;p++){const el=document.createElement('div');el.className='piece';el.style.backgroundImage=`url("${curURL}")`;el.dataset.p=p;board.appendChild(el);els[p]=el}
-  G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n};
+  G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n,intro:false};
+  if(cur.mode==='nightmare'&&!(cur.shuffleIn>0))cur.shuffleIn=SHUFFLE_EVERY;
   const info=`${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces`;board.setAttribute('aria-label',`Level ${cur.level} · ${info}`);
   Z.z=1;Z.tx=0;Z.ty=0;gest=null;ptrs.clear();
-  show('game');layout();refresh(false);startTimer();
-  toast('🧩',`Level ${cur.level}`,info);
+  const ml=MODES[cur.mode]?MODES[cur.mode].label:'';
+  $('#gLv').textContent=`Lv ${cur.level}`;$('#sdLv').textContent=cur.level;$('#sdMode').textContent=ml||`${n} pieces`;$('#sdMode').className='sm '+(cur.mode||'');
+  $('#gNm').classList.toggle('hidden',cur.mode!=='nightmare');$('#sdNm').classList.toggle('hidden',cur.mode!=='nightmare');
+  setStatus(!!(S.ui&&S.ui.status));
+  show('game');layout();refresh(false);updNm();
+  const isNew=cur.moves===0&&cur.elapsed<0.5&&!NOINTRO;
+  if(isNew){G.intro=true;board.classList.add('intro');const g0=G;
+    setTimeout(()=>{if(G!==g0)return;board.classList.add('introfade');board.classList.remove('intro');
+      setTimeout(()=>{if(G!==g0)return;board.classList.remove('introfade');G.intro=false;startTimer()},720)},2000)}
+  else startTimer();
+  toast(modeIc(cur.mode),`Level ${cur.level}`,info+(cur.mode==='nightmare'?` · reshuffles every ${SHUFFLE_EVERY}s`:''));
   if(!S.seenZoomHint){S.seenZoomHint=1;save();toast('🤏','Pinch to zoom','Tap two pieces to swap them. Pieces that lock in place are in the right spot.')}
 }
 function layout(){
@@ -615,6 +743,9 @@ function layout(){
   cur.order.forEach((p,s)=>place(G.els[p],s));
   if(Z.z>1.01){Z.tx=st.clientWidth/2-board.offsetLeft-fx*bw*Z.z;Z.ty=st.clientHeight/2-board.offsetTop-fy*bh*Z.z}
   clampPan();applyZoom(false);
+  // landscape: use the side margin for level / mode / progress
+  const margin=(st.clientWidth-bw)/2,land=innerWidth>innerHeight&&margin>=78;
+  const gs=$('#gside');gs.classList.toggle('show',land);if(land)gs.style.width=Math.min(170,margin-20)+'px';
 }
 function slotXY(s){const c=S.current.cols;return [(s%c)*G.pw,Math.floor(s/c)*G.ph]}
 function place(el,s){const [x,y]=slotXY(s);el.dataset.s=s;el.style.transform=`translate(${x}px,${y}px)`}
@@ -625,6 +756,7 @@ function refresh(anim){
     if(good&&!el.classList.contains('ok')){el.classList.add('ok');if(anim){el.classList.add('pop');setTimeout(()=>el.classList.remove('pop'),950);if(!S.seenLockTip){S.seenLockTip=1;setTimeout(()=>toast('🔒','Locked in!','That piece is in the right spot, so it can’t move now. Locked pieces blend into the photo.'),250)}}}
     else if(!good)el.classList.remove('ok')});
   $('#gMoves').textContent=cur.moves;$('#gPieces').textContent=`${ok}/${G.n}`;
+  const pct=Math.floor(ok/G.n*100);$('#sdBar').style.width=pct+'%';$('#sdPct').textContent=`${pct}% · ${ok}/${G.n}`;
   return ok;
 }
 function swap(a,b){
@@ -661,6 +793,7 @@ function dropGesture(){if(!gest)return;clearTimeout(gest.lp);if(gest.type==='dra
 function pinchInfo(){const [a,b]=[...ptrs.values()];return {d:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),mx:(a.x+b.x)/2,my:(a.y+b.y)/2}}
 stage.addEventListener('pointerdown',e=>{
   if(!G||G.solved||screen!=='game')return;e.preventDefault();
+  if(G.intro)return;
   ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
   try{stage.setPointerCapture(e.pointerId)}catch(_){}
   if(ptrs.size===2){dropGesture();const p=pinchInfo();const [ox,oy]=boardOrigin();
@@ -736,15 +869,36 @@ stage.addEventListener('contextmenu',e=>e.preventDefault());
 
 // peek
 let peekT=null;
-$('#peekBtn').onclick=()=>{if(!G||G.solved)return;
+$('#peekBtn').onclick=()=>{if(!G||G.solved||G.intro)return;
   if(board.classList.contains('peek')){board.classList.remove('peek');$('#peekBtn').classList.remove('on');clearTimeout(peekT);return}
   S.current.peeks++;save();board.classList.add('peek');$('#peekBtn').classList.add('on');
   clearTimeout(peekT);peekT=setTimeout(()=>{board.classList.remove('peek');$('#peekBtn').classList.remove('on')},2500)};
 
+// status overlay (green = right spot, red = wrong)
+function setStatus(on){board.classList.toggle('status',on);$('#statusBtn').classList.toggle('on',on);$('#statusBtn').setAttribute('aria-pressed',on)}
+$('#statusBtn').onclick=()=>{const on=!board.classList.contains('status');setStatus(on);S.ui=Object.assign({},S.ui,{status:on});save()};
+
 // timer
 let tick=null,lastT=0,saveCnt=0;
 function startTimer(){stopTimer();lastT=performance.now();upd();tick=setInterval(()=>{const now=performance.now();
-  if(screen==='game'&&!document.hidden&&G&&!G.solved&&S.current){S.current.elapsed+=Math.min(5,(now-lastT)/1000);upd();if(++saveCnt%5===0)save()}lastT=now},1000)}
+  if(screen==='game'&&!document.hidden&&G&&!G.solved&&!G.intro&&S.current){const dt=Math.min(5,(now-lastT)/1000);S.current.elapsed+=dt;
+    if(S.current.mode==='nightmare'){S.current.shuffleIn=(S.current.shuffleIn>0?S.current.shuffleIn:SHUFFLE_EVERY)-dt;if(S.current.shuffleIn<=0){S.current.shuffleIn+=SHUFFLE_EVERY;nightmareShuffle()}updNm()}
+    upd();if(++saveCnt%5===0)save()}lastT=now},1000)}
+function updNm(){const c=S.current;if(!c||c.mode!=='nightmare')return;const t=Math.max(0,Math.ceil(c.shuffleIn||SHUFFLE_EVERY));
+  $('#gNmT').textContent=t;$('#sdNmT').textContent=t;$('#gRing').style.setProperty('--p',(t/SHUFFLE_EVERY*100)+'%');$('#gNm').classList.toggle('soon',t<=5)}
+// Nightmare: every wrong piece (except a selected one) is shuffled among the wrong positions
+function nightmareShuffle(){
+  if(!G||G.solved||!S.current)return;const o=S.current.order;
+  if(gest&&gest.type==='drag')dropGesture();
+  const slots=[];for(let s=0;s<o.length;s++)if(o[s]!==s&&s!==G.sel)slots.push(s);
+  if(slots.length<2)return;
+  const pcs=slots.map(s=>o[s]);for(let i=pcs.length-1;i>0;i--){const j=rnd(i+1);[pcs[i],pcs[j]]=[pcs[j],pcs[i]]}
+  slots.forEach((s,i)=>{o[s]=pcs[i];place(G.els[pcs[i]],s)});
+  board.classList.remove('shake');void board.offsetWidth;board.classList.add('shake');setTimeout(()=>board.classList.remove('shake'),550);
+  const f=$('#shuffleFlash');f.classList.remove('on');void f.offsetWidth;f.classList.add('on');
+  if(navigator.vibrate)try{navigator.vibrate([30,40,30])}catch(e){}
+  const ok=refresh(true);save();if(ok===G.n)complete();
+}
 function stopTimer(){if(tick){clearInterval(tick);tick=null}if(S.current)save()}
 function upd(){if(S.current)$('#gTime').textContent=fmt(S.current.elapsed)}
 document.addEventListener('visibilitychange',()=>{lastT=performance.now();save()});
@@ -779,7 +933,7 @@ if(window.visualViewport)visualViewport.addEventListener('resize',onResize);
 // test hook, only with ?debug=1
 if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=>IMAGES,runtime:()=>G,
   nearlySolve(){if(!S.current||!G)return;const n=G.n,o=S.current.order;for(let i=0;i<n;i++)o[i]=i;[o[0],o[1]]=[o[1],o[0]];layout();refresh(false);save()},
-  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),zoomCenter:f=>zoomCenter(f),checkViewport:f=>checkViewport(f),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
+  swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),pickImage:x=>pickImage(x),shuffleNow:()=>nightmareShuffle(),setShuffleIn:t=>{S.current.shuffleIn=t;updNm()},select:x=>select(x),zoomCenter:f=>zoomCenter(f),checkViewport:f=>checkViewport(f),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
   slotCenter(s){const r=board.getBoundingClientRect(),c=S.current.cols;return [r.left+(s%c+.5)*G.pw*Z.z,r.top+(Math.floor(s/c)+.5)*G.ph*Z.z]}};
 
 // boot
