@@ -206,6 +206,25 @@ body.modalup #toasts{top:calc(10px + var(--sat));bottom:auto;flex-direction:colu
 @keyframes sp{to{transform:rotate(360deg)}}
 .hidden{display:none!important}
 input[type=file]{position:fixed;left:-9999px;width:1px;height:1px;opacity:0}
+/* daily */
+.dcard{background:var(--panel);border-radius:var(--r);padding:14px;margin-bottom:16px}
+.dtop{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.dtop b{font-size:17px;flex:1}
+.dstreak{font-size:13px;font-weight:700;color:var(--gold);background:rgba(255,200,87,.12);border-radius:20px;padding:4px 10px;white-space:nowrap}
+.dcal{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin-bottom:12px}
+.dcal i{display:flex;flex-direction:column;align-items:center;gap:3px;font-style:normal;font-size:9.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.dcal i span{width:100%;max-width:20px;aspect-ratio:1;border-radius:50%;background:#2a2d3f;display:flex;align-items:center;justify-content:center;font-size:10px;color:#06261d;font-weight:800}
+.dcal i.done span{background:var(--accent2)}
+.dcal i.today span{box-shadow:0 0 0 2px var(--gold)}
+.dcal i.missed span{background:#2a2d3f;opacity:.55}
+.btn.dbtn{background:linear-gradient(135deg,#f6a04d,#e8608c);color:#fff}
+.btn.dbtn[disabled]{background:var(--panel2);color:var(--accent2);opacity:1}
+#mDaily .dcal{margin:10px 0 16px}
+.ach .secret{font-style:italic}
+#mNote .box{background:linear-gradient(160deg,#2c1f4f,#1d1f2b 70%);border:1px solid #5b3fa6;max-width:320px}
+#mNote .sig{font-size:20px;line-height:1.45;margin:6px 0 14px;color:#efe7ff;font-weight:600}
+#mNote .sig small{display:block;font-size:13px;font-weight:500;color:#b9a8e6;margin-top:6px}
+#home header h1{cursor:default;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 /* rush */
 .btn.rushbtn{background:linear-gradient(135deg,#ff8a3d,#ff3d6e);color:#fff;font-size:19px;min-height:58px;flex-direction:column;gap:0;line-height:1.2;box-shadow:0 6px 22px rgba(255,61,110,.28)}
 .btn.rushbtn small{display:block;font-size:12px;font-weight:500;opacity:.92}
@@ -275,7 +294,7 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
 <!-- HOME -->
 <section class="screen active" id="home">
   <header>
-    <h1>🧩 Picture Puzzles</h1>
+    <h1 id="appTitle">🧩 Picture Puzzles</h1>
     <button class="btn icon" id="photosBtn" aria-label="My Photos">🖼️</button>
     <button class="btn icon" id="achBtn" aria-label="Achievements">🏆</button>
     <button class="btn icon" id="setBtn" aria-label="Settings">⚙️</button>
@@ -306,6 +325,9 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
     <div id="rushWrap" class="hidden" style="margin-bottom:16px"><button class="btn wide rushbtn" id="rushBtn">⚡ Rush</button>
       <div class="row"><button class="btn" id="lbBtn">🏁 Leaderboard</button><button class="btn hidden" id="quitBtn">✕ Quit run</button></div>
       <div id="rushInv"></div></div>
+    <div class="dcard hidden" id="dailyCard"><div class="dtop"><b>🌅 Daily</b><span class="dstreak" id="dStreak">🔥 0</span></div>
+      <div class="dcal" id="dCal"></div>
+      <button class="btn wide dbtn" id="dailyBtn">Play today’s puzzle</button></div>
     <div class="sect srow2"><span id="lvSect">Levels</span><button class="btn" id="galBtn">🏞 Gallery</button></div>
     <div class="grid" id="levels"></div>
   </div>
@@ -373,6 +395,22 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
   <div class="cstats"><div><b id="cTime">0:00</b><span>Time</span></div><div><b id="cMoves">0</b><span>Moves</span></div><div><b id="cPeeks">0</b><span>Peeks</span></div></div>
   <p id="cNext">Level 2 unlocked!</p>
   <div class="stack"><button class="btn primary wide" id="cNextBtn">Next level ▶</button><button class="btn wide" id="cHomeBtn">All levels</button></div>
+</div></div>
+
+<div class="modal" id="mDaily"><div class="box celebrate">
+  <div class="trophy">🌅</div>
+  <h2 id="dwTitle">Daily solved!</h2>
+  <img class="prev" id="dwImg" alt="" style="max-height:26vh">
+  <div class="cstats"><div><b id="dwTime">0:00</b><span>Time</span></div><div><b id="dwMoves">0</b><span>Moves</span></div><div><b id="dwStreak">1</b><span>Day streak</span></div></div>
+  <div class="dcal" id="dwCal"></div>
+  <p id="dwTxt">Come back tomorrow for a new photo.</p>
+  <div class="stack"><button class="btn primary wide" id="dwOk">Done</button></div>
+</div></div>
+
+<div class="modal" id="mNote"><div class="box">
+  <div style="font-size:40px">💜</div>
+  <p class="sig">Made with care by Alina 💜<small>for Dripping violet’s puzzles</small></p>
+  <div class="stack"><button class="btn wide" id="noteOk">Close</button></div>
 </div></div>
 
 <div class="modal" id="mRushWin"><div class="box celebrate">
@@ -487,7 +525,7 @@ const dayKey=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 // ---------- state ----------
-function fresh(){return {completed:[],current:null,currents:{},ach:{},days:[],rush:freshRush()}}
+function fresh(){return {completed:[],current:null,currents:{},ach:{},days:[],rush:freshRush(),daily:{hist:{},cur:null,playing:0}}}
 function freshRush(){return {inv:{peek:0,square:0,minute:0},board:[],total:0,run:null,playing:0}}
 let S;
 let RAW={};try{RAW=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){RAW={}}
@@ -510,7 +548,10 @@ migrateModes();
 function normRush(){let r=S.rush;if(!r||typeof r!=='object')r=S.rush=freshRush();r.inv=Object.assign({peek:0,square:0,minute:0},r.inv);if(!Array.isArray(r.board))r.board=[];r.total=r.total||0;if(!r.run||typeof r.run!=='object'){r.run=null;r.inv={peek:0,square:0,minute:0}}else{const u=r.run;u.n=u.n||0;u.points=u.points||0;u.time=u.time||0;if(!Array.isArray(u.solves))u.solves=[];if(!Array.isArray(u.used))u.used=[];if(u.cur&&typeof u.cur!=='object')u.cur=null}}
 normRush();
 let RUSH=false; // true while the game screen is playing a Rush puzzle
-const C=()=>RUSH?(S.rush.run&&S.rush.run.cur):S.current;
+let DAILY=false; // true while playing today's Daily puzzle
+const C=()=>RUSH?(S.rush.run&&S.rush.run.cur):DAILY?(S.daily&&S.daily.cur):S.current;
+function normDaily(){let d=S.daily;if(!d||typeof d!=='object')d=S.daily={};if(!d.hist||typeof d.hist!=='object')d.hist={};if(d.cur&&typeof d.cur!=='object')d.cur=null;d.cur=d.cur||null;d.playing=d.playing?1:0}
+normDaily();
 function save(){if(S.currents&&typeof S.currents==='object')S.currents[MODE_IDS.includes(S.mode)?S.mode:'standard']=S.current||null;try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){console.warn('save failed',e)}}
 const doneIds=()=>new Set(S.completed.map(c=>c.id)); // solved in ANY normal difficulty (unblurs)
 const modeDone=m=>S.completed.filter(c=>modeOf(c)===m);
@@ -592,12 +633,12 @@ const ACH=[
  {id:'five',ic:'🖐️',name:'High Five',desc:'Complete 5 puzzles',t:()=>S.completed.length>=5},
  {id:'ten',ic:'🔟',name:'Puzzle Pro',desc:'Complete 10 puzzles',t:()=>S.completed.length>=10},
  {id:'twentyfive',ic:'👑',name:'Puzzle Royalty',desc:'Complete 25 puzzles',t:()=>S.completed.length>=25},
- {id:'speed',ic:'⚡',name:'Speed Solver',desc:'Finish a puzzle in under 10 minutes',t:r=>r&&!r.rush&&r.time<600},
- {id:'lightning',ic:'🌩️',name:'Lightning Hands',desc:'Finish a puzzle in under 5 minutes',t:r=>r&&!r.rush&&r.time<300},
- {id:'efficient',ic:'🎯',name:'Efficient',desc:'Finish using at most 1.25× as many moves as pieces',t:r=>r&&!r.rush&&r.moves<=Math.round(r.pieces*1.25)},
- {id:'nopeek',ic:'🙈',name:'No Peeking',desc:'Finish a puzzle without using Peek',t:r=>r&&!r.rush&&r.peeks===0},
- {id:'night',ic:'🦉',name:'Night Owl',desc:'Solve a puzzle after 10 PM',t:r=>{if(!r||r.rush)return false;const h=new Date(r.date).getHours();return h>=22||h<4}},
- {id:'early',ic:'🌅',name:'Early Bird',desc:'Solve a puzzle between 5 and 8 AM',t:r=>{if(!r||r.rush)return false;const h=new Date(r.date).getHours();return h>=5&&h<8}},
+ {id:'speed',ic:'⚡',name:'Speed Solver',desc:'Finish a puzzle in under 10 minutes',t:r=>r&&!r.rush&&!r.daily&&r.time<600},
+ {id:'lightning',ic:'🌩️',name:'Lightning Hands',desc:'Finish a puzzle in under 5 minutes',t:r=>r&&!r.rush&&!r.daily&&r.time<300},
+ {id:'efficient',ic:'🎯',name:'Efficient',desc:'Finish using at most 1.25× as many moves as pieces',t:r=>r&&!r.rush&&!r.daily&&r.moves<=Math.round(r.pieces*1.25)},
+ {id:'nopeek',ic:'🙈',name:'No Peeking',desc:'Finish a puzzle without using Peek',t:r=>r&&!r.rush&&!r.daily&&r.peeks===0},
+ {id:'night',ic:'🦉',name:'Night Owl',desc:'Solve a puzzle after 10 PM',t:r=>{if(!r||r.rush||r.daily)return false;const h=new Date(r.date).getHours();return h>=22||h<4}},
+ {id:'early',ic:'🌅',name:'Early Bird',desc:'Solve a puzzle between 5 and 8 AM',t:r=>{if(!r||r.rush||r.daily)return false;const h=new Date(r.date).getHours();return h>=5&&h<8}},
  {id:'hard1',ic:'💪',name:'Hard Mode',desc:'Solve your first Hard puzzle',t:()=>S.completed.some(c=>c.mode==='hard')},
  {id:'hard5',ic:'🥊',name:'Hard Hitter',desc:'Solve 5 Hard puzzles',t:()=>S.completed.filter(c=>c.mode==='hard').length>=5},
  {id:'nm1',ic:'😈',name:'Nightmare Survivor',desc:'Solve your first Nightmare puzzle',t:()=>S.completed.some(c=>c.mode==='nightmare')},
@@ -608,6 +649,10 @@ const ACH=[
  {id:'rush3',ic:'🎢',name:'On a Roll',desc:'Solve 3 puzzles in one Rush run',t:r=>!!(r&&r.rush&&r.k>=3)},
  {id:'rush10',ic:'🏃',name:'Marathon',desc:'Solve 10 puzzles in one Rush run',t:r=>!!(r&&r.rush&&r.k>=10)},
  {id:'rushperfect',ic:'🍀',name:'Lucky Streak',desc:'Solve a Rush puzzle in 200 moves or fewer',t:r=>!!(r&&r.rush&&r.moves<=200)} /* id kept from 'Perfect Rush Solve' so earlier awards stay */,
+ {id:'daily1',ic:'☕',name:'Morning Ritual',desc:'Solve your first Daily puzzle',t:r=>!!(r&&r.daily)||Object.values(S.daily.hist).some(h=>h&&h.done)},
+ {id:'daily7',ic:'📅',name:'Week Strong',desc:'Reach a 7-day Daily streak',t:()=>dailyStreak()>=7},
+ {id:'daily30',ic:'🌄',name:'Month of Moments',desc:'Reach a 30-day Daily streak',t:()=>dailyStreak()>=30},
+ {id:'alina',ic:'💜',name:'Signed, Alina',desc:'You found the signature',secret:1,t:()=>false},
  {id:'completionist',ic:'🏅',name:'Completionist',desc:'Solve every photo in your collection (3+ photos)',t:()=>{const d=doneIds();return IMAGES.length>=3&&IMAGES.every(i=>d.has(i.id))}},
 ];
 function checkAch(r){
@@ -618,7 +663,7 @@ function checkAch(r){
 }
 function renderAch(){
   const n=Object.keys(S.ach).length;$('#achSum').textContent=`${n} of ${ACH.length} unlocked`;
-  $('#achList').innerHTML=ACH.map(a=>{const w=S.ach[a.id];return `<div class="ach ${w?'on':'off'}"><div class="ic">${w?a.ic:'🔒'}</div><div><b>${a.name}</b><small>${a.desc}</small></div>${w?`<div class="when">✓<br>${new Date(w).toLocaleDateString()}</div>`:''}</div>`}).join('');
+  $('#achList').innerHTML=ACH.map(a=>{const w=S.ach[a.id],hide=a.secret&&!w;return `<div class="ach ${w?'on':'off'}"><div class="ic">${w?a.ic:'🔒'}</div><div><b>${hide?'???':a.name}</b><small class="${hide?'secret':''}">${hide?'Hidden achievement':a.desc}</small></div>${w?`<div class="when">✓<br>${new Date(w).toLocaleDateString()}</div>`:''}</div>`}).join('');
 }
 
 // ---------- toasts / busy / modals ----------
@@ -655,7 +700,7 @@ function renderHome(){updateInstallUI();renderMode();
     h+=`<div class="tile locked"><div class="big">🔒</div>Level 1</div>`;
   }
   $('#levels').innerHTML=h;
-  renderRushHome();
+  renderRushHome();renderDailyHome();
 }
 $('#levels').addEventListener('click',async e=>{
   const t=e.target.closest('.tile');if(!t)return;
@@ -744,6 +789,7 @@ async function deletePhotos(ids){
   if(S.current&&!IMAGES.some(i=>i.id===S.current.imageId)){const lvl=S.current.level;S.current=null;if(IMAGES.length)newPuzzle(null,lvl);replaced=true}
   MODE_IDS.forEach(m=>{const c=S.currents[m];if(c&&c!==S.current&&!IMAGES.some(i=>i.id===c.imageId))S.currents[m]=null});
   const rr=S.rush.run;if(rr&&rr.cur&&!IMAGES.some(i=>i.id===rr.cur.imageId))rr.cur=null;
+  if(S.daily.cur&&!IMAGES.some(i=>i.id===S.daily.cur.imageId))S.daily.cur=null;
   save();pSel=null;pView=null;checkAch(null); // earned achievements are never revoked
   renderPhotos();renderHome();
   toast('🗑️',`Deleted ${ids.length} photo${ids.length===1?'':'s'}`,replaced&&S.current?'Your puzzle in progress now uses a new photo':(IMAGES.length?`${IMAGES.length} left`:'Add photos to keep playing'));
@@ -789,6 +835,7 @@ function newPuzzle(excludeId,level){
 }
 async function play(){
   if(!IMAGES.length){$('#fileIn').click();return}
+  RUSH=false;DAILY=false;
   if(!S.current&&!newPuzzle())return;
   await openGame();
 }
@@ -797,7 +844,8 @@ let G=null; // runtime
 let curURL=null;
 async function openGame(){
   const cur=C();const rec=await idbGet(cur.imageId);
-  if(!rec){if(RUSH){S.rush.run.cur=null;save();toast('⚠️','Photo missing','Picking another one');if(newRushPuzzle())return openGame();RUSH=false;return}
+  if(!rec){if(DAILY){S.daily.cur=null;S.daily.playing=0;DAILY=false;save();renderHome();show('home');toast('⚠️','Photo missing','Today’s Daily photo was deleted');return}
+    if(RUSH){S.rush.run.cur=null;save();toast('⚠️','Photo missing','Picking another one');if(newRushPuzzle())return openGame();RUSH=false;return}
     S.current=null;save();renderHome();toast('⚠️','Photo missing','Picking another one');if(newPuzzle())return openGame();return}
   document.body.classList.toggle('rush',RUSH);
   if(curURL)URL.revokeObjectURL(curURL);
@@ -814,10 +862,10 @@ async function openGame(){
   for(let p=0;p<n;p++){const el=document.createElement('div');el.className='piece';el.style.backgroundImage=`url("${curURL}")`;el.dataset.p=p;board.appendChild(el);els[p]=el}
   G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n,intro:false,paused:false};$('#pauseOv').classList.add('hidden');
   if(cur.mode==='nightmare')cur.shuffleIn=cur.shuffleIn>0?Math.min(SHUFFLE_EVERY,cur.shuffleIn):SHUFFLE_EVERY; // older saves used a 60s cycle
-  const info=`${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces`,ttl=RUSH?`Rush · puzzle #${cur.level}`:`Level ${cur.level}`;board.setAttribute('aria-label',`${ttl} · ${info}`);
+  const info=`${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces`,ttl=RUSH?`Rush · puzzle #${cur.level}`:DAILY?`Daily · ${dayLabel(cur.day)}`:`Level ${cur.level}`;board.setAttribute('aria-label',`${ttl} · ${info}`);
   Z.z=1;Z.tx=0;Z.ty=0;gest=null;ptrs.clear();
   const ml=MODES[cur.mode]?MODES[cur.mode].label:'';
-  $('#gLv').textContent=RUSH?`#${cur.level}`:`Lv ${cur.level}`;$('#gTIc').textContent=RUSH?'⏳':'⏱';if(RUSH)rushUI();upd();$('#sdLv').textContent=cur.level;$('#sdMode').textContent=ml||`${n} pieces`;$('#sdMode').className='sm no '+(cur.mode||'');
+  $('#gLv').textContent=RUSH?`#${cur.level}`:DAILY?'🌅 Daily':`Lv ${cur.level}`;$('#gTIc').textContent=RUSH?'⏳':'⏱';if(RUSH)rushUI();upd();$('#sdLv').textContent=DAILY?'Daily':cur.level;$('#sdMode').textContent=DAILY?dayLabel(cur.day):(ml||`${n} pieces`);$('#sdMode').className='sm no '+(cur.mode||'');
   $('#gNm').classList.toggle('hidden',cur.mode!=='nightmare');$('#sdNm').classList.toggle('hidden',cur.mode!=='nightmare');
   setStatus(!!(S.ui&&S.ui.status));
   show('game');layout();refresh(false);updNm();
@@ -826,7 +874,7 @@ async function openGame(){
     setTimeout(()=>{if(G!==g0)return;board.classList.add('introfade');board.classList.remove('intro');
       setTimeout(()=>{if(G!==g0)return;board.classList.remove('introfade');G.intro=false;startTimer()},720)},2000)}
   else startTimer();
-  if(RUSH)toast('⚡',ttl,`${info} · ${fmt(Math.ceil(cur.remain))} on the clock`);else toast(modeIc(cur.mode),`Level ${cur.level}`,info+(cur.mode==='nightmare'?` · reshuffles every ${SHUFFLE_EVERY}s`:''));
+  if(DAILY)toast('🌅',ttl,`${info} · no timer pressure, one try per day`);else if(RUSH)toast('⚡',ttl,`${info} · ${fmt(Math.ceil(cur.remain))} on the clock`);else toast(modeIc(cur.mode),`Level ${cur.level}`,info+(cur.mode==='nightmare'?` · reshuffles every ${SHUFFLE_EVERY}s`:''));
   if(!S.seenZoomHint){S.seenZoomHint=1;save();toast('🤏','Pinch to zoom','Tap two pieces to swap them. Pieces that lock in place are in the right spot.')}
 }
 function layout(){
@@ -1018,10 +1066,11 @@ function upd(){const c=C();if(!c)return;
   else{$('#gTime').textContent=fmt(c.elapsed);$('#gTime').parentNode.classList.remove('low')}}
 document.addEventListener('visibilitychange',()=>{lastT=performance.now();if(document.hidden)rushPause();save()});
 window.addEventListener('pagehide',save);
-$('#backBtn').onclick=()=>{select(null);stopTimer();if(RUSH){S.rush.playing=0;save()}RUSH=false;renderHome();show('home')};
+$('#backBtn').onclick=()=>{select(null);stopTimer();if(RUSH){S.rush.playing=0;save()}if(DAILY){S.daily.playing=0;save()}RUSH=false;DAILY=false;renderHome();show('home')};
 
 function complete(){
   if(RUSH)return rushComplete();
+  if(DAILY)return dailyComplete();
   G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);const cur=C();
   const r={id:cur.imageId,level:cur.level,time:Math.round(cur.elapsed),moves:cur.moves,peeks:cur.peeks,pieces:G.n,mode:modeOf(cur),date:Date.now()};
   S.completed.push(r);const dk=dayKey(new Date());if(!S.days.includes(dk))S.days.push(dk);
@@ -1037,8 +1086,8 @@ function complete(){
 $('#cNextBtn').onclick=()=>{closeModals();play()};
 $('#cHomeBtn').onclick=()=>{closeModals();renderHome();show('home')};
 
-function confetti(){const c=$('#confetti'),g=c.getContext('2d');const dpr=Math.min(2,devicePixelRatio||1);c.width=innerWidth*dpr;c.height=innerHeight*dpr;g.scale(dpr,dpr);
-  const cols=['#7c6cff','#29d3a6','#ffc857','#ff5d73','#5bc0ff','#fff'];const P=[...Array(160)].map(()=>({x:innerWidth/2+(Math.random()-.5)*80,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:Math.random()*7+4,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[Math.random()*cols.length|0]}));
+function confetti(colors){const c=$('#confetti'),g=c.getContext('2d');const dpr=Math.min(2,devicePixelRatio||1);c.width=innerWidth*dpr;c.height=innerHeight*dpr;g.scale(dpr,dpr);
+  const cols=colors||['#7c6cff','#29d3a6','#ffc857','#ff5d73','#5bc0ff','#fff'];const P=[...Array(160)].map(()=>({x:innerWidth/2+(Math.random()-.5)*80,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:Math.random()*7+4,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[Math.random()*cols.length|0]}));
   const t0=performance.now();(function f(t){g.clearRect(0,0,innerWidth,innerHeight);for(const p of P){p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);g.restore()}
     if(t-t0<3500)requestAnimationFrame(f);else g.clearRect(0,0,innerWidth,innerHeight)})(t0)}
 
@@ -1058,7 +1107,7 @@ function pickRush(){const run=S.rush.run,used=new Set(run.used);let pool=IMAGES.
   const img=pool.length?pool[rnd(pool.length)]:null;if(img){run.used.push(img.id);run.last=img.id}return img}
 function newRushPuzzle(){const run=S.rush.run,img=pickRush();if(!img)return false;const [rows,cols]=chooseGrid(img.w,img.h,'standard');
   run.cur={imageId:img.id,level:run.n+1,mode:'standard',rush:1,rows,cols,order:derange(rows*cols),moves:0,elapsed:0,peeks:0,squares:0,minutes:0,remain:RUSH_T,w:img.w,h:img.h};save();return true}
-async function rushPlay(){if(!IMAGES.length){$('#fileIn').click();return}
+async function rushPlay(){if(!IMAGES.length){$('#fileIn').click();return}DAILY=false;
   const rs=S.rush;if(!rs.run)rs.run={start:Date.now(),n:0,points:0,time:0,solves:[],used:[]};
   if(!rs.run.cur&&!newRushPuzzle())return;RUSH=true;rs.playing=1;save();await openGame()}
 function rushUI(){const rs=S.rush,inv=rs.inv,run=rs.run;
@@ -1166,12 +1215,66 @@ lbl.addEventListener('click',e=>{const t=e.target.closest('.lbgrid .tile');if(t)
   const h=e.target.closest('.lbhead');if(!h)return;const row=h.parentNode,i=+row.dataset.i;
   lbOpenIdx=row.classList.contains('open')?-1:i;lbl.querySelectorAll('.lbrow').forEach(x=>x.classList.toggle('open',+x.dataset.i===lbOpenIdx))});
 
+// ---------- DAILY PUZZLE ----------
+// one photo per local calendar day, chosen deterministically from the collection; seeded scramble; one try per day
+let TODAY_OVERRIDE=null; // debug only
+const pad2=n=>String(n).padStart(2,'0');
+const keyOf=d=>`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+const todayKey=()=>TODAY_OVERRIDE||keyOf(new Date());
+const dateOfKey=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(k,n)=>{const d=dateOfKey(k);d.setDate(d.getDate()+n);return keyOf(d)};
+const dayLabel=k=>k?dateOfKey(k).toLocaleDateString(undefined,{month:'short',day:'numeric'}):'';
+function seed32(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+// photo index walks forward from an anchor day so consecutive days never repeat a photo (when 2+ photos)
+const DAILY_ANCHOR='2026-01-01';
+function dailyPick(day){if(!IMAGES.length)return null;const ids=IMAGES.map(i=>i.id).sort(),n=ids.length,sig='|'+ids.join(',');
+  let k=day<DAILY_ANCHOR?day:DAILY_ANCHOR,idx=Math.floor(mulberry(seed32(k+sig))()*n),guard=0;
+  while(k<day&&guard++<20000){k=addDays(k,1);if(n>1)idx=(idx+1+Math.floor(mulberry(seed32(k+sig))()*(n-1)))%n}
+  const rng=mulberry(seed32(day+'#'+sig));rng();return {img:IMAGES.find(i=>i.id===ids[idx]),rng}}
+function seededDerange(n,rng){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  for(let i=0;i<n;i++)if(a[i]===i){const j=(i+1)%n;[a[i],a[j]]=[a[j],a[i]]}return a}
+function dailyPuzzle(day){const p=dailyPick(day);if(!p)return null;const {img,rng}=p;const [rows,cols]=chooseGrid(img.w,img.h,'standard');
+  return {imageId:img.id,day,level:0,mode:'standard',daily:1,rows,cols,order:seededDerange(rows*cols,rng),moves:0,elapsed:0,peeks:0,w:img.w,h:img.h}}
+function dailyStreak(){const h=S.daily.hist,t=todayKey();let k=h[t]&&h[t].done?t:addDays(t,-1),n=0;while(h[k]&&h[k].done){n++;k=addDays(k,-1)}return n}
+function calHtml(){const h=S.daily.hist,t=todayKey();let out='';for(let i=13;i>=0;i--){const k=addDays(t,-i),done=h[k]&&h[k].done,d=dateOfKey(k);
+    out+=`<i class="${done?'done':k===t?'today':'missed'}" data-day="${k}" title="${dayLabel(k)}"><span>${done?'✓':''}</span>${d.getDate()}</i>`}return out}
+function renderDailyHome(){const card=$('#dailyCard');card.classList.toggle('hidden',!IMAGES.length);if(!IMAGES.length)return;
+  const t=todayKey(),h=S.daily.hist[t],st=dailyStreak(),cur=S.daily.cur;
+  if(cur&&cur.day!==t){S.daily.cur=null;S.daily.playing=0;save()} // yesterday's unfinished puzzle is missed
+  $('#dStreak').textContent=`🔥 ${st} day${st===1?'':'s'}`;$('#dCal').innerHTML=calHtml();
+  const b=$('#dailyBtn');b.disabled=!!(h&&h.done);
+  b.textContent=h&&h.done?`✓ Solved today · ${fmt(h.time)} · ${h.moves} moves`:S.daily.cur?`▶ Continue today’s puzzle · ${dayLabel(t)}`:`🌅 Play today’s puzzle · ${dayLabel(t)}`}
+async function dailyPlay(){if(!IMAGES.length){$('#fileIn').click();return}const t=todayKey(),d=S.daily;
+  if(d.hist[t]&&d.hist[t].done){renderHome();return}
+  if(!d.cur||d.cur.day!==t){d.cur=dailyPuzzle(t);if(!d.cur)return}
+  RUSH=false;DAILY=true;d.playing=1;save();await openGame()}
+$('#dailyBtn').onclick=()=>dailyPlay();
+function dailyComplete(){
+  G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);
+  const d=S.daily,c=d.cur,r={id:c.imageId,day:c.day,time:Math.round(c.elapsed),moves:c.moves,peeks:c.peeks,pieces:G.n,date:Date.now(),daily:1,done:1};
+  d.hist[c.day]=r;d.cur=null;d.playing=0;save();stopTimer();
+  const got=checkAch(r),st=dailyStreak();
+  setTimeout(()=>{if(!DAILY||screen!=='game')return;
+    $('#dwTitle').textContent=`Daily solved · ${dayLabel(r.day)}`;$('#dwImg').src=curURL;$('#dwTime').textContent=fmt(r.time);$('#dwMoves').textContent=r.moves;$('#dwStreak').textContent=st;
+    $('#dwCal').innerHTML=calHtml();
+    $('#dwTxt').innerHTML=(st>1?`🔥 ${st} days in a row!`:'Streak started!')+' Come back tomorrow for a new photo.'+(got.length?`<br>🏆 ${got.length} new achievement${got.length>1?'s':''}`:'');
+    openModal('#mDaily');confetti(['#f6a04d','#e8608c','#ffc857','#fff','#29d3a6'])},700)}
+$('#dwOk').onclick=()=>{closeModals();DAILY=false;renderHome();show('home')};
+// ---------- signature (tap the title 5 times) ----------
+let sigTaps=[];
+$('#appTitle').addEventListener('pointerup',()=>{const now=Date.now();sigTaps=sigTaps.filter(t=>now-t<2500);sigTaps.push(now);if(sigTaps.length<5)return;sigTaps=[];
+  closeModals();openModal('#mNote');confetti(['#b388ff','#7c4dff','#d1b3ff','#9b6bff','#efe7ff','#6a3dc9']);
+  if(!S.ach.alina){S.ach.alina=Date.now();save();toast('💜','Signed, Alina','Secret achievement unlocked!',true);renderHome()}});
+$('#noteOk').onclick=closeModals;
+
 // test hook, only with ?debug=1
 if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=>IMAGES,runtime:()=>G,
   nearlySolve(){if(!C()||!G)return;const n=G.n,o=C().order;for(let i=0;i<n;i++)o[i]=i;[o[0],o[1]]=[o[1],o[0]];layout();refresh(false);save()},
   swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),pickImage:x=>pickImage(x),shuffleNow:()=>nightmareShuffle(),nmShuffleOrder:o=>nmShuffleOrder(o),setShuffleIn:t=>{C().shuffleIn=t;updNm()},select:x=>select(x),zoomCenter:f=>zoomCenter(f),checkViewport:f=>checkViewport(f),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
   setMode:m=>setMode(m),galleryItems:()=>galItems,
   achTest:(id,r)=>{const a=ACH.find(x=>x.id===id);return a?!!a.t(r):null},
+  daily:()=>S.daily,setToday:k=>{TODAY_OVERRIDE=k||null;renderHome()},dailyPuzzle:k=>dailyPuzzle(k),dailyStreak:()=>dailyStreak(),dailyPlay:()=>dailyPlay(),isDaily:()=>DAILY,todayKey:()=>todayKey(),
   rush:()=>S.rush,rushPoints:m=>rushPoints(m),useItem:k=>useItem(k),rushPlay:()=>rushPlay(),isRush:()=>RUSH,cur:()=>C(),rushOver:r=>rushOver(r),openLB:i=>openLB(i),
   pause:()=>rushPause(),resume:()=>rushResume(),
   setRemain:t=>{const c=C();if(c){c.remain=t;upd()}},
@@ -1181,6 +1284,7 @@ if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=
 (async()=>{try{IMAGES=await idbMeta()}catch(e){console.warn(e);toast('⚠️','Storage unavailable','Photos can’t be saved in this browser mode')}
   renderHome();
   if(S.rush.playing&&S.rush.run&&IMAGES.length)rushPlay();
+  else if(S.daily.playing&&S.daily.cur&&S.daily.cur.day===todayKey()&&IMAGES.some(i=>i.id===S.daily.cur.imageId))dailyPlay();
   else if(S.current&&IMAGES.some(i=>i.id===S.current.imageId))openGame();})();
 })();
 </script>
