@@ -154,12 +154,6 @@ button,.btn,.tile,input,label,.modal,.toast,header,.card,.stat,.ach{touch-action
 #galGrid .tile.stats img{filter:blur(10px) brightness(.45);transform:scale(1.15)}
 #galGrid .gst{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:8px;font-size:11.5px;line-height:1.45;color:#e6e8f5}
 #galGrid .gst b{color:#fff}
-#galPop{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,86vw);border-radius:18px;overflow:hidden;z-index:120;box-shadow:0 20px 60px rgba(0,0,0,.7);background:#111;animation:rise .2s ease}
-#galPop .gpimg{position:absolute;inset:0}
-#galPop .gpimg img{width:100%;height:100%;object-fit:cover;filter:blur(14px) brightness(.4);transform:scale(1.2)}
-#galPop .gpst{position:relative;padding:20px 20px 8px;font-size:15px;line-height:1.7;color:#e6e8f5}
-#galPop .gpst b{color:#fff}
-#galPop small{position:relative;display:block;text-align:center;color:var(--muted);padding:0 0 14px}
 #galGrid .tile.holding{transform:scale(.96);transition:transform 1s}
 #galGrid .tile.holding img{filter:blur(4px)}
 /* achievements */
@@ -249,12 +243,23 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
 .lbgrid .tile.holding{transform:scale(.96);transition:transform 1s}
 .lbgrid .tile .cap{font-size:11px;padding:12px 6px 5px}
 .lbnone{font-size:13px;color:var(--muted);padding:4px 2px}
-#lbPop{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,86vw);border-radius:18px;overflow:hidden;z-index:120;box-shadow:0 20px 60px rgba(0,0,0,.7);background:#111;animation:rise .2s ease}
-#lbPop .gpimg{position:absolute;inset:0}
-#lbPop .gpimg img{width:100%;height:100%;object-fit:cover;filter:blur(14px) brightness(.4);transform:scale(1.2)}
-#lbPop .gpst{position:relative;padding:20px 20px 8px;font-size:15px;line-height:1.65;color:#e6e8f5}
+#lbView{position:fixed;inset:0;z-index:110;background:#000;display:flex;align-items:center;justify-content:center;padding:calc(var(--sat) + 8px) calc(var(--sar) + 8px) calc(var(--sab) + 40px) calc(var(--sal) + 8px);touch-action:manipulation;-webkit-touch-callout:none;animation:rise .2s ease}
+#lbView img{max-width:100%;max-height:100%;object-fit:contain;display:block;transition:filter .3s,transform .9s;border-radius:6px}
+#lbView.holding img{transform:scale(.97)}
+#lbView.stats img{filter:blur(16px) brightness(.45)}
+#lbView .lvgone{color:var(--muted);font-size:15px;text-align:center}#lbView .lvgone div{font-size:54px}
+#lbView .lvhint{position:absolute;left:0;right:0;bottom:calc(var(--sab) + 12px);text-align:center;color:var(--muted);font-size:13px;pointer-events:none}
+#lbView.stats .lvhint{display:none}
+#lbView .lvx{position:absolute;top:calc(var(--sat) + 8px);right:calc(var(--sar) + 8px);width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:18px}
+#lbPop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,86vw);border-radius:18px;z-index:2;background:rgba(17,18,26,.55);box-shadow:0 20px 60px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.12)}
+#lbPop .gpst{padding:20px 20px 8px;font-size:15px;line-height:1.65;color:#e6e8f5}
 #lbPop .gpst b{color:#fff}
-#lbPop small{position:relative;display:block;text-align:center;color:var(--muted);padding:0 0 14px}
+.mdl{margin:12px 0 6px;display:flex;flex-direction:column;gap:12px}
+.md{display:flex;align-items:center;gap:12px;font-size:17px;color:#a9adc4}
+.md .mk{width:28px;height:28px;flex:none;border-radius:50%;border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#06261d}
+.md.on{color:#fff;font-weight:600}
+.md.on .mk{background:var(--accent2);border-color:var(--accent2)}
+#lbPop small{display:block;text-align:center;color:var(--muted);padding:0 0 14px}
 </style>
 </head>
 <body>
@@ -271,7 +276,7 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
   </header>
   <div class="scroll">
     <div class="stats">
-      <div class="stat"><b id="stLevel">1</b><span>Level</span></div>
+      <div class="stat"><b id="stLevel">1</b><span id="stLevelLbl">Level</span></div>
       <div class="stat"><b id="stImgs">0</b><span>Photos</span></div>
       <div class="stat"><b id="stAch">0</b><span>Badges</span></div>
     </div>
@@ -295,7 +300,7 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
     <div id="rushWrap" class="hidden" style="margin-bottom:16px"><button class="btn wide rushbtn" id="rushBtn">⚡ Rush</button>
       <div class="row"><button class="btn" id="lbBtn">🏁 Leaderboard</button><button class="btn hidden" id="quitBtn">✕ Quit run</button></div>
       <div id="rushInv"></div></div>
-    <div class="sect srow2"><span>Levels</span><button class="btn" id="galBtn">🏞 Gallery</button></div>
+    <div class="sect srow2"><span id="lvSect">Levels</span><button class="btn" id="galBtn">🏞 Gallery</button></div>
     <div class="grid" id="levels"></div>
   </div>
 </section>
@@ -323,8 +328,7 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
     <button class="btn icon" id="gBack" aria-label="Back">‹</button>
     <h1>Gallery<small id="galSum"></small></h1>
   </header>
-  <div class="scroll"><p class="hint" style="margin:0 2px 10px">Tap to view · press and hold for stats</p><div class="grid" id="galGrid"></div></div>
-  <div id="galPop" class="hidden" role="dialog" aria-label="Solve stats"><div class="gpimg"><img id="gpImg" alt=""></div><div class="gpst" id="gpSt"></div><small>Tap anywhere to close</small></div>
+  <div class="scroll"><p class="hint" style="margin:0 2px 10px">Tap a photo to view it · in the full view, press and hold to see which difficulties you’ve solved</p><div class="grid" id="galGrid"></div></div>
 </section>
 
 <!-- RUSH LEADERBOARD -->
@@ -333,8 +337,7 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
     <button class="btn icon" id="lbBack" aria-label="Back">‹</button>
     <h1>🏁 Rush Leaderboard<small id="lbSum"></small></h1>
   </header>
-  <div class="scroll"><p class="hint" style="margin:0 2px 10px">Top 10 runs · tap a run to see its puzzles · press and hold a puzzle for stats</p><div id="lbList"></div></div>
-  <div id="lbPop" class="hidden" role="dialog" aria-label="Rush solve stats"><div class="gpimg"><img id="lpImg" alt=""></div><div class="gpst" id="lpSt"></div><small>Tap anywhere to close</small></div>
+  <div class="scroll"><p class="hint" style="margin:0 2px 10px">Top 10 runs · tap a run to see its puzzles · tap a puzzle to view it</p><div id="lbList"></div></div>
 </section>
 
 <!-- MY PHOTOS -->
@@ -442,12 +445,6 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
   <div class="stack"><button class="btn wide" id="vClose">Close</button></div>
 </div></div>
 
-<div class="modal" id="mMode"><div class="box">
-  <div style="font-size:44px" id="mmIc">🧩</div>
-  <h2 id="mmTitle">Restart this puzzle?</h2>
-  <p id="mmTxt"></p>
-  <div class="stack"><button class="btn primary wide" id="mmYes">Restart</button><button class="btn wide" id="mmNo">Keep current puzzle</button></div>
-</div></div>
 <div class="modal" id="mInstall"><div class="box" style="text-align:left">
   <h2 style="text-align:center">📱 Full screen</h2>
   <p>iPhone Safari can’t make a web page full screen by itself. Add it to your Home Screen instead:</p>
@@ -456,6 +453,8 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
   <p style="margin-top:10px">The Home Screen app keeps its own photos and progress, so add your photos again there.</p>
   <div class="stack"><button class="btn primary wide" id="miOk">Got it</button></div>
 </div></div>
+<div id="lbView" class="hidden" role="dialog" aria-label="Photo"><img id="lvImg" alt=""><div class="lvgone hidden" id="lvGone"><div>🗑️</div>Photo deleted</div><button class="lvx" id="lvX" aria-label="Close">✕</button><div class="lvhint"><span id="lvHintTxt">Press and hold for stats</span> · tap to close</div>
+    <div id="lbPop" class="hidden" role="dialog" aria-label="Stats"><div class="gpst" id="lpSt"></div><small>Tap to close stats</small></div></div>
 <button id="resetView">↺ Reset view</button>
 <div id="toasts"></div>
 <canvas id="confetti"></canvas>
@@ -474,16 +473,34 @@ const dayKey=d=>d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 // ---------- state ----------
-function fresh(){return {completed:[],current:null,ach:{},days:[],rush:freshRush()}}
+function fresh(){return {completed:[],current:null,currents:{},ach:{},days:[],rush:freshRush()}}
 function freshRush(){return {inv:{peek:0,square:0,minute:0},board:[],total:0,run:null,playing:0}}
 let S;
-try{S=Object.assign(fresh(),JSON.parse(localStorage.getItem(LS)||'{}'))}catch(e){S=fresh()}
-function normRush(){let r=S.rush;if(!r||typeof r!=='object')r=S.rush=freshRush();r.inv=Object.assign({peek:0,square:0,minute:0},r.inv);if(!Array.isArray(r.board))r.board=[];r.total=r.total||0;if(!r.run||typeof r.run!=='object')r.run=null;else{const u=r.run;u.n=u.n||0;u.points=u.points||0;u.time=u.time||0;if(!Array.isArray(u.solves))u.solves=[];if(!Array.isArray(u.used))u.used=[];if(u.cur&&typeof u.cur!=='object')u.cur=null}}
+let RAW={};try{RAW=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){RAW={}}
+try{S=Object.assign(fresh(),RAW)}catch(e){S=fresh()}
+// per-difficulty progress: each mode has its own solves (S.completed[].mode), level and in-progress puzzle (S.currents[mode]);
+// S.current always mirrors the active mode's puzzle so older code paths keep working
+const MODE_IDS=['standard','hard','nightmare'];
+const modeOf=c=>MODE_IDS.includes(c&&c.mode)?c.mode:'standard';
+function migrateModes(){
+  if(!MODE_IDS.includes(S.mode))S.mode='standard';
+  const first=!RAW.currents||typeof RAW.currents!=='object';if(!S.currents||typeof S.currents!=='object')S.currents={};
+  const cnt={standard:0,hard:0,nightmare:0};
+  S.completed.forEach(c=>{c.mode=modeOf(c);c.level=++cnt[c.mode]});
+  MODE_IDS.forEach(m=>{if(S.currents[m]&&typeof S.currents[m]!=='object')S.currents[m]=null});
+  if(S.current&&typeof S.current==='object'){const m=modeOf(S.current);S.current.mode=m;S.currents[m]=S.current;if(first)S.mode=m}
+  MODE_IDS.forEach(m=>{const c=S.currents[m];if(c){c.mode=m;c.level=cnt[m]+1}});
+  S.current=S.currents[S.mode]||null;
+}
+migrateModes();
+function normRush(){let r=S.rush;if(!r||typeof r!=='object')r=S.rush=freshRush();r.inv=Object.assign({peek:0,square:0,minute:0},r.inv);if(!Array.isArray(r.board))r.board=[];r.total=r.total||0;if(!r.run||typeof r.run!=='object'){r.run=null;r.inv={peek:0,square:0,minute:0}}else{const u=r.run;u.n=u.n||0;u.points=u.points||0;u.time=u.time||0;if(!Array.isArray(u.solves))u.solves=[];if(!Array.isArray(u.used))u.used=[];if(u.cur&&typeof u.cur!=='object')u.cur=null}}
 normRush();
 let RUSH=false; // true while the game screen is playing a Rush puzzle
 const C=()=>RUSH?(S.rush.run&&S.rush.run.cur):S.current;
-function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){console.warn('save failed',e)}}
-const doneIds=()=>new Set(S.completed.map(c=>c.id));
+function save(){if(S.currents&&typeof S.currents==='object')S.currents[MODE_IDS.includes(S.mode)?S.mode:'standard']=S.current||null;try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){console.warn('save failed',e)}}
+const doneIds=()=>new Set(S.completed.map(c=>c.id)); // solved in ANY normal difficulty (unblurs)
+const modeDone=m=>S.completed.filter(c=>modeOf(c)===m);
+const doneIdsM=m=>new Set(modeDone(m).map(c=>c.id));
 
 // ---------- IndexedDB ----------
 let dbp;
@@ -576,7 +593,7 @@ const ACH=[
  {id:'rush1',ic:'⚡',name:'Rush Starter',desc:'Solve your first Rush puzzle',t:r=>(r&&r.rush)||S.rush.total>=1},
  {id:'rush3',ic:'🎢',name:'On a Roll',desc:'Solve 3 puzzles in one Rush run',t:r=>!!(r&&r.rush&&r.k>=3)},
  {id:'rush10',ic:'🏃',name:'Marathon',desc:'Solve 10 puzzles in one Rush run',t:r=>!!(r&&r.rush&&r.k>=10)},
- {id:'rushperfect',ic:'💯',name:'Perfect Rush Solve',desc:'Score 1000 points on a Rush puzzle',t:r=>!!(r&&r.rush&&r.points>=1000)},
+ {id:'rushperfect',ic:'🍀',name:'Lucky Streak',desc:'Solve a Rush puzzle in 200 moves or fewer',t:r=>!!(r&&r.rush&&r.moves<=200)} /* id kept from 'Perfect Rush Solve' so earlier awards stay */,
  {id:'completionist',ic:'🏅',name:'Completionist',desc:'Solve every photo in your collection (3+ photos)',t:()=>{const d=doneIds();return IMAGES.length>=3&&IMAGES.every(i=>d.has(i.id))}},
 ];
 function checkAch(r){
@@ -601,19 +618,20 @@ function closeModals(){document.querySelectorAll('.modal.show').forEach(m=>m.cla
 
 // ---------- screens ----------
 let screen='home';
-function show(id){if(id!==screen){for(let i=tq.length-1;i>=0;i--)if(!tq[i][3])tq.splice(i,1);document.querySelectorAll('.toast:not(.ach-t)').forEach(t=>t.remove())}document.body.classList.toggle('ingame',id==='game');document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));screen=id;if(id!=='game')stopTimer()}
+function show(id){if(id!==screen){closeLbView();for(let i=tq.length-1;i>=0;i--)if(!tq[i][3])tq.splice(i,1);document.querySelectorAll('.toast:not(.ach-t)').forEach(t=>t.remove())}document.body.classList.toggle('ingame',id==='game');document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));screen=id;if(id!=='game')stopTimer()}
 
 function renderHome(){updateInstallUI();renderMode();
-  const lvl=S.completed.length+1;
-  $('#stLevel').textContent=lvl;$('#stImgs').textContent=IMAGES.length;$('#stAch').textContent=Object.keys(S.ach).length+'/'+ACH.length;
+  const M=curMode(),mine=modeDone(M),lvl=mine.length+1;
+  $('#stLevel').textContent=lvl;$('#stLevelLbl').textContent=`${MODES[M].label} level`;$('#stImgs').textContent=IMAGES.length;$('#stAch').textContent=Object.keys(S.ach).length+'/'+ACH.length;
   $('#importTitle').textContent=IMAGES.length?'Add more photos':'Add your photos';
   $('#importCard').querySelector('.hint').style.display=IMAGES.length?'none':'';
-  const d=doneIds(),remaining=IMAGES.filter(i=>!d.has(i.id)).length;
+  const d=doneIdsM(M),remaining=IMAGES.filter(i=>!d.has(i.id)).length;
   $('#playWrap').classList.toggle('hidden',!IMAGES.length);
-  $('#playBtn').textContent=S.current?`▶ Continue level ${S.current.level}`:(remaining?`▶ Play level ${lvl}`:'🔁 Replay a random photo');
+  $('#playBtn').textContent=(S.current?`▶ Continue level ${S.current.level}`:(remaining?`▶ Play level ${lvl}`:'🔁 Replay a random photo'))+` · ${MODES[M].label}`;
+  $('#lvSect').textContent=`${MODES[M].label} levels`;
   const thumbs=Object.fromEntries(IMAGES.map(i=>[i.id,i.thumb]));
   let h='';
-  S.completed.forEach((c,i)=>{h+=`<div class="tile${thumbs[c.id]?'':' gone'}" data-view="${i}">${thumbs[c.id]?`<img src="${thumbs[c.id]}" alt="">`:'<div class="big">🗑️</div>'}<span class="badge">✓</span><div class="cap"><b>Level ${c.level}</b><br>${fmt(c.time)} · ${c.moves} moves</div></div>`});
+  S.completed.forEach((c,i)=>{if(modeOf(c)!==M)return;h+=`<div class="tile${thumbs[c.id]?'':' gone'}" data-view="${i}">${thumbs[c.id]?`<img src="${thumbs[c.id]}" alt="">`:'<div class="big">🗑️</div>'}<span class="badge">✓</span><div class="cap"><b>Level ${c.level}</b><br>${fmt(c.time)} · ${c.moves} moves</div></div>`});
   if(IMAGES.length){
     const cur=S.current;
     h+=`<div class="tile next blur" data-play="1">${cur&&thumbs[cur.imageId]?`<img src="${thumbs[cur.imageId]}" alt="">`:''}<div><div class="big">${cur?'▶':'?'}</div>Level ${lvl}<br><small style="font-weight:500">${cur?'In progress':(remaining?'Unlocked':'Replay')}</small></div></div>`;
@@ -637,60 +655,29 @@ $('#playBtn').onclick=()=>play();
 
 // ---------- difficulty ----------
 function renderMode(){const m=curMode();document.querySelectorAll('.seg button').forEach(b=>{const on=b.dataset.mode===m;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)})}
-let pendingMode=null;
-function setMode(m){if(!MODES[m]||m===curMode()&&!(S.current&&S.current.mode!==m))return;
-  S.mode=m;save();renderMode();renderHome();
-  const cur=S.current;
-  if(cur&&cur.mode!==m){pendingMode=m;const L=MODES[m].label;
-    $('#mmIc').textContent=modeIc(m);$('#mmTitle').textContent=`Restart this puzzle in ${L}?`;
-    $('#mmTxt').textContent=`Your Level ${cur.level} puzzle has ${cur.rows*cur.cols} pieces. Restart it with ~${MODES[m].t} pieces (same photo, moves and timer reset), or keep playing it as it is. ${L} will be used for your next new puzzle either way.`;
-    $('#mmYes').textContent=`Restart in ${L}`;closeModals();openModal('#mMode')}
-  else toast(modeIc(m),`${MODES[m].label} mode`,m==='nightmare'?`~${MODES[m].t} pieces, and wrong pieces reshuffle every ${SHUFFLE_EVERY}s`:`New puzzles will have ~${MODES[m].t} pieces`)}
+function setMode(m){if(!MODES[m]||m===curMode())return;
+  if(S.current)S.currents[curMode()]=S.current;
+  S.mode=m;S.current=S.currents[m]||null;save();renderMode();renderHome();
+  const cur=S.current,lv=cur?cur.level:modeDone(m).length+1;
+  toast(modeIc(m),`${MODES[m].label} · Level ${lv}`,cur?'Your puzzle in progress is waiting':(m==='nightmare'?`~${MODES[m].t} pieces, and wrong pieces reshuffle every ${SHUFFLE_EVERY}s`:`~${MODES[m].t} pieces`))}
 document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
-$('#mmNo').onclick=()=>{pendingMode=null;closeModals();toast('👍','Kept your puzzle',`${MODES[curMode()].label} starts with your next puzzle`)};
-$('#mmYes').onclick=()=>{const m=pendingMode;pendingMode=null;closeModals();const cur=S.current;if(!cur||!m)return;
-  const [r,c]=chooseGrid(cur.w,cur.h,m);Object.assign(cur,{mode:m,rows:r,cols:c,order:derange(r*c),moves:0,elapsed:0,peeks:0});if(m==='nightmare')cur.shuffleIn=SHUFFLE_EVERY;else delete cur.shuffleIn;save();renderHome();
-  toast('🔄',`Restarted in ${MODES[m].label}`,`Level ${cur.level} now has ${r*c} pieces`)};
 
 // ---------- Gallery ----------
 function galleryItems(){const by=new Map();S.completed.forEach(c=>{if(!by.has(c.id))by.set(c.id,[]);by.get(c.id).push(c)});
   return [...by.entries()].map(([id,runs])=>({id,runs,last:runs[runs.length-1]})).sort((a,b)=>(b.last.date||0)-(a.last.date||0))}
-function statsHtml(it){const r=it.last,dash='—',ml=MODES[r.mode]?MODES[r.mode].label:dash;
-  const peek=r.peeks==null?dash:(r.peeks?`Yes (${r.peeks}×)`:'No');
-  let h=`<b>Level ${r.level??dash}</b><br>Difficulty: <b>${ml}</b><br>Completed: <b>${r.date?new Date(r.date).toLocaleDateString():dash}</b><br>Time: <b>${r.time!=null?fmt(r.time):dash}</b><br>Moves: <b>${r.moves??dash}</b><br>Peek: <b>${peek}</b>`;
-  if(it.runs.length>1){const best=Math.min(...it.runs.map(x=>x.time??1e9));h+=`<br>Solved <b>${it.runs.length}×</b> · best <b>${fmt(best)}</b>`}
-  return h}
+function modesHtml(id){const done=new Set(S.completed.filter(c=>c.id===id).map(modeOf));
+  return `<b>Difficulties completed</b><div class="mdl">${MODE_IDS.map(m=>`<div class="md${done.has(m)?' on':''}" data-m="${m}"><span class="mk">${done.has(m)?'✓':''}</span>${MODES[m].label}</div>`).join('')}</div>`}
 function renderGallery(){const items=galleryItems(),thumbs=Object.fromEntries(IMAGES.map(i=>[i.id,i.thumb]));
   $('#galSum').textContent=items.length?`${items.length} solved photo${items.length===1?'':'s'}`:'Nothing solved yet';
-  $('#galGrid').innerHTML=items.length?items.map((it,k)=>`<div class="tile${thumbs[it.id]?'':' gone'}" data-k="${k}">${thumbs[it.id]?`<img src="${thumbs[it.id]}" alt="">`:'<div class="big">🗑️</div><div class="cap">Photo deleted</div>'}<div class="gst">${statsHtml(it)}</div></div>`).join('')
+  $('#galGrid').innerHTML=items.length?items.map((it,k)=>`<div class="tile${thumbs[it.id]?'':' gone'}" data-k="${k}">${thumbs[it.id]?`<img src="${thumbs[it.id]}" alt="">`:'<div class="big">🗑️</div><div class="cap">Photo deleted</div>'}</div>`).join('')
     :'<div class="empty" style="grid-column:1/-1">Solve a puzzle and it will appear here.</div>';
   galItems=items}
-let galItems=[],galHold=null,galSuppress=false;
-function showGalPop(t){const it=galItems[+t.dataset.k];if(!it)return;const im=IMAGES.find(i=>i.id===it.id);
-  const g=$('#gpImg');if(im){g.src=im.thumb;g.classList.remove('hidden')}else{g.removeAttribute('src');g.classList.add('hidden')}
-  $('#gpSt').innerHTML=(im?'':'<i>Photo deleted</i><br>')+statsHtml(it);$('#galPop').classList.remove('hidden')}
-function hideGalPop(){$('#galPop').classList.add('hidden');gg.querySelectorAll('.tile.stats').forEach(x=>x.classList.remove('stats'))}
-$('#galPop').addEventListener('click',hideGalPop);
-$('#gallery').addEventListener('click',e=>{if(!$('#galPop').classList.contains('hidden')&&!galSuppress&&!e.target.closest('#galGrid'))hideGalPop()});
+let galItems=[];
 $('#galBtn').onclick=()=>{renderGallery();show('gallery')};
-$('#gBack').onclick=()=>{hideGalPop();renderHome();show('home')};
-const gg=$('#galGrid');
-gg.addEventListener('pointerdown',e=>{const t=e.target.closest('.tile[data-k]');if(!t)return;
-  clearTimeout(galHold&&galHold.t);t.classList.add('holding');
-  galHold={el:t,x:e.clientX,y:e.clientY,fired:false,t:setTimeout(()=>{gg.querySelectorAll('.tile.stats').forEach(x=>x!==t&&x.classList.remove('stats'));t.classList.remove('holding');t.classList.add('stats');galHold.fired=true;showGalPop(t);if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}},1000)}});
-gg.addEventListener('pointermove',e=>{if(galHold&&!galHold.fired&&Math.hypot(e.clientX-galHold.x,e.clientY-galHold.y)>10){clearTimeout(galHold.t);galHold.el.classList.remove('holding');galHold=null}});
-const galEnd=()=>{if(!galHold)return;clearTimeout(galHold.t);galHold.el.classList.remove('holding');galSuppress=galHold.fired;galHold=null};
-gg.addEventListener('pointerup',galEnd);gg.addEventListener('pointercancel',galEnd);
-gg.addEventListener('contextmenu',e=>e.preventDefault());
-gg.addEventListener('click',async e=>{const t=e.target.closest('.tile[data-k]');if(!t)return;
-  if(galSuppress){galSuppress=false;return}
-  if(!$('#galPop').classList.contains('hidden')){hideGalPop();return}
-  gg.querySelectorAll('.tile.stats').forEach(x=>x.classList.remove('stats'));
-  const it=galItems[+t.dataset.k];if(!it)return;const rec=await idbGet(it.id);
-  if(rec){const u=URL.createObjectURL(new Blob([rec.data],{type:rec.type}));$('#vImg').onload=()=>URL.revokeObjectURL(u);$('#vImg').src=u}else $('#vImg').removeAttribute('src');
-  $('#vImg').classList.toggle('hidden',!rec);
-  const r=it.last;$('#vTxt').textContent=(rec?'':'This photo was deleted. ')+[`Level ${r.level}`,MODES[r.mode]?MODES[r.mode].label:null,r.time!=null?fmt(r.time):null,r.moves!=null?`${r.moves} moves`:null,r.date?new Date(r.date).toLocaleDateString():null].filter(Boolean).join(' · ');
-  openModal('#mView')});
+$('#gBack').onclick=()=>{closeLbView();renderHome();show('home')};
+$('#galGrid').addEventListener('contextmenu',e=>e.preventDefault());
+$('#galGrid').addEventListener('click',e=>{const t=e.target.closest('.tile[data-k]');if(!t)return;const it=galItems[+t.dataset.k];if(!it)return;
+  const im=IMAGES.some(i=>i.id===it.id);openFV(it.id,(im?'':'<i>Photo deleted</i><br>')+modesHtml(it.id),'Press and hold to see difficulties')});
 
 // ---------- My Photos ----------
 let pSel=null; // Set of ids when selecting
@@ -740,6 +727,7 @@ async function deletePhotos(ids){
   IMAGES=await idbMeta();
   let replaced=false;
   if(S.current&&!IMAGES.some(i=>i.id===S.current.imageId)){const lvl=S.current.level;S.current=null;if(IMAGES.length)newPuzzle(null,lvl);replaced=true}
+  MODE_IDS.forEach(m=>{const c=S.currents[m];if(c&&c!==S.current&&!IMAGES.some(i=>i.id===c.imageId))S.currents[m]=null});
   const rr=S.rush.run;if(rr&&rr.cur&&!IMAGES.some(i=>i.id===rr.cur.imageId))rr.cur=null;
   save();pSel=null;pView=null;checkAch(null); // earned achievements are never revoked
   renderPhotos();renderHome();
@@ -771,14 +759,14 @@ function derange(n){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=
   for(let i=0;i<n;i++)if(a[i]===i){const j=(i+1)%n;[a[i],a[j]]=[a[j],a[i]]}return a}
 // uniformly random among unsolved photos (never upload order)
 function pickImage(excludeId){
-  const d=doneIds();let pool=IMAGES.filter(i=>!d.has(i.id)&&i.id!==excludeId);
+  const d=doneIdsM(curMode());let pool=IMAGES.filter(i=>!d.has(i.id)&&i.id!==excludeId);
   if(!pool.length)pool=IMAGES.filter(i=>!d.has(i.id));
   if(!pool.length)pool=IMAGES.filter(i=>i.id!==excludeId); // all solved → replay
   if(!pool.length)pool=IMAGES.slice();
   return pool.length?pool[rnd(pool.length)]:null;
 }
 function newPuzzle(excludeId,level){
-  const img=pickImage(excludeId);if(!img)return false;level=level||S.completed.length+1;
+  const img=pickImage(excludeId);if(!img)return false;level=level||modeDone(curMode()).length+1;
   const mode=curMode();const [rows,cols]=chooseGrid(img.w,img.h,mode);
   S.current={imageId:img.id,level,mode,rows,cols,order:derange(rows*cols),moves:0,elapsed:0,peeks:0,w:img.w,h:img.h};
   if(mode==='nightmare')S.current.shuffleIn=SHUFFLE_EVERY;
@@ -1010,14 +998,14 @@ $('#backBtn').onclick=()=>{select(null);stopTimer();if(RUSH){S.rush.playing=0;sa
 function complete(){
   if(RUSH)return rushComplete();
   G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);const cur=C();
-  const r={id:cur.imageId,level:cur.level,time:Math.round(cur.elapsed),moves:cur.moves,peeks:cur.peeks,pieces:G.n,mode:cur.mode||null,date:Date.now()};
+  const r={id:cur.imageId,level:cur.level,time:Math.round(cur.elapsed),moves:cur.moves,peeks:cur.peeks,pieces:G.n,mode:modeOf(cur),date:Date.now()};
   S.completed.push(r);const dk=dayKey(new Date());if(!S.days.includes(dk))S.days.push(dk);
   S.current=null;save();stopTimer();
   const got=checkAch(r);
   setTimeout(()=>{
     $('#cTitle').textContent=`Level ${r.level} complete!`;$('#cImg').src=curURL;$('#cTime').textContent=fmt(r.time);$('#cMoves').textContent=r.moves;$('#cPeeks').textContent=r.peeks;
-    const d=doneIds(),left=IMAGES.filter(i=>!d.has(i.id)).length;
-    $('#cNext').innerHTML=`🔓 Level ${r.level+1} unlocked!`+(got.length?`<br>🏆 ${got.length} new achievement${got.length>1?'s':''}`:'')+(left?'':'<br>You’ve solved every photo — add more or replay!');
+    const d=doneIdsM(r.mode),left=IMAGES.filter(i=>!d.has(i.id)).length;
+    $('#cNext').innerHTML=`🔓 ${MODES[r.mode]?MODES[r.mode].label+' level':'Level'} ${r.level+1} unlocked!`+(got.length?`<br>🏆 ${got.length} new achievement${got.length>1?'s':''}`:'')+(left?'':'<br>You’ve solved every photo — add more or replay!');
     openModal('#mCelebrate');confetti();
   },700);
 }
@@ -1029,14 +1017,15 @@ function confetti(){const c=$('#confetti'),g=c.getContext('2d');const dpr=Math.m
   const t0=performance.now();(function f(t){g.clearRect(0,0,innerWidth,innerHeight);for(const p of P){p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);g.restore()}
     if(t-t0<3500)requestAnimationFrame(f);else g.clearRect(0,0,innerWidth,innerHeight)})(t0)}
 
-let rz;function onResize(){clearTimeout(rz);rz=setTimeout(layout,60)}
+let rz,rz2;function onResize(){clearTimeout(rz);clearTimeout(rz2);rz=setTimeout(layout,60);rz2=setTimeout(layout,400)} // second pass catches late viewport updates after rotation
 window.addEventListener('resize',onResize);window.addEventListener('orientationchange',onResize);
 if(window.visualViewport)visualViewport.addEventListener('resize',onResize);
 
 // ---------- RUSH MODE ----------
 const RUSH_T=900;
 const REWARDS=[{k:'peek',n:2,ic:'👁',name:'+2 Peeks'},{k:'square',n:5,ic:'🧩',name:'+5 Free Square Solves'},{k:'minute',n:1,ic:'⏱',name:'+1 Extra Minute'}];
-const rushPoints=m=>Math.max(100,1000-50*Math.floor(Math.max(0,m-150)/25));
+// 1000 max; each move m>150 costs 1 + 0.2*floor((m-151)/25) points; sum in tenths (exact), round half up, floor 0
+function rushPoints(m){let t=0;for(let k=151;k<=m&&t<10000;k++)t+=10+2*Math.floor((k-151)/25);return Math.max(0,Math.floor((10000-t+5)/10))}
 const lbSort=(a,b)=>(b.points-a.points)||(b.n-a.n)||(a.date-b.date);
 // random over the whole collection (solved or not); no repeats within a run until every photo has been used
 function pickRush(){const run=S.rush.run,used=new Set(run.used);let pool=IMAGES.filter(i=>!used.has(i.id));
@@ -1087,11 +1076,11 @@ function rushOver(reason){const rs=S.rush,run=rs.run;if(!run)return;
   const rec={points:run.points,n:run.n,time:Math.round(run.time),date:Date.now(),start:run.start,solves:run.solves,end:reason};
   rs.board.push(rec);rs.board.sort(lbSort);if(rs.board.length>50)rs.board.length=50;const rank=rs.board.indexOf(rec)+1;
   if(G&&RUSH&&screen==='game'&&run.cur){G.solved=true;select(null);dropGesture();clearTimeout(peekT);board.classList.remove('peek');$('#peekBtn').classList.remove('on')}
-  rs.run=null;rs.playing=0;
+  rs.run=null;rs.playing=0;rs.inv={peek:0,square:0,minute:0}; // rewards only last for one run
   stopTimer();save();
   $('#roIc').textContent=reason==='timeout'?'⏰':'🏁';$('#roTitle').textContent=reason==='timeout'?'Time’s up!':'Run ended';
   $('#roN').textContent=rec.n;$('#roTime').textContent=fmt(rec.time);$('#roPts').textContent=rec.points.toLocaleString();
-  $('#roTxt').textContent=(rank>0&&rank<=10?`#${rank} on your leaderboard. `:'')+'Run progress is wiped, so the next run starts from puzzle 1. Your rewards are kept.';
+  $('#roTxt').textContent=(rank>0&&rank<=10?`#${rank} on your leaderboard. `:'')+'Run progress and rewards are wiped, so the next run starts from puzzle 1 with no rewards.';
   lbOpenIdx=rank>0&&rank<=10?rank-1:-1;closeModals();openModal('#mRushOver')}
 const leaveGame=()=>{RUSH=false;closeModals();renderHome();show('home')};
 $('#roNew').onclick=()=>{closeModals();rushPlay()};
@@ -1102,36 +1091,45 @@ function renderRushHome(){const rs=S.rush,run=rs.run,inv=rs.inv;
   $('#rushBtn').innerHTML=run?`⚡ Continue Rush<small>Puzzle #${run.n+1} · ${run.points.toLocaleString()} pts${run.cur?' · '+fmt(Math.ceil(run.cur.remain??RUSH_T))+' left':''}</small>`:`⚡ Rush<small>15:00 per puzzle · earn rewards · beat your best</small>`;
   $('#quitBtn').classList.toggle('hidden',!run);
   const best=rs.board.length?rs.board[0].points:0;
-  $('#rushInv').textContent=`Rewards: 👁 ${inv.peek} · 🧩+ ${inv.square} · ⏱+ ${inv.minute}`+(best?` · Best ${best.toLocaleString()} pts`:'')}
+  $('#rushInv').textContent=[run?`This run: 👁 ${inv.peek} · 🧩+ ${inv.square} · ⏱+ ${inv.minute}`:'',best?`Best ${best.toLocaleString()} pts`:''].filter(Boolean).join(' · ')}
 $('#rushBtn').onclick=()=>rushPlay();
-$('#quitBtn').onclick=()=>{const run=S.rush.run;if(!run)return;$('#qTxt').textContent=`This ends your run (${run.n} puzzle${run.n===1?'':'s'}, ${run.points.toLocaleString()} points) and records it on the leaderboard. The next run starts from puzzle 1. Your rewards are kept.`;closeModals();openModal('#mQuit')};
+$('#quitBtn').onclick=()=>{const run=S.rush.run;if(!run)return;$('#qTxt').textContent=`This ends your run (${run.n} puzzle${run.n===1?'':'s'}, ${run.points.toLocaleString()} points) and records it on the leaderboard. The next run starts from puzzle 1, and this run’s rewards are lost.`;closeModals();openModal('#mQuit')};
 $('#qNo').onclick=closeModals;
 $('#qYes').onclick=()=>{closeModals();rushOver('quit');renderHome()};
 // leaderboard
 const fmtD=t=>t?new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'}):'—';
 function rushStatsHtml(r){const dash='—';return `<b>⚡ Rush · puzzle #${r.k}</b><br>Difficulty: <b>Standard</b><br>Completed: <b>${r.date?new Date(r.date).toLocaleDateString():dash}</b><br>Time: <b>${r.time!=null?fmt(r.time):dash}</b><br>Moves: <b>${r.moves??dash}</b><br>Peeks used: <b>${r.peeks??0}</b><br>Free squares used: <b>${r.squares??0}</b><br>Minutes used: <b>${r.minutes??0}</b><br>Points: <b>${(r.points??0).toLocaleString()}</b>`}
-function renderLB(){const top=S.rush.board.slice(0,10),thumbs=Object.fromEntries(IMAGES.map(i=>[i.id,i.thumb])),d=doneIds();
+function renderLB(){const top=S.rush.board.slice(0,10),thumbs=Object.fromEntries(IMAGES.map(i=>[i.id,i.thumb]));
   $('#lbSum').textContent=top.length?`Best ${top[0].points.toLocaleString()} pts · ${S.rush.board.length} run${S.rush.board.length===1?'':'s'} played`:'No runs yet';
   $('#lbList').innerHTML=top.length?top.map((r,i)=>`<div class="lbrow${i===lbOpenIdx?' open':''}" data-i="${i}"><div class="lbhead"><span class="lbrk">${i+1}</span><span class="lbp"><b>${r.points.toLocaleString()}</b><small>points</small></span><span><b>${r.n}</b><small>puzzles</small></span><span><b>${fmt(r.time)}</b><small>time</small></span><span><b>${fmtD(r.date)}</b><small>date</small></span><span class="lbchev">›</span></div>
-    <div class="lbbody">${(r.solves||[]).length?`<div class="grid lbgrid">${r.solves.map((x,k)=>{const th=thumbs[x.id];return th?`<div class="tile${d.has(x.id)?'':' blur'}" data-i="${i}" data-k="${k}"><img src="${th}" alt=""><div class="cap"><b>#${x.k}</b> · ${x.points} pts</div></div>`:`<div class="tile gone" data-i="${i}" data-k="${k}"><div class="big">🗑️</div><div class="cap"><b>#${x.k}</b> · photo deleted</div></div>`}).join('')}</div>`:'<div class="lbnone">No puzzles completed in this run.</div>'}</div></div>`).join('')
+    <div class="lbbody">${(r.solves||[]).length?`<div class="grid lbgrid">${r.solves.map((x,k)=>{const th=thumbs[x.id];return th?`<div class="tile" data-i="${i}" data-k="${k}"><img src="${th}" alt=""><div class="cap"><b>#${x.k}</b> · ${x.points} pts</div></div>`:`<div class="tile gone" data-i="${i}" data-k="${k}"><div class="big">🗑️</div><div class="cap"><b>#${x.k}</b> · photo deleted</div></div>`}).join('')}</div>`:'<div class="lbnone">No puzzles completed in this run.</div>'}</div></div>`).join('')
     :'<div class="empty">Finish a Rush run and it will show up here.</div>'}
-function openLB(idx){lbOpenIdx=idx==null?-1:idx;hideLbPop();renderLB();show('rushlb')}
-function showLbPop(t){const r=S.rush.board[+t.dataset.i],x=r&&r.solves[+t.dataset.k];if(!x)return;const im=IMAGES.find(i=>i.id===x.id);
-  const g=$('#lpImg');if(im){g.src=im.thumb;g.classList.remove('hidden')}else{g.removeAttribute('src');g.classList.add('hidden')}
-  $('#lpSt').innerHTML=(im?'':'<i>Photo deleted</i><br>')+rushStatsHtml(x);$('#lbPop').classList.remove('hidden')}
-function hideLbPop(){$('#lbPop').classList.add('hidden')}
+function openLB(idx){lbOpenIdx=idx==null?-1:idx;closeLbView();renderLB();show('rushlb')}
+// full-screen view of a Rush solve; press and hold ~1s there for stats
+let lvSolve=null,lvURL=null,lvHold=null,lvSup=false;
+function openLbView(i,k){const r=S.rush.board[i],x=r&&r.solves[k];if(!x)return;const im=IMAGES.some(m=>m.id===x.id);
+  openFV(x.id,(im?'':'<i>Photo deleted</i><br>')+rushStatsHtml(x),'Press and hold for stats')}
+// full-screen photo view: tap closes, press and hold ~1s blurs it and shows the given stats
+async function openFV(id,html,hint){const tok={id};lvSolve=tok;
+  const v=$('#lbView'),img=$('#lvImg'),im=IMAGES.find(m=>m.id===id);v.classList.remove('stats','holding');$('#lbPop').classList.add('hidden');
+  $('#lpSt').innerHTML=html;$('#lvHintTxt').textContent=hint||'Press and hold for stats';
+  $('#lvGone').classList.toggle('hidden',!!im);img.classList.toggle('hidden',!im);
+  if(im)img.src=im.thumb;else img.removeAttribute('src');v.classList.remove('hidden');
+  if(im){const rec=await idbGet(id);if(rec&&lvSolve===tok){if(lvURL)URL.revokeObjectURL(lvURL);lvURL=URL.createObjectURL(new Blob([rec.data],{type:rec.type||'image/jpeg'}));img.src=lvURL}}}
+function closeLbView(){lvSolve=null;clearTimeout(lvHold&&lvHold.t);lvHold=null;$('#lbView').classList.add('hidden');$('#lbView').classList.remove('stats','holding');$('#lbPop').classList.add('hidden');if(lvURL){URL.revokeObjectURL(lvURL);lvURL=null}}
+function lvStats(on){$('#lbView').classList.toggle('stats',on);$('#lbPop').classList.toggle('hidden',!on)}
 $('#lbBtn').onclick=()=>openLB(-1);
-$('#lbBack').onclick=()=>{hideLbPop();renderHome();show('home')};
-$('#lbPop').addEventListener('click',hideLbPop);
-const lbl=$('#lbList');let lbHold=null,lbSup=false;
-lbl.addEventListener('pointerdown',e=>{const t=e.target.closest('.lbgrid .tile');if(!t)return;clearTimeout(lbHold&&lbHold.t);t.classList.add('holding');
-  lbHold={el:t,x:e.clientX,y:e.clientY,fired:false,t:setTimeout(()=>{t.classList.remove('holding');lbHold.fired=true;showLbPop(t);if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}},1000)}});
-lbl.addEventListener('pointermove',e=>{if(lbHold&&!lbHold.fired&&Math.hypot(e.clientX-lbHold.x,e.clientY-lbHold.y)>10){clearTimeout(lbHold.t);lbHold.el.classList.remove('holding');lbHold=null}});
-const lbEnd=()=>{if(!lbHold)return;clearTimeout(lbHold.t);lbHold.el.classList.remove('holding');lbSup=lbHold.fired;lbHold=null};
-lbl.addEventListener('pointerup',lbEnd);lbl.addEventListener('pointercancel',lbEnd);lbl.addEventListener('contextmenu',e=>e.preventDefault());
-lbl.addEventListener('click',e=>{if(lbSup){lbSup=false;return}
-  if(!$('#lbPop').classList.contains('hidden')){hideLbPop();return}
-  if(e.target.closest('.lbgrid .tile')){toast('👆','Press and hold','Hold a puzzle to see its stats');return}
+$('#lbBack').onclick=()=>{closeLbView();renderHome();show('home')};
+const lv=$('#lbView');
+lv.addEventListener('pointerdown',e=>{if(e.target.closest('#lvX'))return;if(lv.classList.contains('stats'))return;clearTimeout(lvHold&&lvHold.t);lv.classList.add('holding');
+  lvHold={x:e.clientX,y:e.clientY,fired:false,t:setTimeout(()=>{lv.classList.remove('holding');if(!lvHold)return;lvHold.fired=true;lvStats(true);if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}},1000)}});
+lv.addEventListener('pointermove',e=>{if(lvHold&&!lvHold.fired&&Math.hypot(e.clientX-lvHold.x,e.clientY-lvHold.y)>10){clearTimeout(lvHold.t);lv.classList.remove('holding');lvHold=null}});
+const lvEnd=()=>{if(!lvHold)return;clearTimeout(lvHold.t);lv.classList.remove('holding');lvSup=lvHold.fired;lvHold=null};
+lv.addEventListener('pointerup',lvEnd);lv.addEventListener('pointercancel',lvEnd);lv.addEventListener('contextmenu',e=>e.preventDefault());
+lv.addEventListener('click',e=>{if(lvSup){lvSup=false;return}if(e.target.closest('#lvX')){closeLbView();return}
+  if(lv.classList.contains('stats')){lvStats(false);return}closeLbView()});
+const lbl=$('#lbList');
+lbl.addEventListener('click',e=>{const t=e.target.closest('.lbgrid .tile');if(t){openLbView(+t.dataset.i,+t.dataset.k);return}
   const h=e.target.closest('.lbhead');if(!h)return;const row=h.parentNode,i=+row.dataset.i;
   lbOpenIdx=row.classList.contains('open')?-1:i;lbl.querySelectorAll('.lbrow').forEach(x=>x.classList.toggle('open',+x.dataset.i===lbOpenIdx))});
 
@@ -1139,6 +1137,8 @@ lbl.addEventListener('click',e=>{if(lbSup){lbSup=false;return}
 if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=>IMAGES,runtime:()=>G,
   nearlySolve(){if(!C()||!G)return;const n=G.n,o=C().order;for(let i=0;i<n;i++)o[i]=i;[o[0],o[1]]=[o[1],o[0]];layout();refresh(false);save()},
   swap:(a,b)=>swap(a,b),zoom:()=>({...Z}),pickImage:x=>pickImage(x),shuffleNow:()=>nightmareShuffle(),setShuffleIn:t=>{C().shuffleIn=t;updNm()},select:x=>select(x),zoomCenter:f=>zoomCenter(f),checkViewport:f=>checkViewport(f),deletePhotos:ids=>deletePhotos(ids),zoomAt:(z,x,y)=>zoomAt(z,x,y,false),
+  setMode:m=>setMode(m),galleryItems:()=>galItems,
+  achTest:(id,r)=>{const a=ACH.find(x=>x.id===id);return a?!!a.t(r):null},
   rush:()=>S.rush,rushPoints:m=>rushPoints(m),useItem:k=>useItem(k),rushPlay:()=>rushPlay(),isRush:()=>RUSH,cur:()=>C(),rushOver:r=>rushOver(r),openLB:i=>openLB(i),
   setRemain:t=>{const c=C();if(c){c.remain=t;upd()}},
   slotCenter(s){const r=board.getBoundingClientRect(),c=C().cols;return [r.left+(s%c+.5)*G.pw*Z.z,r.top+(Math.floor(s/c)+.5)*G.ph*Z.z]}};
