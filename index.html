@@ -197,6 +197,7 @@ label.chk input{width:20px;height:20px}
 .toast .ic{font-size:26px}
 .toast small{display:block;color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
 body.ingame #toasts{top:auto;bottom:calc(46px + var(--sab));flex-direction:column-reverse}
+body.modalup #toasts{top:calc(10px + var(--sat));bottom:auto;flex-direction:column} /* keep toasts off modal buttons */
 @keyframes tin{from{transform:translateY(-20px);opacity:0}}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:150}
 #busy{position:fixed;inset:0;background:rgba(5,6,10,.8);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
@@ -243,6 +244,11 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
 .lbgrid .tile.holding{transform:scale(.96);transition:transform 1s}
 .lbgrid .tile .cap{font-size:11px;padding:12px 6px 5px}
 .lbnone{font-size:13px;color:var(--muted);padding:4px 2px}
+#pauseOv{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;align-items:center;justify-content:center;touch-action:none}
+#pauseOv .pstack{display:flex;flex-direction:column;gap:14px;width:min(260px,70vw)}
+#pauseOv #resumeBtn{font-size:20px;min-height:60px;border-radius:16px}
+#pauseOv #pauseQuit{font-size:16px;min-height:48px;border-radius:14px}
+#pauseBtn{min-width:34px}
 #lbView{position:fixed;inset:0;z-index:110;background:#000;display:flex;align-items:center;justify-content:center;padding:calc(var(--sat) + 8px) calc(var(--sar) + 8px) calc(var(--sab) + 40px) calc(var(--sal) + 8px);touch-action:manipulation;-webkit-touch-callout:none;animation:rise .2s ease}
 #lbView img{max-width:100%;max-height:100%;object-fit:contain;display:block;transition:filter .3s,transform .9s;border-radius:6px}
 #lbView.holding img{transform:scale(.97)}
@@ -315,7 +321,7 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
       <button class="gb" id="peekBtn" aria-label="Peek at the full picture">👁<span class="cnt ro" id="pkN">0</span></button>
       <button class="gb inv ro" id="sqBtn" aria-label="Free square solve">🧩<i>+</i><span class="cnt" id="sqN">0</span></button>
       <button class="gb inv ro" id="mnBtn" aria-label="Extra minute">⏱<i>+</i><span class="cnt" id="mnN">0</span></button>
-      <span class="gs tm"><span class="ic" id="gTIc">⏱</span><b id="gTime">0:00</b></span><span class="gs"><span class="ic">↔</span><b id="gMoves">0</b></span><span class="gs no"><span class="ic">🧩</span><b id="gPieces">0</b></span>
+      <button class="gb ro" id="pauseBtn" aria-label="Pause"><svg viewBox="0 0 20 20" width="16" height="16"><rect x="4.5" y="3.5" width="3.6" height="13" rx="1.2" fill="#c9ccdd"/><rect x="11.9" y="3.5" width="3.6" height="13" rx="1.2" fill="#c9ccdd"/></svg></button><span class="gs tm"><span class="ic" id="gTIc">⏱</span><b id="gTime">0:00</b></span><span class="gs"><span class="ic">↔</span><b id="gMoves">0</b></span><span class="gs no"><span class="ic">🧩</span><b id="gPieces">0</b></span>
       <span class="gs nm hidden" id="gNm" title="Seconds until shuffle"><i class="ring" id="gRing"></i><b id="gNmT">10</b></span>
       <button class="gb" id="statusBtn" aria-label="Show which pieces are right" aria-pressed="false"><svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="3" fill="none" stroke="#c9ccdd" stroke-width="1.6"/><path d="M3.5 3.5h6.5v13H5a1.5 1.5 0 0 1-1.5-1.5z" fill="#2fd27a" opacity=".85"/><path d="M10 3.5h5a1.5 1.5 0 0 1 1.5 1.5v10a1.5 1.5 0 0 1-1.5 1.5h-5z" fill="#ff4d5e" opacity=".85"/></svg></button>
     </div>
@@ -376,7 +382,7 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
   <img class="prev" id="rwImg" alt="" style="max-height:26vh">
   <div class="cstats"><div><b id="rwTime">0:00</b><span>Time</span></div><div><b id="rwMoves">0</b><span>Moves</span></div><div><b id="rwPts">1000</b><span>Points</span></div></div>
   <p id="rwRun"></p>
-  <div class="stack"><button class="btn primary wide" id="rwNext">Next puzzle ▶</button></div>
+  <div class="stack"><button class="btn primary wide" id="rwNext">Next puzzle ▶</button><button class="btn wide" id="rwQuit">💾 Save &amp; Quit</button></div>
 </div></div>
 
 <div class="modal" id="mRushOver"><div class="box">
@@ -385,6 +391,13 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
   <div class="cstats"><div><b id="roN">0</b><span>Puzzles</span></div><div><b id="roTime">0:00</b><span>Total time</span></div><div><b id="roPts">0</b><span>Points</span></div></div>
   <p id="roTxt"></p>
   <div class="stack"><button class="btn primary wide" id="roNew">⚡ New run</button><button class="btn wide" id="roLb">🏁 Leaderboard</button><button class="btn wide" id="roHome">Home</button></div>
+</div></div>
+
+<div class="modal" id="mPQuit"><div class="box">
+  <div style="font-size:44px">💾</div>
+  <h2>Are you sure?</h2>
+  <p>Save this run and go back to the menu. The clock stays stopped until you continue, and you’ll see the photo for 2 seconds before it starts again.</p>
+  <div class="stack"><button class="btn primary wide" id="pqYes">Yes, save &amp; quit</button><button class="btn wide" id="pqNo">Cancel</button></div>
 </div></div>
 
 <div class="modal" id="mQuit"><div class="box">
@@ -455,6 +468,7 @@ body.rush .gs.tm.low b,#rsT.low{color:var(--danger)!important}
 </div></div>
 <div id="lbView" class="hidden" role="dialog" aria-label="Photo"><img id="lvImg" alt=""><div class="lvgone hidden" id="lvGone"><div>🗑️</div>Photo deleted</div><button class="lvx" id="lvX" aria-label="Close">✕</button><div class="lvhint"><span id="lvHintTxt">Press and hold for stats</span> · tap to close</div>
     <div id="lbPop" class="hidden" role="dialog" aria-label="Stats"><div class="gpst" id="lpSt"></div><small>Tap to close stats</small></div></div>
+<div id="pauseOv" class="hidden" role="dialog" aria-label="Paused"><div class="pstack"><button class="btn primary" id="resumeBtn">▶ Resume</button><button class="btn" id="pauseQuit">💾 Save &amp; Quit</button></div></div>
 <button id="resetView">↺ Reset view</button>
 <div id="toasts"></div>
 <canvas id="confetti"></canvas>
@@ -613,12 +627,13 @@ function toast(ic,title,sub,isAch){tq.push([ic,title,sub,isAch]);if(!tBusy)nextT
 function nextToast(){const t=tq.shift();if(!t){tBusy=false;return}tBusy=true;showToast(...t);setTimeout(nextToast,t[3]?1700:1200)}
 function showToast(ic,title,sub,isAch){const el=document.createElement('div');el.className='toast'+(isAch?' ach-t':'');el.innerHTML=`<div class="ic">${ic}</div><div>${isAch?`<small>${esc(sub)}</small><b>${esc(title)}</b>`:`<b>${esc(title)}</b><div style="font-size:13px;color:var(--muted)">${esc(sub||'')}</div>`}</div>`;$('#toasts').appendChild(el);setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),450)},isAch?2600:2600)}
 function busy(on,t){$('#busy').classList.toggle('show',on);if(t)$('#busyTxt').textContent=t}
-function openModal(id){$(id).classList.add('show')}
-function closeModals(){document.querySelectorAll('.modal.show').forEach(m=>m.classList.remove('show'))}
+function openModal(id){$(id).classList.add('show');document.body.classList.add('modalup');
+  if(id==='#mRushWin'||id==='#mCelebrate'){for(let i=tq.length-1;i>=0;i--)if(!tq[i][3])tq.splice(i,1);document.querySelectorAll('.toast:not(.ach-t)').forEach(t=>t.remove())}}
+function closeModals(){document.querySelectorAll('.modal.show').forEach(m=>m.classList.remove('show'));document.body.classList.remove('modalup')}
 
 // ---------- screens ----------
 let screen='home';
-function show(id){if(id!==screen){closeLbView();for(let i=tq.length-1;i>=0;i--)if(!tq[i][3])tq.splice(i,1);document.querySelectorAll('.toast:not(.ach-t)').forEach(t=>t.remove())}document.body.classList.toggle('ingame',id==='game');document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));screen=id;if(id!=='game')stopTimer()}
+function show(id){if(id!=='game')$('#pauseOv').classList.add('hidden');if(id!==screen){closeLbView();for(let i=tq.length-1;i>=0;i--)if(!tq[i][3])tq.splice(i,1);document.querySelectorAll('.toast:not(.ach-t)').forEach(t=>t.remove())}document.body.classList.toggle('ingame',id==='game');document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));screen=id;if(id!=='game')stopTimer()}
 
 function renderHome(){updateInstallUI();renderMode();
   const M=curMode(),mine=modeDone(M),lvl=mine.length+1;
@@ -797,7 +812,7 @@ async function openGame(){
   $('#peekImg').src=curURL;
   const n=cur.rows*cur.cols;const els=[];
   for(let p=0;p<n;p++){const el=document.createElement('div');el.className='piece';el.style.backgroundImage=`url("${curURL}")`;el.dataset.p=p;board.appendChild(el);els[p]=el}
-  G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n,intro:false};
+  G={els,sel:null,drag:null,solved:false,pw:0,ph:0,n,intro:false,paused:false};$('#pauseOv').classList.add('hidden');
   if(cur.mode==='nightmare')cur.shuffleIn=cur.shuffleIn>0?Math.min(SHUFFLE_EVERY,cur.shuffleIn):SHUFFLE_EVERY; // older saves used a 60s cycle
   const info=`${MODES[cur.mode]?MODES[cur.mode].label+' · ':''}${cur.rows*cur.cols} pieces`,ttl=RUSH?`Rush · puzzle #${cur.level}`:`Level ${cur.level}`;board.setAttribute('aria-label',`${ttl} · ${info}`);
   Z.z=1;Z.tx=0;Z.ty=0;gest=null;ptrs.clear();
@@ -806,7 +821,7 @@ async function openGame(){
   $('#gNm').classList.toggle('hidden',cur.mode!=='nightmare');$('#sdNm').classList.toggle('hidden',cur.mode!=='nightmare');
   setStatus(!!(S.ui&&S.ui.status));
   show('game');layout();refresh(false);updNm();
-  const isNew=cur.moves===0&&cur.elapsed<0.5&&!NOINTRO;
+  const isNew=!NOINTRO&&(RUSH||cur.moves===0&&cur.elapsed<0.5); // Rush: reveal on every entry (clock paused during it); only in-game pause/resume skips it
   if(isNew){G.intro=true;board.classList.add('intro');const g0=G;
     setTimeout(()=>{if(G!==g0)return;board.classList.add('introfade');board.classList.remove('intro');
       setTimeout(()=>{if(G!==g0)return;board.classList.remove('introfade');G.intro=false;startTimer()},720)},2000)}
@@ -879,7 +894,7 @@ function dropGesture(){if(!gest)return;clearTimeout(gest.lp);if(gest.type==='dra
 function pinchInfo(){const [a,b]=[...ptrs.values()];return {d:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),mx:(a.x+b.x)/2,my:(a.y+b.y)/2}}
 stage.addEventListener('pointerdown',e=>{
   if(!G||G.solved||screen!=='game')return;e.preventDefault();
-  if(G.intro)return;
+  if(G.intro||G.paused)return;
   ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
   try{stage.setPointerCapture(e.pointerId)}catch(_){}
   if(ptrs.size===2){dropGesture();const p=pinchInfo();const [ox,oy]=boardOrigin();
@@ -955,7 +970,7 @@ stage.addEventListener('contextmenu',e=>e.preventDefault());
 
 // peek
 let peekT=null;
-$('#peekBtn').onclick=()=>{if(!G||G.solved||G.intro)return;
+$('#peekBtn').onclick=()=>{if(!G||G.solved||G.intro||G.paused)return;
   if(board.classList.contains('peek')){board.classList.remove('peek');$('#peekBtn').classList.remove('on');clearTimeout(peekT);return}
   if(RUSH){const inv=S.rush.inv;if(!(inv.peek>0)){toast('👁','No Peeks left','Solve Rush puzzles to earn more');return}inv.peek--;rushUI()}
   C().peeks++;save();board.classList.add('peek');$('#peekBtn').classList.add('on');
@@ -968,7 +983,7 @@ $('#statusBtn').onclick=()=>{const on=!board.classList.contains('status');setSta
 // timer
 let tick=null,lastT=0,saveCnt=0;
 function startTimer(){stopTimer();lastT=performance.now();upd();tick=setInterval(()=>{const now=performance.now();
-  if(screen==='game'&&!document.hidden&&G&&!G.solved&&!G.intro&&C()){const dt=Math.min(5,(now-lastT)/1000);C().elapsed+=dt;
+  if(screen==='game'&&!document.hidden&&G&&!G.solved&&!G.intro&&!G.paused&&C()){const dt=Math.min(5,(now-lastT)/1000);C().elapsed+=dt;
     if(RUSH){const c=C();c.remain=(c.remain??RUSH_T)-dt;if(c.remain<=0){c.remain=0;upd();rushOver('timeout');return}}
     if(C().mode==='nightmare'){C().shuffleIn=(C().shuffleIn>0?C().shuffleIn:SHUFFLE_EVERY)-dt;if(C().shuffleIn<=0){C().shuffleIn+=SHUFFLE_EVERY;nightmareShuffle()}updNm()}
     upd();if(++saveCnt%5===0)save()}lastT=now},1000)}
@@ -1001,7 +1016,7 @@ function stopTimer(){if(tick){clearInterval(tick);tick=null}if(C())save()}
 function upd(){const c=C();if(!c)return;
   if(RUSH){const t=Math.max(0,Math.ceil(c.remain??RUSH_T)),txt=fmt(t);$('#gTime').textContent=txt;$('#rsT').textContent=txt;const low=t<=60;$('#gTime').parentNode.classList.toggle('low',low);$('#rsT').classList.toggle('low',low)}
   else{$('#gTime').textContent=fmt(c.elapsed);$('#gTime').parentNode.classList.remove('low')}}
-document.addEventListener('visibilitychange',()=>{lastT=performance.now();save()});
+document.addEventListener('visibilitychange',()=>{lastT=performance.now();if(document.hidden)rushPause();save()});
 window.addEventListener('pagehide',save);
 $('#backBtn').onclick=()=>{select(null);stopTimer();if(RUSH){S.rush.playing=0;save()}RUSH=false;renderHome();show('home')};
 
@@ -1052,7 +1067,7 @@ function rushUI(){const rs=S.rush,inv=rs.inv,run=rs.run;
   if(RUSH)$('#peekBtn').classList.toggle('empty',!inv.peek);else $('#peekBtn').classList.remove('empty');
   $('#sqBtn').classList.toggle('empty',!inv.square);$('#mnBtn').classList.toggle('empty',!inv.minute);
   if(run){$('#rsN').textContent='#'+(run.n+1);$('#rsP').textContent=run.points.toLocaleString()}}
-function useItem(k){if(!RUSH||!G||G.solved)return false;const inv=S.rush.inv,c=C();if(!c||!(k in inv))return false;
+function useItem(k){if(!RUSH||!G||G.solved||G.paused)return false;const inv=S.rush.inv,c=C();if(!c||!(k in inv))return false;
   const nm={square:['🧩','No Free Square Solves left'],minute:['⏱','No Extra Minutes left']}[k];
   if(!(inv[k]>0)){toast(nm[0],nm[1],'Solve Rush puzzles to earn more');return false}
   if(k==='minute'){inv.minute--;c.minutes=(c.minutes||0)+1;c.remain=(c.remain??RUSH_T)+60;save();upd();rushUI();
@@ -1062,7 +1077,6 @@ function useItem(k){if(!RUSH||!G||G.solved)return false;const inv=S.rush.inv,c=C
     inv.square--;c.squares=(c.squares||0)+1;const ok=refresh(true);save();rushUI();if(ok===G.n)complete();return true}
   return false}
 $('#sqBtn').onclick=()=>useItem('square');$('#mnBtn').onclick=()=>useItem('minute');
-let rwTimer=null;
 function rushComplete(){
   G.solved=true;board.classList.add('solved');select(null);dropGesture();Z.z=1;clampPan();applyZoom(true);
   const rs=S.rush,run=rs.run,c=run.cur,pts=rushPoints(c.moves),rw=REWARDS[rnd(REWARDS.length)];rs.inv[rw.k]+=rw.n;
@@ -1075,11 +1089,20 @@ function rushComplete(){
     const rr=$('#rwRwd');rr.style.animation='none';void rr.offsetWidth;rr.style.animation='';
     $('#rwRun').innerHTML=`Run: <b>${run.n}</b> solved · <b>${run.points.toLocaleString()}</b> pts`+(got.length?`<br>🏆 ${got.length} new achievement${got.length>1?'s':''}`:'');
     openModal('#mRushWin');confetti();
-    let n=4;const lab=()=>{$('#rwNext').textContent=`Next puzzle ▶ (${n})`};lab();clearInterval(rwTimer);
-    rwTimer=setInterval(()=>{if(!$('#mRushWin').classList.contains('show')){clearInterval(rwTimer);return}if(document.hidden)return;if(--n<=0)rushNext();else lab()},1000);
   },700)}
-function rushNext(){clearInterval(rwTimer);if(!$('#mRushWin').classList.contains('show'))return;closeModals();rushPlay()}
+function rushNext(){if(!$('#mRushWin').classList.contains('show'))return;closeModals();rushPlay()}
 $('#rwNext').onclick=rushNext;
+// Save & Quit between puzzles: the next puzzle isn't picked yet and no clock runs until "Continue Rush"
+$('#rwQuit').onclick=()=>{S.rush.playing=0;save();RUSH=false;closeModals();renderHome();show('home');toast('💾','Run saved','Tap Continue Rush to start the next puzzle')};
+// pause (Rush only): clock stops, board fully hidden, only Resume
+function rushPause(){if(!RUSH||!G||G.solved||G.intro||G.paused||screen!=='game')return false;
+  G.paused=true;select(null);if(gest&&gest.type==='drag')dropGesture();gest=null;ptrs.clear();clearTimeout(peekT);board.classList.remove('peek');$('#peekBtn').classList.remove('on');
+  $('#pauseOv').classList.remove('hidden');save();return true}
+function rushResume(){if(!G||!G.paused)return;G.paused=false;lastT=performance.now();$('#pauseOv').classList.add('hidden')}
+$('#pauseBtn').onclick=()=>rushPause();$('#resumeBtn').onclick=rushResume;
+$('#pauseQuit').onclick=()=>{if(G&&G.paused)openModal('#mPQuit')};
+$('#pqNo').onclick=closeModals;
+$('#pqYes').onclick=()=>{closeModals();if(!RUSH||!G)return;S.rush.playing=0;save();RUSH=false;renderHome();show('home');toast('💾','Run saved','Your clock is stopped until you continue')};
 let lbOpenIdx=-1;
 function rushOver(reason){const rs=S.rush,run=rs.run;if(!run)return;
   if(run.cur)run.time+=run.cur.elapsed||0;
@@ -1150,6 +1173,7 @@ if(/[?&]debug=1\b/.test(location.search))window.__puzzle={state:()=>S,images:()=
   setMode:m=>setMode(m),galleryItems:()=>galItems,
   achTest:(id,r)=>{const a=ACH.find(x=>x.id===id);return a?!!a.t(r):null},
   rush:()=>S.rush,rushPoints:m=>rushPoints(m),useItem:k=>useItem(k),rushPlay:()=>rushPlay(),isRush:()=>RUSH,cur:()=>C(),rushOver:r=>rushOver(r),openLB:i=>openLB(i),
+  pause:()=>rushPause(),resume:()=>rushResume(),
   setRemain:t=>{const c=C();if(c){c.remain=t;upd()}},
   slotCenter(s){const r=board.getBoundingClientRect(),c=C().cols;return [r.left+(s%c+.5)*G.pw*Z.z,r.top+(Math.floor(s/c)+.5)*G.ph*Z.z]}};
 
